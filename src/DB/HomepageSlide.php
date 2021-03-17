@@ -1,0 +1,57 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Web\DB;
+
+use StORM\Entity;
+
+/**
+ * @table
+ */
+class HomepageSlide extends Entity
+{
+	const IMAGE_DIR = 'homepage_slides';
+
+	/**
+	 * Text
+	 * @column{"type":"longtext"}
+	 */
+	public ?string $text = null;
+
+	/**
+	 * Cesta obrázku, pokud je typ video, tak cesta videa
+	 * @column
+	 */
+	public ?string $image = null;
+
+	/**
+	 * Typ
+	 * @column{"type":"enum","length":"'image','video'"}
+	 */
+	public string $type = 'image';
+
+	/**
+	 * Cesta obrázku (mobil)
+	 * @column
+	 */
+	public ?string $imageMobile = null;
+
+	/**
+	 * Priorita
+	 * @column
+	 */
+	public int $priority = 10;
+
+	/**
+	 * Skryto
+	 * @column
+	 */
+	public bool $hidden = false;
+
+	/**
+	 * Animovat
+	 * @column
+	 */
+	public bool $animate = false;
+}

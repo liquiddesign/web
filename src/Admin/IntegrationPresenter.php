@@ -1,0 +1,69 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Web\Admin;
+
+use Admin\BackendPresenter;
+use App\Admin\Controls\AdminForm;
+use App\Admin\PresenterTrait;
+use Web\DB\ContactItemRepository;
+use Web\DB\SettingRepository;
+
+class IntegrationPresenter extends BackendPresenter
+{
+	/** @inject */
+	public SettingRepository $settingsRepo;
+	
+	/** @inject */
+	public ContactItemRepository $contactItemRepo;
+	
+	public function beforeRender()
+	{
+		$this->traitBeforeRender();
+		
+		$this->template->tabs = [
+			'@default' => 'Měření a nástroje',
+		];
+	}
+	
+	public function actionDefault()
+	{
+		/** @var AdminForm $form */
+		$form = $this->getComponent('form');
+		
+		$form->setDefaults($this->settingsRepo->many()->setIndex('name')->toArrayOf('value'));
+	}
+	
+	public function renderDefault()
+	{
+		$this->template->headerLabel = 'Integrace';
+		$this->template->headerTree = [
+			['Integrace'],
+		];
+		$this->template->displayButtons = [];
+		$this->template->displayControls = [$this->getComponent('form')];
+	}
+	
+	public function createComponentForm(): AdminForm
+	{
+		$form = $this->formFactory->create();
+		$form->addText('integrationGTM', 'GTM (Google Tag Manager)')->setNullable();
+		
+		$form->addSubmit('submit', 'Uložit');
+		
+		$form->onSuccess[] = function (AdminForm $form) {
+			$values = $form->getValues('array');
+			
+			foreach ($values as $key => $value) {
+				$this->settingsRepo->syncOne(['name' => $key, 'value' => $value]);
+			}
+			
+			$this->flashMessage('Nastavení uloženo', 'success');
+			$form->processRedirect('default');
+		};
+		
+		return $form;
+	}
+	
+}

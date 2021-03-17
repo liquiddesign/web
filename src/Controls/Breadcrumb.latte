@@ -1,0 +1,29 @@
+<div class="container py-2" n:if="isset($items) && count($items)">
+	<div class="row">
+		<div class="col">
+			<div class="breadcrumb">
+				<a href="{plink :Web:Index:default}">
+					<svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+						<path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+					</svg>
+				</a>
+
+				{foreach $items as $item}
+					<svg class="w-auto h-2 mr-2 text-gray-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+					</svg>
+
+					{ifset $item->link}
+						<a href="{$item->link}" class="breadcrumb-item">
+							{$item->name}
+						</a>
+					{else}
+						<div class="breadcrumb-item">
+							{$item->name}
+						</div>
+					{/ifset}
+				{/foreach}
+			</div>
+		</div>
+	</div>
+</div>
