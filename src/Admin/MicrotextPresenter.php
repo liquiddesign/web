@@ -36,7 +36,7 @@ class MicrotextPresenter extends BackendPresenter
 		foreach ($this->formFactory->getDefaultMutations() as $mutation) {
 			$img = $this->createFlag($mutation);
 
-			$suffix = $this->stm->getAvailableMutations()[$mutation];
+			$suffix = $this->storm->getAvailableMutations()[$mutation];
 			$grid->addColumnInputText($img . " Překlad", "text$suffix", '', '', null, ['style' => 'min-width: 240px;']);
 		}
 

@@ -41,7 +41,7 @@ class MenuPresenter extends BackendPresenter
 	public function createComponentGrid()
 	{
 		$grid = $this->gridFactory->create($this->menuItemRepository->many()
-			->join(['nxn' => 'web_menu_item_nxn_web_menutype'], 'this.uuid = nxn.fk_menuitem')
+			->join(['nxn' => 'web_menuitem_nxn_web_menutype'], 'this.uuid = nxn.fk_menuitem')
 			->join(['type' => 'web_menutype'], 'nxn.fk_menutype = type.uuid')
 			->where('type.uuid', $this->tab), 20, 'type');
 		$grid->setSecondaryOrder(['this.priority' => 'ASC']);
