@@ -20,7 +20,7 @@ class IntegrationPresenter extends BackendPresenter
 	
 	public function beforeRender()
 	{
-		$this->traitBeforeRender();
+		parent::beforeRender();
 		
 		$this->template->tabs = [
 			'@default' => 'Měření a nástroje',

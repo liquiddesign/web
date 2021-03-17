@@ -24,7 +24,7 @@ class SettingPresenter extends BackendPresenter
 	
 	public function beforeRender()
 	{
-		$this->traitBeforeRender();
+		parent::beforeRender();
 		
 		$this->template->tabs = [
 			'@default' => 'Hlavní informace a mapa',
