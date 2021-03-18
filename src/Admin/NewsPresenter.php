@@ -50,7 +50,7 @@ class NewsPresenter extends BackendPresenter
 		$grid->addColumnText('Publikováno', "published|date:'d.m.Y'", '%s', null, ['class' => 'minimal']);
 
 		$grid->addColumn('Název', function (News $news, $grid) {
-			return [$grid->getPresenter()->link(':Web:Article:detail', ['news' => (string)$news]), $news->name];
+			return [$grid->getPresenter()->link(':Web:Article:detail', ['article' => (string)$news]), $news->name];
 		}, '<a href="%s" target="_blank"> %s</a>', 'name');
 
 		$grid->addColumnInputCheckbox('<i title="Skryto" class="far fa-eye-slash"></i>', 'hidden', '', '', 'hidden');
