@@ -117,12 +117,4 @@ class MessagePresenter extends BackendPresenter
 
 		$form->setDefaults($template->toArray());
 	}
-	
-	public function actionBulkEdit(string $grid = 'grid')
-	{
-		$this['grid']['bulkForm']->onSuccess[] = function() {
-			$this->flashMessage('Uloženo', 'success');
-			$this->redirect('default');
-		};
-	}
 }
