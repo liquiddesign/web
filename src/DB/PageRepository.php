@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Web\DB;
 
-use App\IGeneralRepository;
+use Common\DB\IGeneralRepository;
 use Nette\Utils\Strings;
 use StORM\Collection;
 
