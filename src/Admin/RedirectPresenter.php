@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Web\Admin;
 
 use Admin\BackendPresenter;
-use App\Admin\Controls\AdminForm;
-use App\Admin\Controls\AdminGrid;
-use App\Admin\PresenterTrait;
+use Admin\Controls\AdminForm;
 use Forms\Form;
 use Pages\DB\Redirect;
 use Pages\DB\RedirectRepository;

@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Web\Admin;
 
 use Admin\BackendPresenter;
-use App\Admin\Controls\AdminForm;
-use App\Admin\PresenterTrait;
+use Admin\Controls\AdminForm;
 use Forms\Form;
 use League\Csv\Reader;
 use League\Csv\Writer;

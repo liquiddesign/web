@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace Web\Admin;
 
 use Admin\BackendPresenter;
-use App\Admin\Controls\AdminForm;
-use App\Admin\PresenterTrait;
+use Admin\Controls\AdminForm;
 use Web\DB\HomepageSlide;
 use Web\DB\HomepageSlideRepository;
-use Web\DB\News;
 use Nette\Forms\IControl;
-use Forms\Controls\UploadImage;
 use Nette\Http\FileUpload;
 use Nette\Http\Request;
 use Nette\Utils\FileSystem;

@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace Web\Admin;
 
 use Admin\BackendPresenter;
-use App\Admin\Controls\AdminForm;
-use App\Admin\Controls\AdminFormFactory;
-use App\Admin\Controls\BulkFormFactory;
-use App\Admin\PresenterTrait;
+use Admin\Controls\AdminForm;
 use Forms\Form;
 use Messages\DB\Template;
 use Messages\DB\TemplateRepository;

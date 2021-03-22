@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace Web\Admin;
 
 use Admin\BackendPresenter;
-use App\Admin\Controls\AdminForm;
-use App\Admin\Controls\AdminFormFactory;
-use App\Admin\Controls\AdminGrid;
-use App\Admin\PresenterTrait;
+use Admin\Controls\AdminForm;
 use Web\DB\Page;
 use Web\DB\PageRepository;
 use Forms\Form;

@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Web\Admin;
 
 use Admin\BackendPresenter;
-use App\Admin\Controls\AdminForm;
-use App\Admin\PresenterTrait;
+use Admin\Controls\AdminForm;
 use Web\DB\News;
 use Web\DB\NewsRepository;
 use Web\DB\TagRepository;
 use DateTime;
-use Eshop\DB\Tag;
+use Web\DB\Tag;
 use Forms\Form;
 use Nette\Utils\Image;
 use Pages\DB\PageRepository;
