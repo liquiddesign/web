@@ -66,7 +66,7 @@ class SliderPresenter extends BackendPresenter
 	public function createComponentForm(): AdminForm
 	{
 		$form = $this->formFactory->create();
-		$imageDir = $this->context->parameters['wwwDir'] . \DIRECTORY_SEPARATOR . 'userfiles' . \DIRECTORY_SEPARATOR . HomepageSlide::IMAGE_DIR;
+		$imageDir = $this->wwwDir . \DIRECTORY_SEPARATOR . 'userfiles' . \DIRECTORY_SEPARATOR . HomepageSlide::IMAGE_DIR;
 
 		/** @var HomepageSlide $homepageSlide */
 		$homepageSlide = $this->getParameter('slide');
@@ -232,7 +232,7 @@ class SliderPresenter extends BackendPresenter
 				continue;
 			}
 
-			$rootDir = $this->context->parameters['wwwDir'] . \DIRECTORY_SEPARATOR . 'userfiles' . \DIRECTORY_SEPARATOR . $dir;
+			$rootDir = $this->wwwDir . \DIRECTORY_SEPARATOR . 'userfiles' . \DIRECTORY_SEPARATOR . $dir;
 			FileSystem::delete($rootDir . \DIRECTORY_SEPARATOR . $subDir . \DIRECTORY_SEPARATOR . $slide->$property);
 		}
 	}
@@ -241,7 +241,7 @@ class SliderPresenter extends BackendPresenter
 	{
 		$subDirs = ['desktop', 'mobile', 'video'];
 		$dir = HomepageSlide::IMAGE_DIR;
-		$rootDir = $this->context->parameters['wwwDir'] . \DIRECTORY_SEPARATOR . 'userfiles' . \DIRECTORY_SEPARATOR . $dir;
+		$rootDir = $this->wwwDir . \DIRECTORY_SEPARATOR . 'userfiles' . \DIRECTORY_SEPARATOR . $dir;
 		FileSystem::createDir($rootDir);
 		
 		foreach ($subDirs as $subDir) {

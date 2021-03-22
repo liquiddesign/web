@@ -9,6 +9,7 @@ use Admin\Controls\AdminForm;
 use Forms\Form;
 use League\Csv\Reader;
 use League\Csv\Writer;
+use Nette\Application\Application;
 use Nette\Application\Responses\FileResponse;
 use Nette\Utils\DateTime;
 use Nette\Utils\FileSystem;
@@ -23,6 +24,9 @@ class MicrotextPresenter extends BackendPresenter
 
 	/** @inject */
 	public DIConnection $storm;
+	
+	/** @inject */
+	public Application $application;
 
 	public function createComponentGrid()
 	{
@@ -134,7 +138,7 @@ class MicrotextPresenter extends BackendPresenter
 
 	public function handleRestoreLastImport(): void
 	{
-		$backupDir = $this->context->getParameters()['tempDir'] . \DIRECTORY_SEPARATOR . 'translations_backup';
+		$backupDir = $this->tempDir . \DIRECTORY_SEPARATOR . 'translations_backup';
 
 		if (!\is_dir($backupDir)) {
 			$this->flashMessage('Nejsou k dispozici žádné zálohy!', 'warning');
@@ -173,11 +177,11 @@ class MicrotextPresenter extends BackendPresenter
 		$form->addSubmit('submit', 'Exportovat');
 
 		$form->onSubmit[] = function (Form $form) {
-			$dir = $this->context->getParameters()['tempDir'] . \DIRECTORY_SEPARATOR . 'export';
+			$dir = $this->tempDir . \DIRECTORY_SEPARATOR . 'export';
 			FileSystem::createDir($dir);
 			$tempFilename = \tempnam($dir, 'csv');
 
-			$this->context->getService('application')->onShutdown[] = function () use ($tempFilename) {
+			$this->application->onShutdown[] = function () use ($tempFilename) {
 				\unlink($tempFilename);
 			};
 
@@ -205,7 +209,7 @@ class MicrotextPresenter extends BackendPresenter
 		$form->addSubmit('submit', 'Importovat');
 
 		$form->onSubmit[] = function (Form $form) {
-			$backupDir = $this->context->getParameters()['tempDir'] . \DIRECTORY_SEPARATOR . 'translations_backup';
+			$backupDir = $this->tempDir . \DIRECTORY_SEPARATOR . 'translations_backup';
 
 			$this->translationRepository->createTranslationsSnapshot($backupDir, \array_keys($this->storm->getAvailableMutations()));
 
