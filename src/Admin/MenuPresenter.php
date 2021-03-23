@@ -125,7 +125,7 @@ class MenuPresenter extends BackendPresenter
 
 		$nameInput = $form->addLocaleText('name', 'Název');
 		$form->addLocaleRichEdit('content', 'Obsah');
-		$form->addDataMultiSelect('types', 'Umístění', $this->menuTypeRepository->getArrayForSelect());
+		$form->addDataMultiSelect('types', 'Umístění', $this->menuTypeRepository->getArrayForSelect())->setRequired();
 		$form->addInteger('priority', 'Priorita')->setRequired()->setDefaultValue(10);
 		$form->addCheckbox('hidden', 'Skryto');
 
