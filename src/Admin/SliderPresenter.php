@@ -124,7 +124,7 @@ class SliderPresenter extends BackendPresenter
 		$form->onSuccess[] = function (AdminForm $form) use ($homepageSlide, $imageDir) {
 			$values = $form->getValues('array');
 		;
-			$this->createImageDirs();
+			$this->createImageDirs(HomepageSlide::IMAGE_DIR);
 			
 			if ($homepageSlide && $homepageSlide->type !== $values['type']) {
 				$this->deleteImages($homepageSlide);
@@ -240,7 +240,6 @@ class SliderPresenter extends BackendPresenter
 	protected function createImageDirs(string $dir)
 	{
 		$subDirs = ['desktop', 'mobile', 'video'];
-		$dir = HomepageSlide::IMAGE_DIR;
 		$rootDir = $this->wwwDir . \DIRECTORY_SEPARATOR . 'userfiles' . \DIRECTORY_SEPARATOR . $dir;
 		FileSystem::createDir($rootDir);
 		
