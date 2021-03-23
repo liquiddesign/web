@@ -23,6 +23,7 @@ class IntegrationPresenter extends BackendPresenter
 		
 		$this->template->tabs = [
 			'@default' => 'Měření a nástroje',
+			'@zasilkovna' => 'Zásilkovna',
 		];
 	}
 	
@@ -62,6 +63,46 @@ class IntegrationPresenter extends BackendPresenter
 			$form->processRedirect('default');
 		};
 		
+		return $form;
+	}
+
+	public function actionZasilkovna()
+	{
+		/** @var AdminForm $form */
+		$form = $this->getComponent('zasilkovnaForm');
+
+		$form->setDefaults($this->settingsRepo->many()->setIndex('name')->toArrayOf('value'));
+	}
+
+	public function renderZasilkovna()
+	{
+		$this->template->headerLabel = 'Integrace';
+		$this->template->headerTree = [
+			['Integrace'],
+			['Zásilkovna']
+		];
+		$this->template->displayButtons = [];
+		$this->template->displayControls = [$this->getComponent('zasilkovnaForm')];
+	}
+
+	public function createComponentZasilkovnaForm(): AdminForm
+	{
+		$form = $this->formFactory->create();
+		$form->addText('zasilkovnaApiKey', 'API klíč')->setNullable();
+
+		$form->addSubmit('submit', 'Uložit');
+
+		$form->onSuccess[] = function (AdminForm $form) {
+			$values = $form->getValues('array');
+
+			foreach ($values as $key => $value) {
+				$this->settingsRepo->syncOne(['name' => $key, 'value' => $value]);
+			}
+
+			$this->flashMessage('Nastavení uloženo', 'success');
+			$form->processRedirect('zasilkovna');
+		};
+
 		return $form;
 	}
 	
