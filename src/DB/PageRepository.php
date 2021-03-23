@@ -22,7 +22,7 @@ class PageRepository extends \Pages\DB\PageRepository implements IGeneralReposit
 	
 	public function getPagesWithoutMenu(?array $types = null): Collection
 	{
-		$collection = $this->many()->join(['menu' => 'web_menutem'], 'menu.fk_page = this.uuid')->where('menu.uuid IS NULL');
+		$collection = $this->many()->join(['menu' => 'web_menuitem'], 'menu.fk_page = this.uuid')->where('menu.uuid IS NULL');
 		
 		if ($types !== null) {
 			$collection->where('this.type', $types);
