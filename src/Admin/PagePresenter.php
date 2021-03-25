@@ -58,8 +58,8 @@ class PagePresenter extends BackendPresenter
 			return $page->isDeletable();
 		}, 'this.uuid');
 		
-		$inputs = ['page' => ['title', 'description', 'robots'], 'sitemap' => ['lastmod', 'changefreq', 'priority']];
-		$grid->addButtonBulkEdit('form', $inputs);
+		//$inputs = ['page' => ['title', 'description', 'robots'], 'lastmod', 'changefreq', 'priority'];
+		//$grid->addButtonBulkEdit('form', $inputs);
 		
 		$grid->addFilterTextInput('search', ['this.name_cs', 'this.url_cs', 'this.title_cs'], null, 'Název, url, titulek');
 		
