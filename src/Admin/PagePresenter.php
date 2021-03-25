@@ -159,7 +159,7 @@ class PagePresenter extends BackendPresenter
 		$this->template->headerTree = [
 			['Vstupní stránky'],
 		];
-		$this->template->displayButtons = [$this->createNewItemButton('new')];
+		//$this->template->displayButtons = [$this->createNewItemButton('new')];
 		$this->template->displayControls = [$this->getComponent('grid')];
 	}
 	
