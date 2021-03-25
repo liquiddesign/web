@@ -24,11 +24,36 @@ class PageRepository extends \Pages\DB\PageRepository implements IGeneralReposit
 	{
 		$collection = $this->many()->join(['menu' => 'web_menuitem'], 'menu.fk_page = this.uuid')->where('menu.uuid IS NULL');
 		
-		if ($types !== null) {
-			$collection->where('this.type', $types);
+		$expression = new \StORM\Expression();
+		
+		foreach ($types as $type => $param) {
+			$expression->add('OR', 'this.type=%s' . ($param !== null ? ' AND params LIKE %s' : ''), $param !== null ? [$type, $param === '' ? '' : "$param=%"] : [$type]);
 		}
 		
+		$collection->where($expression->getSql(), $expression->getVars());
+		
 		return $collection;
+	}
+	
+	/**
+	 * Sitemaps format example:
+	 * [$pagetype1 => $param1, $pagetype2, $pagetype3 => $param3 ....]
+	 *
+	 * @param array $sitemaps
+	 * @return \StORM\Collection
+	 */
+	public function getPagesForSitemap(array $sitemaps): Collection
+	{
+		$expression = new \StORM\Expression();
+		
+		foreach ($sitemaps as $key => $value) {
+			$type = \is_int($key) ? $value : $key;
+			$param = \is_int($key) ? null : $value;
+			
+			$expression->add('OR', 'this.type=%s' . ($param !== null ? ' AND params LIKE %s' : ''), $param !== null ? [$type, "$param=%"] : [$type]);
+		}
+		
+		return $this->many()->where('isOffline', false)->where($expression->getSql(), $expression->getVars());
 	}
 	
 	public function getArrayForSelect(bool $includeHidden = true):array

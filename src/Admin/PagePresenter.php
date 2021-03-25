@@ -58,8 +58,8 @@ class PagePresenter extends BackendPresenter
 			return $page->isDeletable();
 		}, 'this.uuid');
 		
-		$inputs = ['page' => ['title', 'description', 'robots'], 'sitemap' => ['lastmod', 'changefreq', 'priority']];
-		$grid->addButtonBulkEdit('form', $inputs);
+		//$inputs = ['page' => ['title', 'description', 'robots'], 'lastmod', 'changefreq', 'priority'];
+		//$grid->addButtonBulkEdit('form', $inputs);
 		
 		$grid->addFilterTextInput('search', ['this.name_cs', 'this.url_cs', 'this.title_cs'], null, 'Název, url, titulek');
 		
@@ -115,13 +115,12 @@ class PagePresenter extends BackendPresenter
 		$pageContainer->addLocaleText('canonicalUrl', 'Canonická URL');
 		
 		$form->addGroup('Sitemap');
-		$sitemapContainer = $form->addContainer('sitemap');
-		$sitemapContainer->addDatetime('lastmod', 'Poslední změna');
+		$form->addDatetime('lastmod', 'Poslední změna');
 		$frequency = ['always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never'];
-		$sitemapContainer->addSelect('changefreq', 'Frekvence', \array_combine($frequency, $frequency))->setPrompt('Žádná');
-		$sitemapContainer->addText('priority', 'Priorita');
+		$form->addSelect('changefreq', 'Frekvence', \array_combine($frequency, $frequency))->setPrompt('Žádná');
+		$form->addText('priority', 'Priorita')->setHtmlType('number');
 		
-		$form->bind(null, ['page' => $this->pageRepository->getStructure(), 'sitemap' => $this->pageRepository->getStructure()]);
+		$form->bind(null, ['page' => $this->pageRepository->getStructure()]);
 		
 		$form->addSubmits(!$this->getParameter('page'));
 		
@@ -143,7 +142,9 @@ class PagePresenter extends BackendPresenter
 				$values['page']['params'] = \Pages\Helpers::serializeParameters($values["_$values[type]"]);
 			}
 			
-			$page = $this->pageRepository->syncOne($values['page'] + $values['sitemap'], null, true);
+			$values['priority'] = $values['priority'] === '' ? null : (float) $values['priority'];
+			
+			$page = $this->pageRepository->syncOne($values + $values['page'], null, true);
 			
 			$this->flashMessage('Uloženo', 'success');
 			$form->processRedirect('detail', 'default', [$page]);
@@ -158,7 +159,7 @@ class PagePresenter extends BackendPresenter
 		$this->template->headerTree = [
 			['Vstupní stránky'],
 		];
-		$this->template->displayButtons = [$this->createNewItemButton('new')];
+		//$this->template->displayButtons = [$this->createNewItemButton('new')];
 		$this->template->displayControls = [$this->getComponent('grid')];
 	}
 	
