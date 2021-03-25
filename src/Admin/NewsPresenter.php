@@ -183,7 +183,6 @@ class NewsPresenter extends BackendPresenter
 		$form->onSuccess[] = function (AdminForm $form) {
 			$values = $form->getValues('array');
 			
-			
 			if (!$values['uuid']) {
 				$values['uuid'] = DIConnection::generateUuid();
 			}
