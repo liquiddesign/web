@@ -82,7 +82,7 @@ class MenuPresenter extends BackendPresenter
 	
 	public function createComponentPageGrid()
 	{
-		$types = ['index', 'content', 'contact', 'news', 'pickup_points'];
+		$types = ['index' => '', 'content'  => null, 'contact' => null, 'news' => '', 'pickup_points' => null];
 		
 		$grid = $this->gridFactory->create($this->pageRepository->getPagesWithoutMenu($types), 20, 'this.type');
 		$grid->addColumnSelector();
