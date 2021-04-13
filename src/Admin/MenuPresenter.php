@@ -42,8 +42,7 @@ class MenuPresenter extends BackendPresenter
 		$grid = $this->gridFactory->create($this->menuItemRepository->many()
 			->join(['nxn' => 'web_menuitem_nxn_web_menutype'], 'this.uuid = nxn.fk_menuitem')
 			->join(['type' => 'web_menutype'], 'nxn.fk_menutype = type.uuid')
-			->where('type.uuid', $this->tab), 20, 'type');
-		$grid->setSecondaryOrder(['this.priority' => 'ASC']);
+			->where('type.uuid', $this->tab), 20, 'priority');
 		$grid->addColumnSelector();
 		
 		$grid->addColumnText('Název', 'name', '%s', 'name');
@@ -170,7 +169,7 @@ class MenuPresenter extends BackendPresenter
 		
 		$page = $this->getParameter('page');
 		
-		$inputName = $form->addLocaleText('name', 'Název menu');
+		$inputName = $form->addLocaleText('name', 'Název');
 		$form->addLocaleRichEdit('content', 'Obsah');
 		
 		
