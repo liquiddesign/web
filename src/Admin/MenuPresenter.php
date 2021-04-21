@@ -29,13 +29,8 @@ class MenuPresenter extends BackendPresenter
 	
 	/** @persistent */
 	public string $tab = 'main';
-	
-	public function beforeRender()
-	{
-		parent::beforeRender();
-		
-		$this->menuTypes = $this->menuTypeRepository->getArrayForSelect();
-	}
+
+	public const MAX_LEVEL = 3;
 	
 	public function createComponentGrid()
 	{
@@ -124,7 +119,7 @@ class MenuPresenter extends BackendPresenter
 		
 		$nameInput = $form->addLocaleText('name', 'Název');
 		$form->addLocaleRichEdit('content', 'Obsah');
-		$form->addDataMultiSelect('types', 'Umístění', $this->menuTypeRepository->getArrayForSelect())->setRequired();
+		$form->addDataMultiSelect('types', 'Umístění', $this->menuTypeRepository->getTreeArrayForSelect())->setRequired();
 		$form->addInteger('priority', 'Priorita')->setRequired()->setDefaultValue(10);
 		$form->addCheckbox('hidden', 'Skryto');
 		
@@ -256,8 +251,17 @@ class MenuPresenter extends BackendPresenter
 		
 		$this->template->tabs = [];
 		
-		foreach ($this->menuTypes as $type => $label) {
+		foreach ($this->menuTypeRepository->getCollection()->where('LENGTH(path) <= 4')->toArrayOf('name') as $type => $label) {
 			$this->template->tabs[$type] = " $label";
+		}
+
+		for($i = 1; $i < $this::MAX_LEVEL;$i++){
+			$parameterName = "level$i";
+
+			if($levelParameter = $i == 1 ? $this->tab : $this->getParameter($parameterName))
+			{
+				$this->template->$parameterName = $this->menuTypeRepository->findElementInTree($this->menuTypeRepository->one($levelParameter))->children;
+			}
 		}
 		
 		$this->template->tabs['pages'] = "<i class=\"far fa-sticky-note\"></i> Nezařazené stránky";
