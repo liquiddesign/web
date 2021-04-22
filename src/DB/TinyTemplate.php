@@ -45,7 +45,7 @@ class TinyTemplate extends Entity
 	/**
 	 * @column
 	 */
-	public bool $servis = false;
+	public bool $systemic = false;
 
 	/**
 	 * @column{"mutations":true}
