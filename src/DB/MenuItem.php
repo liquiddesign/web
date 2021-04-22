@@ -60,7 +60,13 @@ class MenuItem extends Entity
 	 * @constraint{"onUpdate":"CASCADE","onDelete":"CASCADE"}
 	 */
 	public ?MenuItem $ancestor;
-	
+
+	/**
+	 * Pomocí repositářové metody getTree($type)
+	 * @var \Web\DB\MenuItem[]
+	 */
+	public array $children = [];
+
 	/**
 	 * Zařazení do menu
 	 * @relationNxN

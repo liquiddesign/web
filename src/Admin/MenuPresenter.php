@@ -6,6 +6,7 @@ namespace Web\Admin;
 
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
+use Nette\Utils\Random;
 use Web\DB\MenuItem;
 use Web\DB\MenuItemRepository;
 use Web\DB\MenuTypeRepository;
@@ -30,17 +31,27 @@ class MenuPresenter extends BackendPresenter
 	/** @persistent */
 	public string $tab = 'main';
 
-	public const MAX_LEVEL = 3;
-
 	public function createComponentGrid()
 	{
 		$grid = $this->gridFactory->create($this->menuItemRepository->many()
 			->join(['nxn' => 'web_menuitem_nxn_web_menutype'], 'this.uuid = nxn.fk_menuitem')
 			->join(['type' => 'web_menutype'], 'nxn.fk_menutype = type.uuid')
 			->where('type.uuid', $this->tab), 20, 'priority');
+
+		$grid->setNestingCallback(static function ($source, $parent) {
+			if (!$parent) {
+				return $source->where('LENGTH(path)=4');
+			}
+
+			return $source->where('path!=:parent AND path LIKE :path', ['path' => $parent->path . '%', 'parent' => $parent->path]);
+		});
+
 		$grid->addColumnSelector();
 
-		$grid->addColumnText('Název', 'name', '%s', 'name');
+		$grid->addColumnText('Název', 'name', '%s', 'name')->onRenderCell[] = function (\Nette\Utils\Html $td, $object) {
+			$level = \strlen($object->path) / 4 - 1;
+			$td->setHtml(\str_repeat('- - ', $level) . $td->getHtml());
+		};;
 		$grid->addColumnText('Titulek', 'page.title', '%s', 'page.title_cs');
 		$grid->addColumnText('URL', 'getUrl', '<a href="%1$s"  target="_blank"><i class="fa fa-external-link-square-alt"></i> %1$s</a>');
 
@@ -119,10 +130,17 @@ class MenuPresenter extends BackendPresenter
 
 		$nameInput = $form->addLocaleText('name', 'Název');
 		$form->addLocaleRichEdit('content', 'Obsah');
-		$form->addDataMultiSelect('types', 'Umístění', $this->menuTypeRepository->getTreeArrayForSelect(false, $this::MAX_LEVEL))->setRequired();
+		$form->addDataMultiSelect('types', 'Umístění', $this->menuTypeRepository->getArrayForSelect())->setRequired();
 		$form->addInteger('priority', 'Priorita')->setRequired()->setDefaultValue(10);
 		$form->addCheckbox('hidden', 'Skryto');
 
+		$menuItems = $this->menuItemRepository->getTreeArrayForSelect(false);
+
+		if ($this->getParameter('menuItem')) {
+			unset($menuItems[$this->getParameter('menuItem')->getPK()]);
+		}
+
+		$form->addDataMultiSelect('ancestor', 'Nadřazená položka', $menuItems);
 
 		/** @var MenuItem $menu */
 		$menu = $this->getParameter('menuItem');
@@ -144,8 +162,19 @@ class MenuPresenter extends BackendPresenter
 
 			$values['path'] = '';
 
-			/** @var MenuItem $menuItem */
+			$prefix = $values['ancestor'] ? $this->menuItemRepository->one($values['ancestor'])->path : '';
+			$random = null;
+
+			do {
+				$random = $prefix . Random::generate(4, '0-9a-z');
+				$tempCategory = $this->menuItemRepository->many()->where('path', $random)->first();
+			} while ($tempCategory);
+
+			$values['path'] = $random;
+
 			$menuItem = $this->menuItemRepository->syncOne($values, null, true);
+
+			$this->menuItemRepository->updateElementChildrenPath($menuItem);
 
 			if ($type === 'content') {
 				$menuItem->page->update(['params' => 'page=' . $menuItem->page->getPK() . '&']);
@@ -251,28 +280,9 @@ class MenuPresenter extends BackendPresenter
 
 		$this->template->tabs = [];
 
-		foreach ($this->menuTypeRepository->getCollection()->where('LENGTH(path) <= 4')->toArrayOf('name') as $type => $label) {
+		foreach ($this->menuTypeRepository->getCollection()->toArrayOf('name') as $type => $label) {
 			$this->template->tabs[$type] = " $label";
 		}
-
-		$levels = [];
-
-		$element = $this->menuTypeRepository->one($this->tab);
-		if ($element && $foundType = $this->menuTypeRepository->findElementInTree($element)) {
-			while ($foundType !== null) {
-				$levels[] = $foundType->children;
-
-				if (!$foundType->ancestor) {
-					break;
-				}
-
-				$foundType = $this->menuTypeRepository->findElementInTree($foundType->ancestor);
-			}
-		};
-
-		$levels = \array_slice(\array_reverse($levels), 0, $this::MAX_LEVEL - 1);
-
-		$this->template->levels = $levels;
 
 		$this->template->tabs['pages'] = "<i class=\"far fa-sticky-note\"></i> Nezařazené stránky";
 	}
@@ -315,6 +325,7 @@ class MenuPresenter extends BackendPresenter
 		/** @var Form $form */
 		$form = $this->getComponent('form');
 		$defaults = $menuItem->jsonSerialize();
+		$defaults['ancestor'] = $menuItem->ancestor->getPK();
 
 		$form->setDefaults($defaults);
 		$form['content']->setDefaults($defaults['page']['content'] ?? []);

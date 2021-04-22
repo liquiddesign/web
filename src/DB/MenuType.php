@@ -22,20 +22,8 @@ class MenuType extends Entity
 	public int $priority = 10;
 
 	/**
+	 * Maximální úroven zanoření
 	 * @column
 	 */
-	public ?string $path;
-
-	/**
-	 * Pomocí repositářové metody getTree(array $orderBy)
-	 * @var \Web\DB\MenuType[]
-	 */
-	public array $children = [];
-
-	/**
-	 * Nadřazený
-	 * @relation
-	 * @constraint{"onUpdate":"CASCADE","onDelete":"CASCADE"}
-	 */
-	public ?MenuType $ancestor;
+	public int $maxLevel = 3;
 }
