@@ -140,7 +140,7 @@ class MenuPresenter extends BackendPresenter
 			unset($menuItems[$this->getParameter('menuItem')->getPK()]);
 		}
 
-		$form->addDataMultiSelect('ancestor', 'Nadřazená položka', $menuItems);
+		$form->addDataSelect('ancestor', 'Nadřazená položka', $menuItems);
 
 		/** @var MenuItem $menu */
 		$menu = $this->getParameter('menuItem');
