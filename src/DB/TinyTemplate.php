@@ -24,7 +24,7 @@ class TinyTemplate extends Entity
 	/**
 	 * @column{"type":"text"}
 	 */
-	public string $html = '';
+	public ?string $html;
 
 	/**
 	 * @column{"type":"text"}
