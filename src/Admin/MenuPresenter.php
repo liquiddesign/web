@@ -140,7 +140,7 @@ class MenuPresenter extends BackendPresenter
 			unset($menuItems[$this->getParameter('menuItem')->getPK()]);
 		}
 
-		$form->addDataSelect('ancestor', 'Nadřazená položka', $menuItems);
+		$form->addDataSelect('ancestor', 'Nadřazená položka', $menuItems)->setPrompt('Žádná');
 
 		/** @var MenuItem $menu */
 		$menu = $this->getParameter('menuItem');
@@ -154,14 +154,6 @@ class MenuPresenter extends BackendPresenter
 		$form->onSuccess[] = function (AdminForm $form) {
 			$values = $form->getValues('array');
 
-			$values['page']['content'] = $values['content'];
-			$values['page']['name'] = $values['name'];
-			$values['page']['params'] = $values['page']['params'] ?: '';
-			$type = $values['page']['type'];
-			$values['page'] = (string)$this->pageRepository->syncOne($values['page']);
-
-			$values['path'] = '';
-
 			$prefix = $values['ancestor'] ? $this->menuItemRepository->one($values['ancestor'])->path : '';
 			$random = null;
 
@@ -171,6 +163,20 @@ class MenuPresenter extends BackendPresenter
 			} while ($tempCategory);
 
 			$values['path'] = $random;
+
+			/** @var \Web\DB\MenuType $menuType */
+			$menuType = $this->menuTypeRepository->one($this->tab);
+
+			if(\strlen($values['path']) > $menuType->maxLevel * 4){
+				$this->flashMessage('Chyba! Tuto položku nelze více zanořit!', 'error');
+				$this->redirect('this');
+			}
+
+			$values['page']['content'] = $values['content'];
+			$values['page']['name'] = $values['name'];
+			$values['page']['params'] = $values['page']['params'] ?: '';
+			$type = $values['page']['type'];
+			$values['page'] = (string)$this->pageRepository->syncOne($values['page']);
 
 			$menuItem = $this->menuItemRepository->syncOne($values, null, true);
 
@@ -325,7 +331,7 @@ class MenuPresenter extends BackendPresenter
 		/** @var Form $form */
 		$form = $this->getComponent('form');
 		$defaults = $menuItem->jsonSerialize();
-		$defaults['ancestor'] = $menuItem->ancestor->getPK();
+		$defaults['ancestor'] = $menuItem->ancestor ? $menuItem->ancestor->getPK() : null;
 
 		$form->setDefaults($defaults);
 		$form['content']->setDefaults($defaults['page']['content'] ?? []);
