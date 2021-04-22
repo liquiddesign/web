@@ -20,12 +20,15 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 
 	private MenuTypeRepository $menuTypeRepository;
 
-	public function __construct(DIConnection $connection, SchemaManager $schemaManager, Request $request, MenuTypeRepository $menuTypeRepository)
+	private MenuAssignRepository $menuAssignRepository;
+
+	public function __construct(DIConnection $connection, SchemaManager $schemaManager, Request $request, MenuTypeRepository $menuTypeRepository, MenuAssignRepository $menuAssignRepository)
 	{
 		parent::__construct($connection, $schemaManager);
 
 		$this->request = $request;
 		$this->menuTypeRepository = $menuTypeRepository;
+		$this->menuAssignRepository = $menuAssignRepository;
 	}
 
 	public function getBaseUrl(): string
@@ -64,7 +67,11 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 
 	public function getTree($menuType = null): array
 	{
-		$collection = $this->getCollection()->where('LENGTH(path) <= 40');
+		$collection = $this->getCollection()
+			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
+			->where('LENGTH(path) <= 40')
+			->select(['ancestor' => 'nxn.fk_ancestor'])
+			->select(['path' => 'nxn.path']);
 
 		if ($menuType) {
 			if (!$menuType instanceof MenuType) {
@@ -73,7 +80,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 				}
 			}
 
-			$collection->where('fk_menuType', $menuType->getPK());
+			$collection->where('nxn.fk_menuType', $menuType->getPK());
 		}
 
 		return $this->buildTree($collection->toArray());
@@ -102,40 +109,27 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	}
 
 	/**
-	 * Updates all paths of children of element.
-	 * @param \Web\DB\MenuItem $element
+	 * Updates all items paths of menu type.
+	 * @param \Web\DB\MenuType $element
 	 * @throws \Throwable
 	 */
-	public function updateElementChildrenPath(MenuItem $element): void
+	public function recalculatePaths(MenuType $menuType): void
 	{
-		$tree = $this->getTree();
-
-		foreach ($tree as $item) {
-			if ($item->getPK() == $element->getPK()) {
-				$startElement = $item;
-				break;
-			}
-
-			if (\str_contains($element->path, $item->path)) {
-				$startElement = $this->findElementInTree($element, $item);
-
-				if ($startElement) {
-					break;
-				}
-			}
+		foreach ($this->getTree($menuType) as $item) {
+			$this->doRecalculatePaths($item, $menuType);
 		}
+	}
 
-		if (isset($startElement)) {
-			$startElement->setParent($this);
-			$startElement->update(['path' => $element->path]);
+	private function doRecalculatePaths($item, MenuType $menuType): void
+	{
+		foreach ($item->children as $child) {
+			$this->menuAssignRepository->many()
+				->where('fk_menutype', $menuType->getPK())
+				->where('fk_menuitem', $child->getPK())
+				->update(['path' => $item->path . \substr($child->path, -4)]);
 
-			foreach ($startElement->children as $child) {
-				$child->setParent($this);
-				$child->update(['path' => $startElement->path . \substr($child->path, -4)]);
-
-				if (\count($child->children) > 0) {
-					$this->doUpdateElementChildrenPath($child);
-				}
+			if (\count($child->children) > 0) {
+				$this->doRecalculatePaths($child, $menuType);
 			}
 		}
 	}
@@ -168,21 +162,9 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		return null;
 	}
 
-	private function doUpdateElementChildrenPath(MenuType $menuType): void
+	public function getTreeArrayForSelect(bool $includeHidden = true, $menuType = null, ?MenuItem $menuItem = null): array
 	{
-		foreach ($menuType->children as $child) {
-			$child->setParent($this);
-			$child->update(['path' => $menuType->path . \substr($child->path, -4)]);
-
-			if (\count($child->children) > 0) {
-				$this->doUpdateElementChildrenPath($child);
-			}
-		}
-	}
-
-	public function getTreeArrayForSelect(bool $includeHidden = true, $menuType = null): array
-	{
-		$collection = $this->getCollection($includeHidden)->where('LENGTH(path) <= 40');
+		$menuTypes = $this->menuTypeRepository->getCollection()->toArray();
 
 		if ($menuType) {
 			if (!$menuType instanceof MenuType) {
@@ -191,12 +173,36 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 				}
 			}
 
-			$collection->join(['type' => 'web_menuitem_nxn_web_menutype'], 'this.uuid = type.fk_menutype');
-			$collection->where('type.fk_menutype', $menuType->getPK());
+			$menuTypes = [$menuType];
+		}
+
+		if ($menuItem) {
+			$menuItem = $this->getCollection()
+				->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
+				->where('nxn.fk_menuitem', $menuItem->getPK())
+				->select(['path' => 'nxn.path'])
+				->first();
 		}
 
 		$list = [];
-		$this->buildTreeArrayForSelect($collection->toArray(), null, $list);
+
+		foreach ($menuTypes as $type) {
+			$collection = $this->getCollection($includeHidden)
+				->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
+				->where('LENGTH(nxn.path) <= 40')
+				->where('nxn.fk_menutype', $type->getPK())
+				->select(['ancestor' => 'nxn.fk_ancestor', 'path' => 'nxn.path']);
+
+			if ($menuItem) {
+				$collection->whereNot('nxn.fk_menuitem', $menuItem->getPK());
+				$collection->where('nxn.path NOT LIKE :path', ['path' => "$menuItem->path%"]);
+			}
+
+			$tempList = [];
+			$this->buildTreeArrayForSelect($collection->toArray(), null, $tempList);
+			$list['type_' . $type->getPK()] = $type->name;
+			$list += $tempList;
+		}
 
 		return $list;
 	}
@@ -213,7 +219,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 
 		foreach ($elements as $element) {
 			if ($element->getValue('ancestor') === $ancestorId) {
-				$list[$element->getPK()] = \str_repeat('--', (\strlen($element->path) / 4) - 1) . " $element->name";
+				$list[$element->getPK()] = \str_repeat('--', \strlen($element->path) / 4) . " $element->name";
 
 				if ($children = $this->buildTreeArrayForSelect($elements, $element->getPK(), $list)) {
 					$element->children = $children;
@@ -224,5 +230,49 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		}
 
 		return $branch;
+	}
+
+	public function getMenuItemPositions(MenuItem $menuItem): array
+	{
+		$items = \array_values($this->getCollection()
+			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
+			->where('nxn.fk_menuitem', $menuItem->getPK())
+			->where('nxn.fk_ancestor IS NOT NULL')
+			->select(['path' => 'nxn.path', 'ancestor' => 'nxn.fk_ancestor'])
+			->toArrayOf('ancestor'));
+
+		$types = $this->menuTypeRepository->getCollection()
+			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menutype')
+			->where('nxn.fk_menuitem', $menuItem->getPK())
+			->where('nxn.fk_ancestor IS NULL')
+			->setSelect(['this.uuid'])
+			->toArray();
+
+		$typesKeys = [];
+
+		foreach ($types as $type) {
+			$typesKeys[] = 'type_' . $type->getPK();
+		}
+
+		return \array_merge($items, $typesKeys);
+	}
+
+	public function getMaxDeepLevel(MenuItem $menuItem): int
+	{
+		$menuItem = $this->getCollection()
+			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
+			->where('nxn.fk_menuitem', $menuItem->getPK())
+			->select(['path' => 'nxn.path'])
+			->first();
+
+		$item = $this->getCollection()
+			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
+			->where('nxn.fk_menuitem', $menuItem->getPK())
+			->where('path LIKE :path', ['path' => "$menuItem->path%"])
+			->select(['pathLength' => 'LENGTH(path)'])
+			->setOrderBy(['pathLength' => 'DESC'])
+			->first();
+
+		return $item ? (($item->pathLength / 4) - (\strlen($menuItem->path) / 4)) : 0;
 	}
 }

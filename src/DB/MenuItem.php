@@ -35,11 +35,7 @@ class MenuItem extends Entity
 	 */
 	public bool $hidden = false;
 
-	/**
-	 * Cesta
-	 * @column
-	 */
-	public string $path;
+
 
 	/**
 	 * Absolutní URL
@@ -55,13 +51,6 @@ class MenuItem extends Entity
 	public ?Page $page;
 
 	/**
-	 * Nadřazený
-	 * @relation
-	 * @constraint{"onUpdate":"CASCADE","onDelete":"CASCADE"}
-	 */
-	public ?MenuItem $ancestor;
-
-	/**
 	 * Pomocí repositářové metody getTree($type)
 	 * @var \Web\DB\MenuItem[]
 	 */
@@ -69,7 +58,7 @@ class MenuItem extends Entity
 
 	/**
 	 * Zařazení do menu
-	 * @relationNxN
+	 * @relationNxN{"via":"web_menuassign"}
 	 * @var \Web\DB\MenuType[]|\StORM\RelationCollection<\Web\DB\MenuType>
 	 */
 	public RelationCollection $types;
