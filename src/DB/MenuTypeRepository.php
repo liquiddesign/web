@@ -8,6 +8,7 @@ use Admin\Controls\Menu;
 use Common\DB\IGeneralRepository;
 use StORM\Collection;
 use StORM\Repository;
+use Web\Admin\MenuPresenter;
 
 /**
  * @extends \StORM\Repository<\Web\DB\MenuType>
@@ -132,9 +133,9 @@ class MenuTypeRepository extends Repository implements IGeneralRepository
 		}
 	}
 
-	public function getTreeArrayForSelect(bool $includeHidden = true): array
+	public function getTreeArrayForSelect(bool $includeHidden = true, int $maxLevel = MenuPresenter::MAX_LEVEL): array
 	{
-		$collection = $this->getCollection($includeHidden)->where('LENGTH(path) <= 40');
+		$collection = $this->getCollection($includeHidden)->where('LENGTH(path) <= ' . $maxLevel * 4);
 
 		$list = [];
 		$this->buildTreeArrayForSelect($collection->toArray(), null, $list);
@@ -166,5 +167,4 @@ class MenuTypeRepository extends Repository implements IGeneralRepository
 
 		return $branch;
 	}
-
 }
