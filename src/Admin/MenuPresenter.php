@@ -326,6 +326,7 @@ class MenuPresenter extends BackendPresenter
 				if ($typePK = Strings::after($type, 'type_')) {
 					/** @var \Web\DB\MenuType $type */
 					$menuType = $this->menuTypeRepository->one($typePK);
+					$ancestor = null;
 				}else{
 					/** @var MenuItem $ancestor */
 					$ancestor = $this->menuItemRepository->many()
@@ -339,7 +340,7 @@ class MenuPresenter extends BackendPresenter
 					$menuType = $this->menuTypeRepository->one($ancestor->menutype);
 				}
 
-				$prefix = isset($ancestor) ? $ancestor->path : '';
+				$prefix = $ancestor ? $ancestor->path : '';
 
 				$path = null;
 
@@ -354,7 +355,7 @@ class MenuPresenter extends BackendPresenter
 				$this->menuAssignRepository->syncOne([
 					'menuitem' => $menuItem->getPK(),
 					'menutype' => $menuType->getPK(),
-					'ancestor' => (isset($ancestor) ? $ancestor->getPK() : null),
+					'ancestor' => ($ancestor ? $ancestor->getPK() : null),
 					'path' => $path
 				]);
 			}
