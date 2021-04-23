@@ -123,10 +123,11 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	private function doRecalculatePaths($item, MenuType $menuType): void
 	{
 		foreach ($item->children as $child) {
-			$this->menuAssignRepository->many()
-				->where('fk_menutype', $menuType->getPK())
-				->where('fk_menuitem', $child->getPK())
-				->update(['path' => $item->path . \substr($child->path, -4)]);
+			$this->menuAssignRepository->syncOne([
+				'menutype' => $menuType->getPK(),
+				'menuitem' => $child->getPK(),
+				'path' => $item->path . \substr($child->path, -4)
+			]);
 
 			if (\count($child->children) > 0) {
 				$this->doRecalculatePaths($child, $menuType);
@@ -234,12 +235,14 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 
 	public function getMenuItemPositions(MenuItem $menuItem): array
 	{
-		$items = \array_values($this->getCollection()
-			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
-			->where('nxn.fk_menuitem', $menuItem->getPK())
-			->where('nxn.fk_ancestor IS NOT NULL')
-			->select(['path' => 'nxn.path', 'ancestor' => 'nxn.fk_ancestor'])
+		$items = \array_values($this->menuAssignRepository->many()
+			->where('fk_menuitem', $menuItem->getPK())
+			->where('fk_ancestor IS NOT NULL')
 			->toArrayOf('ancestor'));
+
+//		$items = \array_values($this->getCollection()
+//			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
+//			->select(['path' => 'nxn.path', 'ancestor' => 'nxn.fk_ancestor'])
 
 		$types = $this->menuTypeRepository->getCollection()
 			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menutype')
@@ -269,10 +272,11 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
 			->where('nxn.fk_menuitem', $menuItem->getPK())
 			->where('path LIKE :path', ['path' => "$menuItem->path%"])
+			->where('LENGTH(path) > :pathLength', ['pathLength' => \strlen($menuItem->path)])
 			->select(['pathLength' => 'LENGTH(path)'])
 			->setOrderBy(['pathLength' => 'DESC'])
 			->first();
 
-		return $item ? (($item->pathLength / 4) - (\strlen($menuItem->path) / 4)) : 0;
+		return $item ? (($item->pathLength / 4) - (\strlen($menuItem->path) / 4)) : (\strlen($menuItem->path) / 4);
 	}
 }

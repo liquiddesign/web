@@ -44,7 +44,9 @@ class MenuPresenter extends BackendPresenter
 			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
 			->join(['type' => 'web_menutype'], 'nxn.fk_menutype = type.uuid')
 			->where('type.uuid', $this->tab)
-			->select(['path' => 'nxn.path']), 20, 'priority');
+			->select(['path' => 'nxn.path']), 20);
+
+		$grid->setOrder(null);
 
 		$grid->setNestingCallback(static function ($source, $parent) {
 			if (!$parent) {
@@ -158,6 +160,11 @@ class MenuPresenter extends BackendPresenter
 
 			$types = Arrays::pick($values, 'types');
 
+			if (!$values['page']['uuid']) {
+				$values['page']['uuid'] = Connection::generateUuid();
+				$values['page']['params'] = 'page=' . $values['page']['uuid'] . '&';
+			}
+
 			$values['page']['content'] = $values['content'];
 			$values['page']['name'] = $values['name'];
 			$values['page']['params'] = $values['page']['params'] ?: '';
@@ -230,7 +237,14 @@ class MenuPresenter extends BackendPresenter
 						->first();
 				} while ($temp);
 
-				if ((\strlen($path) / 4) + $this->menuItemRepository->getMaxDeepLevel($menuItem) > $type['type']->maxLevel) {
+				/** @var \Web\DB\MenuItem $menuItem */
+				$menuItem = $this->menuItemRepository->getCollection()
+					->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
+					->where('nxn.fk_menuitem', $menuItem->getPK())
+					->select(['path' => 'nxn.path'])
+					->first();
+
+				if ((\strlen($path) / 4) + ($this->menuItemRepository->getMaxDeepLevel($menuItem) - (\strlen($menuItem->path) / 4))  > $type['type']->maxLevel) {
 					$this->flashMessage('Chyba! Položku "' . (isset($selectedTypeItem) ? $selectedTypeItem->name : $type['type']->name) . '" nelze více zanořit!', 'error');
 					$this->redirect('this');
 				}
