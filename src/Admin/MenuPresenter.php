@@ -244,7 +244,7 @@ class MenuPresenter extends BackendPresenter
 					->select(['path' => 'nxn.path'])
 					->first();
 
-				if ((\strlen($path) / 4) + ($this->menuItemRepository->getMaxDeepLevel($menuItem) - (\strlen($menuItem->path) / 4))  > $type['type']->maxLevel) {
+				if ((\strlen($path) / 4) + ($this->menuItemRepository->getMaxDeepLevel($menuItem) - (\strlen($menuItem->path) / 4)) > $type['type']->maxLevel) {
 					$this->flashMessage('Chyba! Položku "' . (isset($selectedTypeItem) ? $selectedTypeItem->name : $type['type']->name) . '" nelze více zanořit!', 'error');
 					$this->redirect('this');
 				}
@@ -278,7 +278,6 @@ class MenuPresenter extends BackendPresenter
 		$inputName = $form->addLocaleText('name', 'Název');
 		$form->addLocaleRichEdit('content', 'Obsah');
 
-
 		$form->addPageContainer($page ? $page->type : 'content', $this->getParameter('page') ? ['page' => $this->getParameter('page')] : [], $inputName);
 		$form->addSubmits(!$this->getParameter('page'));
 
@@ -307,7 +306,7 @@ class MenuPresenter extends BackendPresenter
 
 		$form->addLocaleText('name', 'Název menu');
 
-		$form->addDataMultiSelect('types', 'Umístění', $this->menuTypeRepository->getArrayForSelect())->setRequired();
+		$form->addDataMultiSelect('types', 'Umístění', $this->menuItemRepository->getTreeArrayForSelect())->setRequired();
 		$form->addInteger('priority', 'Priorita')->setRequired()->setDefaultValue(10);
 		$form->addCheckbox('hidden', 'Skryto');
 
@@ -316,11 +315,49 @@ class MenuPresenter extends BackendPresenter
 		$form->onSuccess[] = function (AdminForm $form) {
 			$values = $form->getValues('array');
 
-			$values['path'] = '';
 			$values['page'] = $form->getPresenter()->getParameter('page')->getPK();
 
+			$types = Arrays::pick($values, 'types');
+
 			/** @var MenuItem $menuItem */
-			$this->menuItemRepository->createOne($values);
+			$menuItem = $this->menuItemRepository->createOne($values);
+
+			foreach ($types as $type){
+				if ($typePK = Strings::after($type, 'type_')) {
+					/** @var \Web\DB\MenuType $type */
+					$menuType = $this->menuTypeRepository->one($typePK);
+				}else{
+					/** @var MenuItem $ancestor */
+					$ancestor = $this->menuItemRepository->many()
+						->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
+						->select(['path' => 'nxn.path'])
+						->select(['menutype' => 'nxn.fk_menutype'])
+						->where('this.uuid', $type)
+						->first();
+
+					/** @var \Web\DB\MenuType $type */
+					$menuType = $this->menuTypeRepository->one($ancestor->menutype);
+				}
+
+				$prefix = isset($ancestor) ? $ancestor->path : '';
+
+				$path = null;
+
+				do {
+					$path = $prefix . Random::generate(4);
+					$temp = $this->menuItemRepository->many()
+						->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
+						->where('nxn.path', $path)
+						->first();
+				} while ($temp);
+
+				$this->menuAssignRepository->syncOne([
+					'menuitem' => $menuItem->getPK(),
+					'menutype' => $menuType->getPK(),
+					'ancestor' => (isset($ancestor) ? $ancestor->getPK() : null),
+					'path' => $path
+				]);
+			}
 
 			$this->flashMessage('Uloženo', 'success');
 			$form->getPresenter()->redirect('default');
