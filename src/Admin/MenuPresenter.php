@@ -37,6 +37,8 @@ class MenuPresenter extends BackendPresenter
 
 	/** @persistent */
 	public string $tab = 'main';
+	
+	protected array $pageTypes = ['index' => '', 'content' => null, 'contact' => null, 'news' => '', 'pickup_points' => null];
 
 	public function createComponentGrid()
 	{
@@ -98,7 +100,7 @@ class MenuPresenter extends BackendPresenter
 
 	public function createComponentPageGrid()
 	{
-		$types = ['index' => '', 'content' => null, 'contact' => null, 'news' => '', 'pickup_points' => null];
+		$types = $this->pageTypes;
 
 		$grid = $this->gridFactory->create($this->pageRepository->getPagesWithoutMenu($types), 20, 'this.type');
 		$grid->addColumnSelector();
