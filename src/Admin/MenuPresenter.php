@@ -83,6 +83,7 @@ class MenuPresenter extends BackendPresenter
 		$removeIco = "<a href='%s' class='$btnSecondary' title='Odebrat z menu'><i class='far fa-minus-square'\"'></i></a>";
 		$grid->addColumnAction('', $removeIco, function (MenuItem $menuItem) {
 			$this->onRemove($menuItem);
+			$menuItem->delete();
 		}, [], null, ['class' => 'minimal']);
 
 		$deleteCb = function (MenuItem $menuItem) {
@@ -510,8 +511,6 @@ class MenuPresenter extends BackendPresenter
 			->where('fk_menutype', $this->tab)
 			->where('assign.path LIKE :path', ['path' => "$menuItem->path%"])
 			->delete();
-
-		$menuItem->delete();
 	}
 
 }
