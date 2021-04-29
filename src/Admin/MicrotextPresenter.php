@@ -57,7 +57,7 @@ class MicrotextPresenter extends BackendPresenter
 
 	public function createComponentForm(): Form
 	{
-		$form = $this->formFactory->create();
+		$form = $this->formFactory->create(true);
 
 		$form->addText('label', 'Popisek')->setDisabled(true);
 		$form->addLocaleText('text', 'Překlad');

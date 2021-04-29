@@ -79,7 +79,7 @@ class PagePresenter extends BackendPresenter
 	
 	public function createComponentForm(): Form
 	{
-		$form = $this->formFactory->create();
+		$form = $this->formFactory->create(true);
 		
 		$page = $this->getParameter('page');
 		

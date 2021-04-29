@@ -98,7 +98,7 @@ class NewsPresenter extends BackendPresenter
 	
 	public function createComponentNewForm(): Form
 	{
-		$form = $this->formFactory->create();
+		$form = $this->formFactory->create(true);
 		
 		$nameInput = $form->addLocaleText('name', 'Název');
 		$form->addLocaleTextArea('perex', 'Perex');
@@ -167,7 +167,7 @@ class NewsPresenter extends BackendPresenter
 	{
 		$tag = $this->getParameter('tag');
 		
-		$form = $this->formFactory->create();
+		$form = $this->formFactory->create(true);
 		
 		$nameInput = $form->addLocaleText('name', 'Název')->setDefaults(['cs' => '', 'en' => '']);
 		$form->addLocalePerexEdit('perex', 'Perex');

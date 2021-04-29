@@ -15,7 +15,7 @@ class HomepageSlide extends Entity
 
 	/**
 	 * Text
-	 * @column{"type":"longtext"}
+	 * @column{"mutations":true,"type":"longtext"}
 	 */
 	public ?string $text = null;
 

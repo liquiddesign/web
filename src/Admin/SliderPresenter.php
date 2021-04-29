@@ -65,13 +65,13 @@ class SliderPresenter extends BackendPresenter
 
 	public function createComponentForm(): AdminForm
 	{
-		$form = $this->formFactory->create();
+		$form = $this->formFactory->create(true);
 		$imageDir = $this->wwwDir . \DIRECTORY_SEPARATOR . 'userfiles' . \DIRECTORY_SEPARATOR . HomepageSlide::IMAGE_DIR;
 
 		/** @var HomepageSlide $homepageSlide */
 		$homepageSlide = $this->getParameter('slide');
 
-		$form->addRichEdit('text', 'Popisek');
+		$form->addLocaleRichEdit('text', 'Popisek');
 		$form->addRadioList('type', 'Typ', ['image' => 'Obrázek', 'video' => 'Video'])->setDefaultValue('image');
 		
 		$imagePickerDesktop = $form->addImagePicker('image', 'Obrázek (desktop) *', [

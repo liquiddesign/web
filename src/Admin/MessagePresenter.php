@@ -44,7 +44,7 @@ class MessagePresenter extends BackendPresenter
 
 	public function createComponentNewForm(): Form
 	{
-		$form = $this->formFactory->create();
+		$form = $this->formFactory->create(true);
 
 		$form->addText('name', 'Název emailu')->setHtmlAttribute('readonly', 'readonly');
 		$form->addLocaleText('subject', 'Předmět');

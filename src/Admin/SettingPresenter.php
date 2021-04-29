@@ -184,7 +184,7 @@ class SettingPresenter extends BackendPresenter
 	
 	public function createComponentContactForm(): AdminForm
 	{
-		$form = $this->formFactory->create();
+		$form = $this->formFactory->create(true);
 		
 		$form->addLocaleText('name', 'Název');
 		$form->addText('phone', 'Telefonní čísla')->setHtmlAttribute('data-info', 'Zadejte telefonní čísla oddělená středníkem ";"');
