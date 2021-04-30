@@ -189,19 +189,21 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 			$menuTypes = [$menuType];
 		}
 
+		$menuItemLevel = null;
+
 		if ($menuItem) {
 			$menuItem = $this->getCollection()
 				->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
 				->where('nxn.fk_menuitem', $menuItem->getPK())
 				->select(['path' => 'nxn.path'])
 				->first();
+
+			$menuItemLevel = $this->getMaxDeepLevel($menuItem);
 		}
 
 		$list = [];
 
 		foreach ($menuTypes as $type) {
-			//@TODO ověřit aktuální položku a její maximální level vůči max levelu typu
-
 			$collection = $this->menuAssignRepository->many()
 				->join(['type' => 'web_menutype'], 'this.fk_menutype = type.uuid')
 				->where('LENGTH(path) <= 40')
@@ -234,7 +236,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 
 		foreach ($elements as $element) {
 			if ($element->getValue('ancestor') === $ancestorId) {
-				$list[$element->menuitem->getPK()] = \str_repeat('--',
+				$list[$element->getPK()] = \str_repeat('--',
 						\strlen($element->path) / 4) . " " . $element->menuitem->name;
 
 				if ($children = $this->buildTreeArrayForSelect($elements, $element->getPK(), $list)) {
@@ -258,7 +260,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 
 		foreach ($items as $item) {
 			if ($item->ancestor) {
-				$realItems[] = $item->ancestor->menuitem->getPK();
+				$realItems[] = $item->getValue('ancestor');
 			}
 		}
 
@@ -348,7 +350,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 					->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
 					->select(['path' => 'nxn.path'])
 					->select(['menutype' => 'nxn.fk_menutype'])
-					->where('this.uuid', $typeItem)
+					->where('nxn.uuid', $typeItem)
 					->first();
 
 				/** @var \Web\DB\MenuType $type */

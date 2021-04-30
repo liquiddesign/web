@@ -151,7 +151,7 @@ class MenuPresenter extends BackendPresenter
 	public function createComponentForm(): Form
 	{
 		$form = $this->formFactory->create(true);
-		$form->setPrettyPages(false);
+		$form->setPrettyPages(true);
 
 		/** @var MenuItem $menu */
 		$menu = $this->getParameter('menuItem');
@@ -337,6 +337,7 @@ class MenuPresenter extends BackendPresenter
 	public function createComponentMenuForm()
 	{
 		$form = $this->formFactory->create(true);
+		$form->setPrettyPages(true);
 
 		$form->addLocaleText('name', 'Název menu');
 
