@@ -151,6 +151,7 @@ class MenuPresenter extends BackendPresenter
 	public function createComponentForm(): Form
 	{
 		$form = $this->formFactory->create(true);
+		$form->setPrettyPages(false);
 
 		/** @var MenuItem $menu */
 		$menu = $this->getParameter('menuItem');
@@ -303,6 +304,7 @@ class MenuPresenter extends BackendPresenter
 	public function createComponentPageForm(): Form
 	{
 		$form = $this->formFactory->create(true);
+		$form->setPrettyPages(true);
 
 		$page = $this->getParameter('page');
 

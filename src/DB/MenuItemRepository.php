@@ -200,6 +200,8 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		$list = [];
 
 		foreach ($menuTypes as $type) {
+			//@TODO ověřit aktuální položku a její maximální level vůči max levelu typu
+
 			$collection = $this->menuAssignRepository->many()
 				->join(['type' => 'web_menutype'], 'this.fk_menutype = type.uuid')
 				->where('LENGTH(path) <= 40')
@@ -287,7 +289,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		$item = $this->getCollection()
 			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
 			->where('nxn.fk_menuitem', $menuItem->getPK())
-			->where('path LIKE :path', ['path' => "$menuItem->path%"])
+			->where('nxn.path LIKE :path', ['path' => "$menuItem->path%"])
 			->where('LENGTH(path) > :pathLength', ['pathLength' => \strlen($menuItem->path)])
 			->select(['pathLength' => 'LENGTH(path)'])
 			->setOrderBy(['pathLength' => 'DESC'])
