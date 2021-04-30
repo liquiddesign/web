@@ -86,7 +86,11 @@ class MenuPresenter extends BackendPresenter
 			$menuItem->delete();
 		}, [], null, ['class' => 'minimal']);
 
-		$deleteCb = function (MenuItem $menuItem) {
+		$deleteCb = function (?MenuItem $menuItem) {
+			if (!$menuItem) {
+				return;
+			}
+
 			$this->onRemove($menuItem);
 
 			$page = $menuItem->page;
@@ -137,8 +141,8 @@ class MenuPresenter extends BackendPresenter
 		$grid->addButtonSaveAll([], [], 'this.uuid');
 
 		$grid->addButtonDeleteSelected(null, false, function (Page $page) {
-			return $page->isSystemic();
-		});
+			return !$page->isSystemic();
+		},'this.uuid');
 
 		$grid->addFilterTextInput('search', ['this.name_cs', 'this.url_cs', 'this.title_cs'], null,
 			'Název, url, titulek');

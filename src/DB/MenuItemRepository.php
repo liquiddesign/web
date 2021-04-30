@@ -171,13 +171,9 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		return null;
 	}
 
-	public function getTreeArrayForSelect(
-		bool $includeHidden = true,
-		$menuType = null,
-		?MenuItem $menuItem = null
-	): array
+	public function getTreeArrayForSelect(bool $includeHidden = true, $menuType = null, ?MenuItem $menuItem = null): array
 	{
-		$menuTypes = $this->menuTypeRepository->getCollection()->toArray();
+		$menuTypes = $this->menuTypeRepository->getCollection($includeHidden)->toArray();
 
 		if ($menuType) {
 			if (!$menuType instanceof MenuType) {
@@ -192,13 +188,11 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		$menuItemLevel = null;
 
 		if ($menuItem) {
-			$menuItem = $this->getCollection()
+			$menuItem = $this->getCollection($includeHidden)
 				->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
 				->where('nxn.fk_menuitem', $menuItem->getPK())
 				->select(['path' => 'nxn.path'])
 				->first();
-
-			$menuItemLevel = $this->getMaxDeepLevel($menuItem);
 		}
 
 		$list = [];
@@ -211,6 +205,12 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 				->where('fk_menutype', $type->getPK());
 
 			if ($menuItem) {
+				$maxDeep = $this->getMaxDeepLevel($menuItem, $type);
+				$deep = $this->getDeepLevel($menuItem, $type);
+				if ($menuItemDeep = $this->getMaxDeepLevel($menuItem, $type) - $this->getDeepLevel($menuItem, $type)) {
+					$collection->where('(LENGTH(path)/4) + :deep < type.maxLevel', ['deep' => $menuItemDeep]);
+				}
+
 				$collection->whereNot('fk_menuitem', $menuItem->getPK());
 				$collection->where('path NOT LIKE :path', ['path' => "$menuItem->path%"]);
 			}
@@ -280,24 +280,44 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		return \array_merge($realItems, $typesKeys);
 	}
 
-	public function getMaxDeepLevel(MenuItem $menuItem): int
+	public function getMaxDeepLevel($menuItem, $menuType): ?int
 	{
+		if ($menuItem) {
+			if (!$menuItem instanceof MenuItem) {
+				if (!$menuItem = $this->one($menuItem)) {
+					return null;
+				}
+			}
+		}
+
+		if ($menuType) {
+			if (!$menuType instanceof MenuType) {
+				if (!$menuType = $this->menuTypeRepository->one($menuType)) {
+					return null;
+				}
+			}
+		}
+
 		$menuItem = $this->getCollection()
 			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
 			->where('nxn.fk_menuitem', $menuItem->getPK())
+			->where('nxn.fk_menutype', $menuType->getPK())
 			->select(['path' => 'nxn.path'])
 			->first();
 
+		if (!$menuItem) {
+			return null;
+		}
+
 		$item = $this->getCollection()
 			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
-			->where('nxn.fk_menuitem', $menuItem->getPK())
+			->where('nxn.fk_menutype', $menuType->getPK())
 			->where('nxn.path LIKE :path', ['path' => "$menuItem->path%"])
-			->where('LENGTH(path) > :pathLength', ['pathLength' => \strlen($menuItem->path)])
-			->select(['pathLength' => 'LENGTH(path)'])
-			->setOrderBy(['pathLength' => 'DESC'])
+			->select(['path' => 'nxn.path'])
+			->setOrderBy(['LENGTH(path)' => 'DESC'])
 			->first();
 
-		return $item ? (($item->pathLength / 4) - (\strlen($menuItem->path) / 4)) : (\strlen($menuItem->path) / 4);
+		return $item ? (\strlen($item->path) / 4) : (\strlen($menuItem->path) / 4);
 	}
 
 	public function hasChildren($menuItem): bool
@@ -321,6 +341,34 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 				->where('path LIKE :path', ['path' => "$menuItem->path%"])
 				->where('LENGTH(path) > :pathLength', ['pathLength' => \strlen($menuItem->path)])
 				->count() > 0;
+	}
+
+	public function getDeepLevel($menuItem, $menuType): ?int
+	{
+		if ($menuItem) {
+			if (!$menuItem instanceof MenuItem) {
+				if (!$menuItem = $this->one($menuItem)) {
+					return null;
+				}
+			}
+		}
+
+		if ($menuType) {
+			if (!$menuType instanceof MenuType) {
+				if (!$menuType = $this->menuTypeRepository->one($menuType)) {
+					return null;
+				}
+			}
+		}
+
+		$menuItem = $this->getCollection()
+			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
+			->where('nxn.fk_menuitem', $menuItem->getPK())
+			->where('nxn.fk_menutype', $menuType->getPK())
+			->select(['path' => 'nxn.path'])
+			->first();
+
+		return $menuItem ? (\strlen($menuItem->path) / 4) : null;
 	}
 
 	public function checkAncestors(Form $form, array &$selectedAncestors): void
