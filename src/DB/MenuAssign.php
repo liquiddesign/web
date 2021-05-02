@@ -23,7 +23,7 @@ class MenuAssign extends \StORM\Entity
 	 * @relation
 	 * @constraint{"onUpdate":"CASCADE","onDelete":"CASCADE"}
 	 */
-	public ?MenuItem $ancestor;
+	public ?MenuAssign $ancestor;
 
 	/**
 	 * Položka menu
