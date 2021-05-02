@@ -36,12 +36,12 @@ class MicrotextPresenter extends BackendPresenter
 		$grid->addColumnText('ID', 'uuid', '%s', 'uuid', ['class' => 'fit']);
 		$grid->addColumnText('Popisek', 'label', '%s', 'label');
 
-		foreach ($this->formFactory->formFactory->getDefaultMutations() as $mutation) {
+		/*foreach ($this->formFactory->formFactory->getDefaultMutations() as $mutation) {
 			$img = $this->createFlag($mutation);
 
 			$suffix = $this->storm->getAvailableMutations()[$mutation];
 			$grid->addColumnInputText($img . " Překlad", "text$suffix", '', '', null, ['style' => 'min-width: 240px;']);
-		}
+		}*/
 
 		$grid->addColumnMutations('text');
 
