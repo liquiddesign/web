@@ -440,8 +440,6 @@ class MenuPresenter extends BackendPresenter
 		}
 
 		$this->template->tabs['pages'] = "<i class=\"far fa-sticky-note\"></i> Nezařazené stránky";
-
-		bdump($this->menuItemRepository->getTree());
 	}
 
 	public function renderNew()
