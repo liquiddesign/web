@@ -77,7 +77,8 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	{
 		$collection = $this->menuAssignRepository->many()
 			->join(['item' => 'web_menuitem'], 'item.uuid = this.fk_menuitem')
-			->where('LENGTH(path) <= 40');
+			->where('LENGTH(path) <= 40')
+			->orderBy(['item.priority']);
 
 		if ($menuType) {
 			if (!$menuType instanceof MenuType) {
