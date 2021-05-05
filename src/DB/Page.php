@@ -19,7 +19,22 @@ class Page extends \Pages\DB\Page
 	 * @column{"type":"longtext","mutations":true}
 	 */
 	public ?string $content = null;
-	
+
+	/**
+	 * @column
+	 */
+	public ?string $icon = null;
+
+	/**
+	 * @column
+	 */
+	public ?string $secret = null;
+
+	/**
+	 * @column
+	 */
+	public ?string $layout = null;
+
 	/**
 	 * @column{"type":"datetime"}
 	 */
