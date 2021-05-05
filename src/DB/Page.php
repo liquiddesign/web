@@ -21,21 +21,6 @@ class Page extends \Pages\DB\Page
 	public ?string $content = null;
 
 	/**
-	 * @column
-	 */
-	public ?string $icon = null;
-
-	/**
-	 * @column
-	 */
-	public ?string $secret = null;
-
-	/**
-	 * @column
-	 */
-	public ?string $layout = null;
-
-	/**
 	 * @column{"type":"datetime"}
 	 */
 	public ?string $lastmod = null;
