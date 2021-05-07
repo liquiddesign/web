@@ -166,9 +166,9 @@ class MenuPresenter extends BackendPresenter
 			$this->menuItemRepository->getTreeArrayForSelect(false, null, $menu))->setRequired();
 		$form->addInteger('priority', 'Priorita')->setRequired()->setDefaultValue(10);
 		$form->addCheckbox('hidden', 'Skryto');
-
-		$params = $menu && $menu->page && $menu->page->getType() === 'content' ? ['page' => $menu->getValue('page')] : [];
-		$type = $menu && $menu->page && $menu->page->getType() ? $menu->page->getType() : 'content';
+		
+		$params = $menu && $menu->page ? $menu->page->getParsedParameters() : [];
+		$type = $menu && $menu->page ? $menu->page->getType() : 'content';
 
 		$form->addPageContainer($type, $params, $nameInput);
 
