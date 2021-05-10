@@ -19,7 +19,7 @@ class Setting extends \StORM\Entity
 
 	/**
 	 * Hodnota
-	 * @column
+	 * @column{"type":"longtext"}
 	 */
 	public ?string $value = null;
 }
