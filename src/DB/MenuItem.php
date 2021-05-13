@@ -35,7 +35,10 @@ class MenuItem extends Entity
 	 */
 	public bool $hidden = false;
 
-
+	/**
+	 * @column{"mutations":true}
+	 */
+	public bool $active = false;
 
 	/**
 	 * Absolutní URL
