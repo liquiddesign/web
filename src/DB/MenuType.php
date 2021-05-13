@@ -12,7 +12,7 @@ use StORM\Entity;
 class MenuType extends Entity
 {
 	/**
-	 * @column
+	 * @column{"mutations":true}
 	 */
 	public string $name;
 	
