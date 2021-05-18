@@ -269,7 +269,6 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menutype')
 			->where('nxn.fk_menuitem', $menuItem->getPK())
 			->where('nxn.fk_ancestor IS NULL')
-			->setSelect(['this.uuid'])
 			->toArray();
 
 		$typesKeys = [];
