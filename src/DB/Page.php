@@ -55,6 +55,11 @@ class Page extends \Pages\DB\Page
 	 */
 	public bool $systemic = false;
 	
+	/**
+	 * @column
+	 */
+	public bool $deploy = true;
+	
 	public function isSystemic(): bool
 	{
 		return $this->systemic;
