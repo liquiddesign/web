@@ -9,6 +9,11 @@ use Admin\Controls\AdminForm;
 use Web\DB\ContactItemRepository;
 use Web\DB\SettingRepository;
 
+/**
+ * Class IntegrationPresenter
+ * @package Web\Admin
+ * @deprecated Only basic functionality, for full functionality use IntegrationPresenter from package Eshop
+ */
 class IntegrationPresenter extends BackendPresenter
 {
 	/** @inject */
