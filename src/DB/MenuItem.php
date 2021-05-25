@@ -65,12 +65,12 @@ class MenuItem extends Entity
 	 * @var \Web\DB\MenuType[]|\StORM\RelationCollection<\Web\DB\MenuType>
 	 */
 	public RelationCollection $types;
-
-	public function getUrl()
+	
+	public function getUrl(?string $langPrefix = null)
 	{
-		return $this->page ? $this->getRepository()->getBaseUrl() . $this->page->url : $this->absoluteUrl;
+		return $this->page ? $this->getRepository()->getBaseUrl() . ($langPrefix ? "$langPrefix/" : '') . $this->page->url : $this->absoluteUrl;
 	}
-
+	
 	public function isSystemic(): bool
 	{
 		if ($this->page) {
