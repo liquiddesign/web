@@ -23,6 +23,10 @@ use StORM\Connection;
 
 class MenuPresenter extends BackendPresenter
 {
+	protected const CONFIGURATIONS = [
+		'background' => false,
+	];
+	
 	public array $menuTypes = [];
 
 	/** @inject */
@@ -161,6 +165,22 @@ class MenuPresenter extends BackendPresenter
 		$menu = $this->getParameter('menuItem');
 
 		$nameInput = $form->addLocaleText('name', 'Název');
+		
+		if (static::CONFIGURATIONS['background']) {
+			$imagePicker = $form->addImagePicker('image', 'Obrázek', [
+					Page::IMAGE_DIR => null,
+				]
+			);
+			
+			$imagePicker->onDelete[] = function ($dir, $file) use ($menu) {
+				
+				if ($menu->page) {
+					$menu->page->update(['image' => null]);
+				}
+				$this->redirect('this');
+			};
+		}
+		
 		$form->addLocaleRichEdit('content', 'Obsah');
 		$form->addDataMultiSelect('types', 'Umístění',
 			$this->menuItemRepository->getTreeArrayForSelect(false, null, $menu))->setRequired();
@@ -193,6 +213,14 @@ class MenuPresenter extends BackendPresenter
 			if (!$values['page']['uuid']) {
 				$values['page']['uuid'] = Connection::generateUuid();
 				$values['page']['params'] = 'page=' . $values['page']['uuid'] . '&';
+			}
+			
+			if (static::CONFIGURATIONS['background']) {
+				if ($values['image']->isOK()) {
+					$values['page']['image'] = $form['image']->upload($values['image']->getSanitizedName());
+				}
+				
+				unset($values['image']);
 			}
 
 			$values['page']['content'] = $values['content'];
@@ -484,6 +512,10 @@ class MenuPresenter extends BackendPresenter
 
 		$form->setDefaults($defaults);
 		$form['content']->setDefaults($defaults['page']['content'] ?? []);
+		
+		if (static::CONFIGURATIONS['background']) {
+			$form['image']->setDefaultValue($menuItem->page->image ?? null);
+		}
 	}
 
 	public function renderPageDetail()

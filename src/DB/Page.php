@@ -10,6 +10,8 @@ namespace Web\DB;
  */
 class Page extends \Pages\DB\Page
 {
+	public const IMAGE_DIR = 'background';
+	
 	/**
 	 * @column{"mutations":true}
 	 */
@@ -19,6 +21,11 @@ class Page extends \Pages\DB\Page
 	 * @column{"type":"longtext","mutations":true}
 	 */
 	public ?string $content = null;
+	
+	/**
+	 * @column
+	 */
+	public ?string $image;
 
 	/**
 	 * @column
