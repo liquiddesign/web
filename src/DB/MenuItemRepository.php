@@ -111,6 +111,24 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		}
 		return $this->buildTree($collection->toArray());
 	}
+	
+	public function getBreadcrumbStructure($menuItem): ?array
+	{
+		$menuAssign = $this->menuAssignRepository->many()->where('fk_menuitem', $menuItem->getPK())->first();
+		if (\strlen($menuAssign->path) / 4 === 1) {
+			return [];
+		}
+		$ancestors = [];
+		$parent = $menuAssign->ancestor;
+		
+		do {
+			\array_push($ancestors, $parent->menuitem);
+			$parent = $parent->ancestor;
+		} while ($parent);
+		
+		\array_reverse($ancestors);
+		return $ancestors;
+	}
 
 	/**
 	 * @param \Web\DB\MenuAssign[] $elements
