@@ -114,6 +114,14 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	
 	public function getBreadcrumbStructure($menuItem): ?array
 	{
+		if ($menuItem) {
+			if (!$menuItem instanceof MenuItem) {
+				if (!$menuItem = $this->one($menuItem)) {
+					return [];
+				}
+			}
+		}
+		
 		$menuAssign = $this->menuAssignRepository->many()->where('fk_menuitem', $menuItem->getPK())->first();
 		if (\strlen($menuAssign->path) / 4 === 1) {
 			return [];
