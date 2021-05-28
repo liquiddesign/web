@@ -93,14 +93,14 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		return $this->buildTree($collection->toArray());
 	}
 	
-	public function getFrontendTree(string $lang, $menuType = null): array
+	public function getFrontendTree($menuType = null): array
 	{
 		$collection = $this->menuAssignRepository->many()
 			->join(['item' => 'web_menuitem'], 'item.uuid = this.fk_menuitem')
 			->where('LENGTH(path) <= 40')
 			->where('menuitem.page.isOffline', false)
 			->where('menuitem.hidden', false)
-			->where('menuitem.active_' . $lang, true)
+			->where('menuitem.active_' . $this->getConnection()->getMutation(), true)
 			->orderBy(['item.priority']);
 		
 		if ($menuType) {
