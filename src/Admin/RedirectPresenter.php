@@ -22,8 +22,6 @@ class RedirectPresenter extends BackendPresenter
 		$grid->addColumnText('Vytvořeno', "createdTs|date:'d.m.Y'", '%s', 'createdTs', ['class' => 'fit']);
 		$grid->addColumnText('Z URL', 'fromUrl', '%s', 'fromUrl');
 		$grid->addColumnText('Na URL', 'toUrl', '%s', 'toUrl');
-		$grid->addColumnText('Z mutace', 'fromMutation', '%s', 'fromMutation');
-		$grid->addColumnText('Na mutaci', 'toMutation', '%s', 'toMutation');
 		
 		$grid->addColumnInputInteger('Priorita', 'priority', '', '', 'priority', [], true);
 		
@@ -50,10 +48,6 @@ class RedirectPresenter extends BackendPresenter
 		$form->addText('toUrl', 'Na URL')
 			->setHtmlAttribute('data-info', 'Relativní URL bez jazykového prefixu, např. "novinka/nova-adresa"')
 			->setRequired();
-		$form->addText('fromMutation', 'Z mutace')
-			->setHtmlAttribute('data-info', 'Pro všechny jazyky ponechte pole prázdné');
-		$form->addText('toMutation', 'Na mutaci')
-			->setHtmlAttribute('data-info', 'Pro všechny jazyky ponechte pole prázdné');
 		$form->addText('priority', 'Priorita')->addRule($form::INTEGER)->setRequired()->setDefaultValue(0);
 		
 		$form->addSubmits(!$this->getParameter('redirect'));
