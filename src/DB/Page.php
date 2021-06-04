@@ -26,6 +26,11 @@ class Page extends \Pages\DB\Page
 	 * @column
 	 */
 	public ?string $image;
+	
+	/**
+	 * @column
+	 */
+	public ?string $mobileImage;
 
 	/**
 	 * @column

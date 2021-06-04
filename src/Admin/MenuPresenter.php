@@ -167,7 +167,7 @@ class MenuPresenter extends BackendPresenter
 		$nameInput = $form->addLocaleText('name', 'Název');
 		
 		if (static::CONFIGURATIONS['background']) {
-			$imagePicker = $form->addImagePicker('image', 'Obrázek', [
+			$imagePicker = $form->addImagePicker('image', 'Pozadí (desktop)', [
 					Page::IMAGE_DIR => null,
 				]
 			);
@@ -176,6 +176,19 @@ class MenuPresenter extends BackendPresenter
 				
 				if ($menu->page) {
 					$menu->page->update(['image' => null]);
+				}
+				$this->redirect('this');
+			};
+			
+			$imagePicker = $form->addImagePicker('mobileImage', 'Pozadí (mobil)', [
+					Page::IMAGE_DIR => null,
+				]
+			);
+			
+			$imagePicker->onDelete[] = function ($dir, $file) use ($menu) {
+				
+				if ($menu->page) {
+					$menu->page->update(['mobileImage' => null]);
 				}
 				$this->redirect('this');
 			};
@@ -221,6 +234,12 @@ class MenuPresenter extends BackendPresenter
 				}
 				
 				unset($values['image']);
+				
+				if ($values['mobileImage']->isOK()) {
+					$values['page']['mobileImage'] = $form['mobileImage']->upload($values['mobileImage']->getSanitizedName());
+				}
+				
+				unset($values['mobileImage']);
 			}
 
 			$values['page']['content'] = $values['content'];
