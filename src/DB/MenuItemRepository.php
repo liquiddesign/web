@@ -118,6 +118,10 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	
 	public function getBreadcrumbStructure($menuItem): ?array
 	{
+		if (!$menuItem) {
+			return [];
+		}
+		
 		if ($menuItem) {
 			if (!$menuItem instanceof MenuItem) {
 				if (!$menuItem = $this->one($menuItem)) {
