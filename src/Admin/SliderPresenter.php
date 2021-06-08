@@ -107,8 +107,7 @@ class SliderPresenter extends BackendPresenter
 		};
 
 		$videoUploader = $form->addFilePicker('video', 'Vybrat video', HomepageSlide::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'video')
-			->addRule($form::MIME_TYPE, 'Soubor musí být video!', 'video/*')
-			->addRule($form::MAX_FILE_SIZE, 'Soubor je příliš velký!', 1024 * 1024 * 256);
+			->addRule($form::MIME_TYPE, 'Soubor musí být video!', 'video/*');
 
 		if ($homepageSlide && $homepageSlide->type == 'video' && $homepageSlide->image) {
 			$videoUploader->setHtmlAttribute('data-info', 'Nahráním se přepíše aktuálně nahrané video!');
