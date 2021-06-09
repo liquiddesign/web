@@ -21,7 +21,7 @@ class TinyTemplatePresenter extends BackendPresenter
 	{
 		parent::beforeRender();
 
-		$this->tTiny = $this->translator->translate('adminWebTinytemplate.layouts', 'Layouty');
+		$this->tTiny = $this->_('adminWebTinytemplate.layouts', 'Layouty');
 	}
 
 	public function renderDefault(): void
@@ -36,7 +36,7 @@ class TinyTemplatePresenter extends BackendPresenter
 
 	public function renderNew(): void
 	{
-		$tNew = $this->translator->translate('adminWebTinytemplate.newTemplate', 'Nový layout');
+		$tNew = $this->_('adminWebTinytemplate.newTemplate', 'Nový layout');
 		$this->template->headerLabel = $tNew;
 		$this->template->headerTree = [
 			[$this->tTiny, 'default'],
@@ -49,7 +49,7 @@ class TinyTemplatePresenter extends BackendPresenter
 
 	public function renderDetail(): void
 	{
-		$tDetail = $this->translator->translate('adminWebTinytemplate.detailTemplate', 'Detail layoutu');
+		$tDetail = $this->_('adminWebTinytemplate.detailTemplate', 'Detail layoutu');
 		$this->template->headerLabel = $tDetail;
 		$this->template->headerTree = [
 			[$this->tTiny, 'default'],
@@ -68,11 +68,11 @@ class TinyTemplatePresenter extends BackendPresenter
 	public function createComponentForm(): AdminForm
 	{
 		$form = $this->formFactory->create(true, true);
-		$form->addLocaleText('name', $this->translator->translate('adminWebTinytemplate.name', 'Název'));
-		$form->addLocaleText('description', $this->translator->translate('adminWebTinytemplate.description', 'Popis'));
-		$form->addTextArea('html', $this->translator->translate('adminWebTinytemplate.content', 'Obsah'), null, 5)->setRequired();
-		$form->addInteger('priority', $this->translator->translate('admin.priority', 'Pořadí'))->setRequired()->setDefaultValue(10);
-		$form->addCheckbox('hidden', $this->translator->translate('admin.hidden', 'Skryto'));
+		$form->addLocaleText('name', $this->_('adminWebTinytemplate.name', 'Název'));
+		$form->addLocaleText('description', $this->_('adminWebTinytemplate.description', 'Popis'));
+		$form->addTextArea('html', $this->_('adminWebTinytemplate.content', 'Obsah'), null, 5)->setRequired();
+		$form->addInteger('priority', $this->_('admin.priority', 'Pořadí'))->setRequired()->setDefaultValue(10);
+		$form->addCheckbox('hidden', $this->_('admin.hidden', 'Skryto'));
 
 		/** @var \Web\DB\TinyTemplate $template */
 		$template = $this->getParameter('template');
@@ -84,7 +84,7 @@ class TinyTemplatePresenter extends BackendPresenter
 
 			$template = $this->tinyRepo->syncOne($values, null, true);
 
-			$this->flashMessage($this->translator->translate('admin.saved', 'Uloženo'), 'success');
+			$this->flashMessage($this->_('admin.saved', 'Uloženo'), 'success');
 			$form->processRedirect('detail', 'default', [$template]);
 		};
 
@@ -95,10 +95,10 @@ class TinyTemplatePresenter extends BackendPresenter
 	{
 		$grid = $this->gridFactory->create($this->tinyRepo->many(), 20, 'priority', 'ASC', true);
 		$grid->addColumnSelector();
-		$grid->addColumnText($this->translator->translate('adminWebTinytemplate.name', 'Název'), 'name', '%s', 'name');
-		$grid->addColumnText($this->translator->translate('adminWebTinytemplate.description', 'Popis'), 'description', '%s', 'description');
-		$grid->addColumnInputInteger($this->translator->translate('admin.priority', 'Pořadí'), 'priority', '', '', 'priority', [], true);
-		$grid->addColumnInputCheckbox('<i title="'. $this->translator->translate('admin.hidden', 'Skryto') .'" class="far fa-eye-slash"></i>', 'hidden', '', '', 'hidden');
+		$grid->addColumnText($this->_('adminWebTinytemplate.name', 'Název'), 'name', '%s', 'name');
+		$grid->addColumnText($this->_('adminWebTinytemplate.description', 'Popis'), 'description', '%s', 'description');
+		$grid->addColumnInputInteger($this->_('admin.priority', 'Pořadí'), 'priority', '', '', 'priority', [], true);
+		$grid->addColumnInputCheckbox('<i title="'. $this->_('admin.hidden', 'Skryto') .'" class="far fa-eye-slash"></i>', 'hidden', '', '', 'hidden');
 		$grid->addColumnLinkDetail();
 		$grid->addColumnActionDelete();
 		$grid->addButtonSaveAll();
