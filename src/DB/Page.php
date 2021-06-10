@@ -72,6 +72,11 @@ class Page extends \Pages\DB\Page
 	 */
 	public ?bool $deploy = true;
 	
+	/**
+	 * @column{"mutations":true}
+	 */
+	public bool $active = false;
+	
 	public function isSystemic(): bool
 	{
 		return $this->systemic;
