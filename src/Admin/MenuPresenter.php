@@ -56,7 +56,7 @@ class MenuPresenter extends BackendPresenter
 			->where('type.uuid', $this->tab)
 			->select(['path' => 'nxn.path']), 20);
 		
-		$grid->setDefaultOrder('priority');
+		$grid->setDefaultOrder('this.priority');
 		
 		$grid->setNestingCallback(static function ($source, $parent) {
 			if (!$parent) {

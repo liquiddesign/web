@@ -52,6 +52,14 @@ class NewsPresenter extends BackendPresenter
 			return [$grid->getPresenter()->link(':Web:Article:detail', ['article' => (string)$news]), $news->name];
 		}, '<a href="%s" target="_blank"> %s</a>', 'name');
 
+		$grid->addColumn('Tagy', function (News $news) {
+			return \implode(', ', \array_values($this->tagRepository->getCollection(true)
+					->join(['nxn' => 'web_news_nxn_web_tag'], 'this.uuid = nxn.fk_tag')
+					->where('nxn.fk_news', $news->getPK())
+					->toArrayOf('name')
+				)
+			);
+		});
 		$grid->addColumnInputCheckbox('<i title="Skryto" class="far fa-eye-slash"></i>', 'hidden', '', '', 'hidden');
 		$grid->addColumnInputCheckbox('<i title="Doporučeno" class="far fa-thumbs-up"></i>', 'recommended', '', '', 'recommended');
 		$grid->addColumnLinkDetail('Detail');
