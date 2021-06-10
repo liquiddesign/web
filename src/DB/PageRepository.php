@@ -53,7 +53,16 @@ class PageRepository extends \Pages\DB\PageRepository implements IGeneralReposit
 			$expression->add('OR', 'this.type=%s' . ($param !== null ? ' AND params LIKE %s' : ''), $param !== null ? [$type, "$param=%"] : [$type]);
 		}
 		
-		return $this->many()->where('isOffline', false)->where($expression->getSql(), $expression->getVars());
+		$mutations = $this->getConnection()->getAvailableMutations();
+		$urlExpression = new \StORM\Expression();
+		
+		foreach ($mutations as $key => $lang) {
+			$urlExpression->add('OR', "this.url$lang=pr.fromUrl", []);
+		}
+		
+		return $this->many()->join(['pr' => 'pages_redirect'], $urlExpression->getSql())
+			->where('pr.uuid IS NULL')
+			->where('isOffline', false)->where($expression->getSql(), $expression->getVars());
 	}
 	
 	public function getArrayForSelect(bool $includeHidden = true):array
