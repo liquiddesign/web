@@ -1,0 +1,1 @@
+UPDATE web_page SET active_cs = true;
