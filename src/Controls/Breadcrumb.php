@@ -15,6 +15,11 @@ class Breadcrumb extends Control
 	{
 		$this->items[] = (object) ['name' => $name, 'link' => $link];
 	}
+
+	public function getItems(): array
+	{
+		return $this->items;
+	}
 	
 	public function render(): void
 	{
