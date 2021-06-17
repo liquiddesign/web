@@ -12,6 +12,10 @@ use StORM\Entity;
 class HomepageSlide extends Entity
 {
 	const IMAGE_DIR = 'homepage_slides';
+	const DESKTOP_MIN_WIDTH = 820;
+	const DESKTOP_MIN_HEIGHT = 410;
+	const MOBILE_MIN_WIDTH = 700;
+	const MOBILE_MIN_HEIGHT = 700;
 
 	/**
 	 * Text
