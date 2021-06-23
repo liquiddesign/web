@@ -1,0 +1,35 @@
+{* MOBILE VERSION *}
+<div class="accordion lqd-tabs d-flex flex-column d-md-none" id="tabAccordion-{$tab->getPK()}">
+	{foreach $tab->getItems() as $item}
+		<div class="lqd-tab-heading" id="heading-{$item->getPK()}">
+			<button type="button" class="lqd-tab-label d-flex align-items-center justify-content-between {$iterator->first ? 'collapsed'}" data-toggle="collapse" data-target="#tab{$item->uuid}" aria-expanded="{$iterator->first ? 'true' : 'false'}" aria-controls="tab{$item->uuid}" {if $iterator->first && !$tab->firstMobile}data-tabhide="1"{/if} >
+				{$item->name}
+				<i n:if="!$iterator->first" class="fas fa-plus"></i>
+				<i n:if="$iterator->first" class="fas fa-minus"></i>
+			</button>
+
+			<div id="tab{$item->uuid}" class="lqd-tab-collapse collapse {$iterator->first ? 'show' :''}" aria-labelledby="heading-{$item->getPK()}" data-parent="#tabAccordion-{$tab->getPK()}" {if $iterator->first && !$tab->firstMobile}data-tabitemhide="1"{/if}>
+				<div class="lqd-tab-body">
+					{$item->text|noescape}
+				</div>
+			</div>
+		</div>
+	{/foreach}
+</div>
+
+{* TABLET + DESKTOP VERSION *}
+<div class="lqd-tabs nav nav-pills d-none d-md-flex">
+	{foreach $tab->getItems() as $item}
+		<a class="lqd-tab-label {$iterator->first ? 'active'}" id="pill-{$item->getPK()}" data-toggle="pill" href="#pill-item{$item->getPK()}" role="tab" aria-controls="pill-item{$item->getPK()}" aria-selected="{$iterator->first ? 'true' : 'false'}">
+			{$item->name}
+		</a>
+	{/foreach}
+</div>
+
+<div class="tab-content d-none d-md-block">
+	{foreach $tab->getItems() as $item}
+		<div id="pill-item{$item->getPK()}" class="tab-pane fade {$iterator->first ? 'show active' :''}" role="tabpanel" aria-labelledby="pill-{$item->getPK()}">
+			{$item->text|noescape}
+		</div>
+	{/foreach}
+</div>

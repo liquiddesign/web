@@ -1,0 +1,12 @@
+<div class="testimonial d-flex flex-column align-items-center flex-md-row align-items-md-start pt-4 align-items-md-start">
+	<img n:if="$testimonial->image" src="{$presenter->template->userUrl}/testimonials/person/{$testimonial->image}" alt="{$testimonial->fullName}" class="testimonial-person flex-shrink-0 rounded-circle mb-3 mb-md-0 mr-md-4" height="118" width="118">
+
+	<div class="text-center text-md-left">
+		<p class="person-position mt-md-0">{$testimonial->text}</p>
+		<div class="mt-0 mb-0"><strong>{$testimonial->fullName}</strong></div>
+		<div class="font-italic" style="font-size: 14px;">{$testimonial->position}</div>
+		<div class="mt-2">
+			<img n:if="$testimonial->logo" class="testimonial-logo mt-2" src="{$presenter->template->userUrl}/testimonials/logo/{$testimonial->logo}" alt="{$testimonial->fullName} logo" style="max-height: 80px; width: auto">
+		</div>
+	</div>
+</div>

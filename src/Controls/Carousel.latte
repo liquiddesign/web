@@ -1,0 +1,54 @@
+<div class="slideshow-wrapper position-relative">
+	<div class="slideshow-carousel owl-carousel owl-theme owl-loaded position-relative">
+		{if \count($carousel->getSlides()->toArray('uuid')) > 0}
+			{foreach $carousel->getSlides() as $slide}
+				<div class="slideshow-item position-relative">
+					<img loading="lazy" data-src="{$presenter->template->userUrl}/carousel/{$slide->image}" alt="">
+
+					<div n:if="$slide->text" class="slideshow-text d-flex align-items-center position-absolute">
+						<div class="container">
+							<div class="row">
+								<div class="col-10 offset-1 col-md-8 offset-md-2">
+									{$slide->text|shortcode|noescape}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div n:if="$slide->text" class="slideshow-shadow position-absolute"></div>
+				</div>
+			{/foreach}
+		{else}
+			{for $i=0; $i<2; $i++}
+				<div class="slideshow-item position-relative">
+					<img loading="lazy" data-src="{$presenter->template->pubUrl|noescape}/img/carousel/5d9622dc3aca82309394435.jpg" alt="">
+
+					<div class="slideshow-text d-flex align-items-center position-absolute">
+						<div class="container" n:if="$i==1">
+							<div class="row">
+								<div class="col-8 offset-2">
+									<h1>Do carouselu můžete i psát</h1>
+									<p class="perex">
+										Vyberte si apartmány Mandre pro dovolenou.
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<div n:if="$i==1" class="slideshow-shadow position-absolute"></div>
+				</div>
+			{/for}
+		{/if}
+	</div>
+
+	{if \count($carousel->getSlides()->toArray('uuid')) !== 1}
+		<div class="owl-control owl-prev">
+			<img class="owl-control-icon" loading="lazy" data-src="{$presenter->template->pubUrl}/img/icons/arrow-left.png" alt="">
+		</div>
+		<div class="owl-control owl-next">
+			<img class="owl-control-icon" loading="lazy" data-src="{$presenter->template->pubUrl}/img/icons/arrow-right.png" alt="">
+		</div>
+	{/if}
+</div>

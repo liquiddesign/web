@@ -1,0 +1,15 @@
+<div class="faq">
+	{foreach $faq->getItems() as $item}
+		<div class="d-flex flex-column">
+			<a data-toggle="collapse" href="#faq-{$item->getPK()}" role="button" aria-expanded="false" aria-controls="faq-{$item->getPK()}" class="faq-item d-flex align-items-center">
+				<div class="faq-question d-flex align-items-center flex-fill">{$item->question}</div>
+			</a>
+
+			<div id="faq-{$item->getPK()}" class="collapse">
+				<div class="faq-answer">
+					{$item->answer|noescape}
+				</div>
+			</div>
+		</div>
+	{/foreach}
+</div>

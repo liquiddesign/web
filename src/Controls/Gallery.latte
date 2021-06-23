@@ -1,0 +1,45 @@
+<div n:if="$gallery" id="gallery-{$gallery->id}" class="gallery {$gallery->classes}">
+	<style>
+		{var $mobileWidth = 100/$gallery->getRatios()['mobile']}
+		{var $tabletWidth = 100/$gallery->getRatios()['tablet']}
+		{var $desktopWidth = 100/$gallery->getRatios()['desktop']}
+
+		#gallery-{$gallery->id} .gallery-image {
+			width: {$mobileWidth|number:2:'.':''|noescape}%;
+			flex-shrink: 0;
+		}
+
+		@media (min-width: 768px) {
+			#gallery-{$gallery->id} .gallery-image {
+				width: {$tabletWidth|number:2:'.':''|noescape}%;
+			}
+		}
+
+		@media (min-width: 992px) {
+			#gallery-{$gallery->id} .gallery-image {
+				width: {$desktopWidth|number:2:'.':''|noescape}%;
+			}
+		}
+	</style>
+	<div class="d-flex flex-wrap justify-content-start">
+		{if $gallery->images->enum() > 0}
+			{foreach $gallery->images as $image}
+				<a href="{$userUrl}/gallery/origin/{$image->image}" class="gallery-image d-flex align-items-center justify-content-center position-relative" data-lightbox="roadtrip" title="{$image->description}">
+					<div class="position-absolute gallery-image-cover">
+						<img loading="lazy" class="gallery-image-icon" data-src="{$presenter->template->pubUrl}/img/icons/gallery-detail.png" alt="">
+					</div>
+					<img loading="lazy" data-src="{$userUrl}/gallery/thumb/{$image->image}" alt="{$image->description}">
+				</a>
+			{/foreach}
+		{else}
+			{for $i=0; $i<8; $i++}
+				<a href="{$presenter->template->pubUrl}/img/gallery/origin/5d961b9c0fbea1565488960.jpg" class="gallery-image d-flex align-items-center justify-content-center position-relative" data-lightbox="roadtrip" >
+					<div class="position-absolute gallery-image-cover">
+						<img loading="lazy" class="gallery-image-icon" data-src="{$presenter->template->pubUrl}/img/icons/gallery-detail.png" alt="">
+					</div>
+					<img loading="lazy" data-src="{$presenter->template->pubUrl}/img/gallery/thumbs/5d961b9c0fbea1565488960.jpg">
+				</a>
+			{/for}
+		{/if}
+	</div>
+</div>

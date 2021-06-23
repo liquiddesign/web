@@ -1,0 +1,10 @@
+<div class="d-flex flex-column flex-md-row pt-4 align-items-md-center contact-wrapper">
+	<img src="{$presenter->template->userUrl}/contacts/{$contact->image}" alt="{$contact->fullName}" class="flex-shrink-0 rounded-circle mr-md-4 mb-3 mb-md-0" height="118" width="118">
+
+	<div>
+		<h5 class="my-0">{$contact->fullName}</h5>
+		<div class="person-position mb-3">{$contact->position}</div>
+		<div><a href="mailto:{$contact->email}">{$contact->email}</a></div>
+		<div>{$contact->phone}</div>
+	</div>
+</div>
