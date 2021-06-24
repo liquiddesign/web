@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Web\Admin;
+namespace Web\Admin;
 
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
