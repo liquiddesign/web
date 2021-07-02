@@ -172,7 +172,7 @@ class SliderPresenter extends BackendPresenter
 		$grid->addColumnLinkDetail();
 		$grid->addColumnActionDelete([$this, 'deleteImages']);
 
-		$grid->addFilterTextInput('search', ['text'], null, 'Popisek');
+		$grid->addFilterTextInput('search', ['this.text_cs'], null, 'Popisek');
 		$grid->addFilterButtons();
 
 		$grid->addButtonSaveAll();

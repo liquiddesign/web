@@ -109,7 +109,7 @@ class MenuPresenter extends BackendPresenter
 		$grid->addButtonSaveAll();
 		$grid->addButtonDeleteSelected($deleteCb, false, null, 'this.uuid');
 		
-		$grid->addFilterTextInput('search', ['name_cs'], null, 'Název');
+		$grid->addFilterTextInput('search', ['this.name_cs'], null, 'Název');
 		$grid->addFilterButtons();
 		
 		return $grid;

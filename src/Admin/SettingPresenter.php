@@ -83,7 +83,7 @@ class SettingPresenter extends BackendPresenter
 		
 		if (\in_array('support', static::CONFIGURATION['groups'])) {
 			$form->addGroup('Podpora');
-			$form->addText('supportEmail', 'Email')->setNullable()->addCondition(Form::FILLED)->addRule($form::EMAIL);
+			$form->addText('supportEmail', 'E-mail')->setNullable()->addCondition(Form::FILLED)->addRule($form::EMAIL);
 			$form->addText('supportPhone', 'Telefon')->setNullable();
 			$form->addText('supportPhoneTime', 'Dostupnost telefonu')->setNullable()->setHtmlAttribute('data-info', 'Zvolte libovolný formát');
 		}
@@ -188,7 +188,7 @@ class SettingPresenter extends BackendPresenter
 		
 		$form->addLocaleText('name', 'Název');
 		$form->addText('phone', 'Telefonní čísla')->setHtmlAttribute('data-info', 'Zadejte telefonní čísla oddělená středníkem ";"');
-		$form->addText('email', 'Emaily')->setHtmlAttribute('data-info', 'Zadejte emaily oddělené středníkem ";"');
+		$form->addText('email', 'E-maily')->setHtmlAttribute('data-info', 'Zadejte e-maily oddělené středníkem ";"');
 		$form->addInteger('priority', 'Priorita')->setDefaultValue(10)->setRequired();
 		$form->addCheckbox('hidden', 'Skryto');
 		
@@ -213,7 +213,7 @@ class SettingPresenter extends BackendPresenter
 		
 		$grid->addColumnText('Název', 'name', '%s', 'name');
 		$grid->addColumnText('Telefon', 'phone', '<a href="tel:%1$s"><i class="fa fa-phone-alt"></i> %1$s</a>')->onRenderCell[] = [$grid, 'decoratorEmpty'];
-		$grid->addColumnText('Email', 'email', '<a href="mailto:%1$s"><i class="far fa-envelope"></i> %1$s</a>')->onRenderCell[] = [$grid, 'decoratorEmpty'];
+		$grid->addColumnText('E-mail', 'email', '<a href="mailto:%1$s"><i class="far fa-envelope"></i> %1$s</a>')->onRenderCell[] = [$grid, 'decoratorEmpty'];
 		$grid->addColumnInputInteger('Priorita', 'priority', '', '', 'priority');
 		$grid->addColumnInputCheckbox('<i title="Skryto" class="far fa-eye-slash"></i>', 'hidden', '', '', 'hidden');
 		
@@ -223,7 +223,7 @@ class SettingPresenter extends BackendPresenter
 		$grid->addButtonSaveAll();
 		$grid->addButtonDeleteSelected();
 		
-		$grid->addFilterTextInput('search', ['name_cs', 'phone', 'email'], null, 'Název, telefon, email');
+		$grid->addFilterTextInput('search', ['name_cs', 'phone', 'email'], null, 'Název, telefon, e-mail');
 		$grid->addFilterButtons(['contacts']);
 		
 		return $grid;

@@ -26,7 +26,7 @@ class MessagePresenter extends BackendPresenter
 
 		$grid->addColumnText('Název', 'name', '%s', 'name');
 		$grid->addColumnText('Předmět', 'subject', '%s', 'subject');
-		$grid->addColumnText($this->tab === 'outgoing' ? 'Odesilatel' : 'Email', 'email', '%s', 'email');
+		$grid->addColumnText($this->tab === 'outgoing' ? 'Odesílatel' : 'E-mail', 'email', '%s', 'email');
 		$grid->addColumnText('Kopie', 'cc', '%s', 'cc');
 		$grid->addColumnInputCheckbox('Aktivní', 'active');
 		$grid->addColumnLinkDetail('detail');
@@ -35,7 +35,7 @@ class MessagePresenter extends BackendPresenter
 		$inputs = ['email', 'cc', 'alias'];
 		$grid->addButtonBulkEdit('newForm', $inputs);
 
-		$grid->addFilterTextInput('search', ['name', 'subject_cs', 'email'], null, 'Název, předmět, email');
+		$grid->addFilterTextInput('search', ['name', 'subject_cs', 'email'], null, 'Název, předmět, e-mail');
 	
 		$grid->addFilterButtons();
 
@@ -46,11 +46,11 @@ class MessagePresenter extends BackendPresenter
 	{
 		$form = $this->formFactory->create(true);
 
-		$form->addText('name', 'Název emailu')->setHtmlAttribute('readonly', 'readonly');
+		$form->addText('name', 'Název e-mailu')->setHtmlAttribute('readonly', 'readonly');
 		$form->addLocaleText('subject', 'Předmět');
-		$form->addText('email', $this->tab === 'outgoing' ? 'Odesilatel' : 'Email')->setRequired();
+		$form->addText('email', $this->tab === 'outgoing' ? 'Odesílatel' : 'E-mail')->setRequired();
 		$form->addText('cc', 'Posílat kopie')
-		->setHtmlAttribute('data-info','Zadejte emailové adresy oddělené středníkem ";".');
+		->setHtmlAttribute('data-info','Zadejte e-mailové adresy oddělené středníkem ";".');
 		$form->addText('replyTo', 'Adresa pro odpověď');
 		$form->addText('alias', 'Alias');
 		$form->addLocaleRichEdit('html', 'HTML');
@@ -73,9 +73,9 @@ class MessagePresenter extends BackendPresenter
 
 	public function renderDefault()
 	{
-		$this->template->headerLabel = 'Šablony emailů';
+		$this->template->headerLabel = 'Šablony e-mailů';
 		$this->template->headerTree = [
-			['Šablony emailů'],
+			['Šablony e-mailů'],
 		];
 		
 		$this->template->tabs = [
@@ -90,7 +90,7 @@ class MessagePresenter extends BackendPresenter
 	{
 		$this->template->headerLabel = 'Nová položka';
 		$this->template->headerTree = [
-			['Šablony emailů', 'default'],
+			['Šablony e-mailů', 'default'],
 			['Nová položka'],
 		];
 		$this->template->displayButtons = [$this->createBackButton('default')];
@@ -101,7 +101,7 @@ class MessagePresenter extends BackendPresenter
 	{
 		$this->template->headerLabel = 'Detail';
 		$this->template->headerTree = [
-			['Šablony emailů', 'default'],
+			['Šablony e-mailů', 'default'],
 			['Detail'],
 		];
 		$this->template->displayButtons = [$this->createBackButton('default')];
