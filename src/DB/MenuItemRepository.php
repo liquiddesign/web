@@ -73,12 +73,16 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		return $this->getTree($type);
 	}
 
-	public function getTree($menuType = null): array
+	public function getTree($menuType = null, bool $useHidden = false): array
 	{
 		$collection = $this->menuAssignRepository->many()
 			->join(['item' => 'web_menuitem'], 'item.uuid = this.fk_menuitem')
 			->where('LENGTH(path) <= 40')
 			->orderBy(['item.priority']);
+		
+		if ($useHidden) {
+			$collection->where('item.hidden', false);
+		}
 
 		if ($menuType) {
 			if (!$menuType instanceof MenuType) {
