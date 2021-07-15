@@ -79,28 +79,48 @@ final class Widget extends Nette\Application\UI\Component
 	public function createComponentGallery()
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
-			return $this->galleryFactory->create($id);
+			$galleryControl = $this->galleryFactory->create($id);
+			$galleryControl->onAnchor[] = function (Gallery $galleryControl): void {
+				$galleryControl->template->setFile($this->defaultTemplates[Gallery::class] ?? null);
+			};
+
+			return $galleryControl;
 		});
 	}
 
 	public function createComponentTestimonial()
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
-			return $this->testimonialFactory->create($id);
+			$testimonial = $this->testimonialFactory->create($id);
+			$testimonial->onAnchor[] = function (Testimonial $testimonial): void {
+				$testimonial->template->setFile($this->defaultTemplates[Testimonial::class] ?? null);
+			};
+
+			return $testimonial;
 		});
 	}
 
 	public function createComponentContact()
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
-			return $this->contactFactory->create($id);
+			$contactControl = $this->contactFactory->create($id);
+			$contactControl->onAnchor[] = function (Contact $contactControl): void {
+				$contactControl->template->setFile($this->defaultTemplates[Contact::class] ?? null);
+			};
+
+			return $contactControl;
 		});
 	}
 
 	public function createComponentCarousel()
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
-			return $this->carouselFactory->create($id);
+			$carouselControl = $this->carouselFactory->create($id);
+			$carouselControl->onAnchor[] = function (Carousel $carouselControl): void {
+				$carouselControl->template->setFile($this->defaultTemplates[Carousel::class] ?? null);
+			};
+
+			return $carouselControl;
 		});
 	}
 
@@ -111,7 +131,7 @@ final class Widget extends Nette\Application\UI\Component
 			$faqControl->onAnchor[] = function (Faq $faqControl): void {
 				$faqControl->template->setFile($this->defaultTemplates[Faq::class] ?? null);
 			};
-			
+
 			return $faqControl;
 		});
 	}
@@ -119,35 +139,60 @@ final class Widget extends Nette\Application\UI\Component
 	public function createComponentTab()
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
-			return $this->tabFactory->create($id);
+			$tabControl = $this->tabFactory->create($id);
+			$tabControl->onAnchor[] = function (Tab $tabControl): void {
+				$tabControl->template->setFile($this->defaultTemplates[Tab::class] ?? null);
+			};
+
+			return $tabControl;
 		});
 	}
 
 	public function createComponentVideo()
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
-			return $this->videoFactory->create($id);
+			$videoControl = $this->videoFactory->create($id);
+			$videoControl->onAnchor[] = function (Video $videoControl): void {
+				$videoControl->template->setFile($this->defaultTemplates[Video::class] ?? null);
+			};
+
+			return $videoControl;
 		});
 	}
 
 	public function createComponentBanner()
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
-			return $this->bannerFactory->create($id);
+			$bannerControl = $this->bannerFactory->create($id);
+			$bannerControl->onAnchor[] = function (Banner $bannerControl): void {
+				$bannerControl->template->setFile($this->defaultTemplates[Banner::class] ?? null);
+			};
+
+			return $bannerControl;
 		});
 	}
 
 	public function createComponentMap()
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
-			return $this->mapFactory->create($id);
+			$mapControl = $this->mapFactory->create($id);
+			$mapControl->onAnchor[] = function (Map $mapControl): void {
+				$mapControl->template->setFile($this->defaultTemplates[Map::class] ?? null);
+			};
+
+			return $mapControl;
 		});
 	}
 
 	public function createComponentHubspot()
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
-			return $this->hubspotFactory->create($id);
+			$hubspotControl = $this->hubspotFactory->create($id);
+			$hubspotControl->onAnchor[] = function (Hubspot $hubspotControl): void {
+				$hubspotControl->template->setFile($this->defaultTemplates[Hubspot::class] ?? null);
+			};
+
+			return $hubspotControl;
 		});
 	}
 }
