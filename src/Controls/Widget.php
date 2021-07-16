@@ -81,7 +81,9 @@ final class Widget extends Nette\Application\UI\Component
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$galleryControl = $this->galleryFactory->create($id);
 			$galleryControl->onAnchor[] = function (Gallery $galleryControl): void {
-				$galleryControl->template->setFile($this->defaultTemplates[Gallery::class] ?? null);
+				if (\key_exists(Gallery::class, $this->defaultTemplates)) {
+					$$galleryControl->template->setFile($this->defaultTemplates[Gallery::class]);
+				}
 			};
 
 			return $galleryControl;
@@ -93,7 +95,9 @@ final class Widget extends Nette\Application\UI\Component
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$testimonial = $this->testimonialFactory->create($id);
 			$testimonial->onAnchor[] = function (Testimonial $testimonial): void {
-				$testimonial->template->setFile($this->defaultTemplates[Testimonial::class] ?? null);
+				if (\key_exists(Testimonial::class, $this->defaultTemplates)) {
+					$testimonial->template->setFile($this->defaultTemplates[Testimonial::class]);
+				}
 			};
 
 			return $testimonial;
@@ -105,7 +109,9 @@ final class Widget extends Nette\Application\UI\Component
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$contactControl = $this->contactFactory->create($id);
 			$contactControl->onAnchor[] = function (Contact $contactControl): void {
-				$contactControl->template->setFile($this->defaultTemplates[Contact::class] ?? null);
+				if (\key_exists(Contact::class, $this->defaultTemplates)) {
+					$contactControl->template->setFile($this->defaultTemplates[Contact::class]);
+				}
 			};
 
 			return $contactControl;
@@ -117,7 +123,9 @@ final class Widget extends Nette\Application\UI\Component
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$carouselControl = $this->carouselFactory->create($id);
 			$carouselControl->onAnchor[] = function (Carousel $carouselControl): void {
-				$carouselControl->template->setFile($this->defaultTemplates[Carousel::class] ?? null);
+				if (\key_exists(Carousel::class, $this->defaultTemplates)) {
+					$carouselControl->template->setFile($this->defaultTemplates[Carousel::class]);
+				}
 			};
 
 			return $carouselControl;
@@ -129,7 +137,9 @@ final class Widget extends Nette\Application\UI\Component
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$faqControl = $this->faqFactory->create($id);
 			$faqControl->onAnchor[] = function (Faq $faqControl): void {
-				$faqControl->template->setFile($this->defaultTemplates[Faq::class] ?? null);
+				if (\key_exists(Faq::class, $this->defaultTemplates)) {
+					$faqControl->template->setFile($this->defaultTemplates[Faq::class]);
+				}
 			};
 
 			return $faqControl;
@@ -141,7 +151,9 @@ final class Widget extends Nette\Application\UI\Component
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$tabControl = $this->tabFactory->create($id);
 			$tabControl->onAnchor[] = function (Tab $tabControl): void {
-				$tabControl->template->setFile($this->defaultTemplates[Tab::class] ?? null);
+				if (\key_exists(Tab::class, $this->defaultTemplates)) {
+					$tabControl->template->setFile($this->defaultTemplates[Tab::class]);
+				}
 			};
 
 			return $tabControl;
@@ -153,7 +165,9 @@ final class Widget extends Nette\Application\UI\Component
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$videoControl = $this->videoFactory->create($id);
 			$videoControl->onAnchor[] = function (Video $videoControl): void {
-				$videoControl->template->setFile($this->defaultTemplates[Video::class] ?? null);
+				if (\key_exists(Video::class, $this->defaultTemplates)) {
+					$videoControl->template->setFile($this->defaultTemplates[Video::class]);
+				}
 			};
 
 			return $videoControl;
@@ -165,7 +179,9 @@ final class Widget extends Nette\Application\UI\Component
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$bannerControl = $this->bannerFactory->create($id);
 			$bannerControl->onAnchor[] = function (Banner $bannerControl): void {
-				$bannerControl->template->setFile($this->defaultTemplates[Banner::class] ?? null);
+				if (\key_exists(Banner::class, $this->defaultTemplates)) {
+					$bannerControl->template->setFile($this->defaultTemplates[Banner::class]);
+				}
 			};
 
 			return $bannerControl;
@@ -177,7 +193,9 @@ final class Widget extends Nette\Application\UI\Component
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$mapControl = $this->mapFactory->create($id);
 			$mapControl->onAnchor[] = function (Map $mapControl): void {
-				$mapControl->template->setFile($this->defaultTemplates[Map::class] ?? null);
+				if (\key_exists(Map::class, $this->defaultTemplates)) {
+					$mapControl->template->setFile($this->defaultTemplates[Map::class]);
+				}
 			};
 
 			return $mapControl;
@@ -189,7 +207,9 @@ final class Widget extends Nette\Application\UI\Component
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$hubspotControl = $this->hubspotFactory->create($id);
 			$hubspotControl->onAnchor[] = function (Hubspot $hubspotControl): void {
-				$hubspotControl->template->setFile($this->defaultTemplates[Hubspot::class] ?? null);
+				if (\key_exists(Hubspot::class, $this->defaultTemplates)) {
+					$hubspotControl->template->setFile($this->defaultTemplates[Hubspot::class]);
+				}
 			};
 
 			return $hubspotControl;
