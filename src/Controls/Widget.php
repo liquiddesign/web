@@ -9,7 +9,7 @@ use Nette;
 /**
  * Component widget.
  */
-final class Widget extends Nette\Application\UI\Component
+class Widget extends Nette\Application\UI\Component
 {
 	private ITextboxFactory $textboxFactory;
 
