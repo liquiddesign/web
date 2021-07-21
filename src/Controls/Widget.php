@@ -82,7 +82,7 @@ class Widget extends Nette\Application\UI\Component
 			$galleryControl = $this->galleryFactory->create($id);
 			$galleryControl->onAnchor[] = function (Gallery $galleryControl): void {
 				if (\key_exists(Gallery::class, $this->defaultTemplates)) {
-					$$galleryControl->template->setFile($this->defaultTemplates[Gallery::class]);
+					$galleryControl->template->setFile($this->defaultTemplates[Gallery::class]);
 				}
 			};
 
