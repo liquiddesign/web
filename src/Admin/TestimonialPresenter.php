@@ -124,6 +124,7 @@ class TestimonialPresenter extends BackendPresenter
 		$grid->setLogging('testimonial');
 		$grid->addColumnImage('image', 'testimonials', 'person', $this->_('picture', 'Fotka osoby'));
 		$grid->addColumnImage('logo', 'testimonials', 'logo', $this->_('logo', 'Logo společnosti'));
+		$grid->addColumnText($this->_('name', 'Název'), 'name', '%s', 'name');
 		$grid->addColumnText($this->_('fullName', 'Jméno'), 'fullName', '%s', 'fullName');
 		$grid->addColumnText($this->_('.code', 'Kód'), 'id', '{control testimonial-%s}', 'id');
 		$grid->addColumnText('Pozice', 'position', '%s', 'position');

@@ -20,7 +20,7 @@ class Testimonial extends Entity
 	/**
 	 * @column{"mutations":true}
 	 */
-	public string $name;
+	public ?string $name;
 	
 	/**
 	 * @column
