@@ -24,7 +24,7 @@ class CarouselSlide extends Entity
 	/**
 	 * @column
 	 */
-	public string $image = '';
+	public ?string $image;
 	
 	/**
 	 * Priorita

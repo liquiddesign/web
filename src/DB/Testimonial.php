@@ -18,6 +18,11 @@ class Testimonial extends Entity
 	public const MIN_HEIGHT = 300;
 	
 	/**
+	 * @column{"mutations":true}
+	 */
+	public string $name;
+	
+	/**
 	 * @column
 	 */
 	public string $fullName;

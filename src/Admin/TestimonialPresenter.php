@@ -71,6 +71,7 @@ class TestimonialPresenter extends BackendPresenter
 	{
 		$form = $this->formFactory->create(true, true, true, true);
 		$form->setLogging('testimonial');
+		$form->addLocaleText('name', $this->_('name', 'Název'))->setRequired();
 		$form->addText('fullName', $this->_('fullName', 'Jméno'));
 		$form->addLocaleText('position', $this->_('position', 'Pozice ve společnosti'));
 		$form->addLocaleTextArea('text', $this->_('text', 'Text'), null, null);

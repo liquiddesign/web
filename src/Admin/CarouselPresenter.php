@@ -151,7 +151,8 @@ class CarouselPresenter extends BackendPresenter
 		
 		$imagePicker->onDelete[] = function () use ($carouselSlide): void {
 			if ($carouselSlide) {
-				$carouselSlide->update(['image' => '']);
+				$carouselSlide->update(['image' => null]);
+				$this->redirect('this');
 			}
 		};
 		$form->addInteger('priority', $this->_('.priority', 'Pořadí'))->setRequired()->setDefaultValue(10);
@@ -193,7 +194,7 @@ class CarouselPresenter extends BackendPresenter
 	{
 		$grid = $this->gridFactory->create($this->carouselSlideRepo->many()->where('fk_carousel', $this->getParameter('carousel')->getPK()), 200, 'priority', 'ASC', true);
 		$grid->addColumnSelector();
-		$grid->addColumnImage('image', Carousel::IMAGE_DIR, 'thumb', $this->_('carouselPreview', 'Náhled'));
+		$grid->addColumnImage('image', Carousel::IMAGE_DIR, '', $this->_('carouselPreview', 'Náhled'));
 		$grid->addColumnText($this->_('carouselName', 'Název'), 'title', '%s', 'title');
 		$grid->addColumnHidden();
 		$grid->addColumnPriority();
