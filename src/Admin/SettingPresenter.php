@@ -46,7 +46,7 @@ class SettingPresenter extends BackendPresenter
 	public function actionSocial()
 	{
 		/** @var AdminForm $form */
-		$form = $this->getComponent('form');
+		$form = $this->getComponent('socialForm');
 		
 		$form->setDefaults($this->settingsRepo->many()->setIndex('name')->toArrayOf('value'));
 	}
