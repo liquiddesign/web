@@ -149,7 +149,7 @@ class MenuPresenter extends BackendPresenter
 		},'this.uuid');
 		
 		$grid->addFilterTextInput('search', ['this.name_cs', 'this.url_cs', 'this.title_cs'], null,
-			'Název, url, titulek');
+			'Název, URL, titulek');
 		
 		$grid->addFilterButtons();
 		
