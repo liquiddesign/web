@@ -65,9 +65,9 @@ class Cover extends Entity
 	public ?string $cssClass = null;
 	
 	/**
-	 * @column
+	 * @column{"mutations":true}
 	 */
-	public ?string $showOnPage = null;
+	public ?string $showOnPage;
 	
 	/**
 	 * @column

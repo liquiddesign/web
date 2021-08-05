@@ -180,6 +180,8 @@ class SettingPresenter extends BackendPresenter
 		];
 		$this->template->displayButtons = [$this->createBackButton('contacts')];
 		$this->template->displayControls = [$this->getComponent('contactForm')];
+		
+		$this->template->activeTab = 'contacts';
 	}
 	
 	public function createComponentContactForm(): AdminForm

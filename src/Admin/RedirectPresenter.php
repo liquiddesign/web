@@ -29,8 +29,8 @@ class RedirectPresenter extends BackendPresenter
 		$grid = $this->gridFactory->create($this->redirectRepository->many(), 20, 'priority');
 		$grid->addColumnSelector();
 		$grid->addColumnText($this->_('admin.created', 'Vytvořeno'), "createdTs|date:'d.m.Y'", '%s', 'createdTs');
-		$grid->addColumnText($this->_('adminWebRedirect.fromURl', 'Z url'), 'fromUrl', '%s', 'fromUrl');
-		$grid->addColumnText($this->_('adminWebRedirect.toURL', 'Na url'), 'toUrl', '%s', 'toUrl');
+		$grid->addColumnText($this->_('adminWebRedirect.fromURl', 'Z URL'), 'fromUrl', '%s', 'fromUrl');
+		$grid->addColumnText($this->_('adminWebRedirect.toURL', 'Na URL'), 'toUrl', '%s', 'toUrl');
 
 		$grid->addColumnInputInteger($this->_('admin.priority', 'Pořadí'), 'priority', '', '', 'priority', [], true);
 
@@ -51,10 +51,10 @@ class RedirectPresenter extends BackendPresenter
 	{
 		$form = $this->formFactory->create();
 
-		$form->addText('fromUrl', $this->_('adminWebRedirect.fromURl', 'Z url'))
+		$form->addText('fromUrl', $this->_('adminWebRedirect.fromURl', 'Z URL'))
 			->setHtmlAttribute('data-info', $this->_('adminWebRedirect.urlDescription', 'Relativní URL bez / na konci, např. "novinka/stara-adresa"'))
 			->setRequired();
-		$form->addText('toUrl', $this->_('adminWebRedirect.toURL', 'Na url'))
+		$form->addText('toUrl', $this->_('adminWebRedirect.toURL', 'Na URL'))
 			->setHtmlAttribute('data-info', $this->_('adminWebRedirect.urlDescription', 'Relativní URL bez / na konci, např. "novinka/stara-adresa"'))
 			->setRequired();
 		$form->addText('priority', $this->_('admin.priority', 'Pořadí'))
@@ -113,7 +113,7 @@ class RedirectPresenter extends BackendPresenter
 	{
 		/** @var Form $form */
 		$form = $this->getComponent('form');
-		$form->setDefaults($redirect->jsonSerialize());
+		$form->setDefaults($redirect->toArray());
 	}
 
 }

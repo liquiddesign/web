@@ -7,6 +7,7 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
+use Nette\Forms\Controls\TextInput;
 use Web\DB\Cover;
 use Web\DB\CoverRepository;
 use Nette\Utils\Random;
@@ -90,10 +91,12 @@ class CoverPresenter extends BackendPresenter
 		$form->addText('styles', $this->_('styles', 'Styly'));
 		$form->addText('blend', $this->_('blend', 'Blend mode'));
 		$form->addText('cssClass', $this->_('cssClass', 'CSS třída'));
-		$form->addText('showOnPage', $this->_('showOnPage', 'Zobrazit na URL'))->setRequired(false)
-			->addFilter(function ($value) {
+		$form->addLocaleText('showOnPage', $this->_('showOnPage', 'Zobrazit na URL'))->forAll(function (TextInput $input) {
+			$input->setRequired(false)->addFilter(function ($value) {
 				return \strpos($value, '/') !== false ? $value : '/' . $value;
 			});
+		});
+
 		$form->addInteger('priority', $this->_('.priority', 'Pořadí'))->setRequired()->setDefaultValue(10);
 		$form->addCheckbox('hidden', $this->_('.hidden', 'Skryto'));
 		$form->addHidden('id')->setDefaultValue(Random::generate(4));
