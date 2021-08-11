@@ -255,7 +255,7 @@ class MenuPresenter extends BackendPresenter
 			
 			if (isset(static::CONFIGURATIONS['iconImage'])) {
 				$this->generateDirectories([MenuItem::IMAGE_DIR]);
-				$values['iconImage'] = $form['iconImage']->upload($values['uuid'] . '%2$s');
+				$values['iconImage'] = $form['iconImage']->upload($values['uuid'] . '.%2$s');
 			}
 			
 			unset($values['types']);
