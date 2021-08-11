@@ -12,6 +12,8 @@ use StORM\RelationCollection;
  */
 class MenuItem extends Entity
 {
+	public const IMAGE_DIR = 'menuitem';
+	
 	/**
 	 * @column{"mutations":true}
 	 */
@@ -39,6 +41,16 @@ class MenuItem extends Entity
 	 * @column{"mutations":true}
 	 */
 	public bool $active = false;
+	
+	/**
+	 * @column
+	 */
+	public ?string $icon;
+	
+	/**
+	 * @column
+	 */
+	public ?string $iconImage;
 
 	/**
 	 * Absolutní URL

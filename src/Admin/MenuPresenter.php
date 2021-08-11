@@ -7,6 +7,7 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Nette\Utils\Arrays;
+use Nette\Utils\Image;
 use Nette\Utils\Random;
 use Nette\Utils\Strings;
 use StORM\DIConnection;
@@ -25,6 +26,13 @@ class MenuPresenter extends BackendPresenter
 {
 	protected const CONFIGURATIONS = [
 		'background' => false,
+		'icon' => 'false',
+		/*
+		'iconImage' => [
+		 	'width' => 32,
+		 	'height' => 32,
+		],
+		*/
 	];
 	
 	public array $menuTypes = [];
@@ -198,6 +206,29 @@ class MenuPresenter extends BackendPresenter
 		$form->addDataMultiSelect('types', 'Umístění',
 			$this->menuItemRepository->getTreeArrayForSelect(false, null, $menu))->setRequired();
 		$form->addInteger('priority', 'Priorita')->setRequired()->setDefaultValue(10);
+		
+		if (isset(static::CONFIGURATIONS['icon']) && static::CONFIGURATIONS['icon']) {
+			$form->addText('icon', $this->_('icon', 'Ikona v menu'))
+				->setOption('description', $this->_('iconDescription', 'Vkládejte kód v tomto formátu') . ' <i class="far fa-address-card"></i>')->setNullable();
+		}
+		
+		if (isset(static::CONFIGURATIONS['iconImage'])) {
+			$iconPicker = $form->addImagePicker('iconImage', $this->_('icon', 'Ikona v menu'), [
+				MenuItem::IMAGE_DIR => static function (Image $image): void {
+					$width = isset(static::CONFIGURATIONS['iconImage']['width']) ? static::CONFIGURATIONS['iconImage']['width'] : 32;
+					$height = isset(static::CONFIGURATIONS['iconImage']['height']) ? static::CONFIGURATIONS['iconImage']['height'] : 32;
+					$image->resize($width, $height);
+				},
+			]);
+			
+			$iconPicker->onDelete[] = function () use ($menu): void {
+				if ($menu) {
+					$menu->update(['iconImage' => null]);
+					$this->redirect('this');
+				}
+			};
+		}
+		
 		$form->addCheckbox('hidden', 'Skryto');
 		
 		$params = $menu && $menu->page ? $menu->page->getParsedParameters() : [];
@@ -217,11 +248,19 @@ class MenuPresenter extends BackendPresenter
 		
 		$form->onSuccess[] = function (AdminForm $form) {
 			$values = $form->getValues('array');
-			unset($values['types']);
 			
 			if (!$values['uuid']) {
 				$values['uuid'] = DIConnection::generateUuid();
 			}
+			
+			if (isset(static::CONFIGURATIONS['iconImage'])) {
+				$this->generateDirectories([MenuItem::IMAGE_DIR]);
+				$values['iconImage'] = $form['iconImage']->upload($values['uuid'] . '%2$s');
+			}
+			
+			unset($values['types']);
+			
+			
 			
 			if (!$values['page']['uuid']) {
 				$values['page']['uuid'] = Connection::generateUuid();
