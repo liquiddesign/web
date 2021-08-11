@@ -397,8 +397,10 @@ class MenuPresenter extends BackendPresenter
 		$form->setPrettyPages(true);
 		
 		$page = $this->getParameter('page');
-		
-		$inputName = $form->addLocaleText('name', 'Název');
+
+		$inputName = $form->addLocaleText('name', 'Název')->forPrimary(function ($input) {
+			$input->setRequired();
+		});
 		
 		if (static::CONFIGURATIONS['background']) {
 			$imagePicker = $form->addImagePicker('image', 'Pozadí (desktop)', [
