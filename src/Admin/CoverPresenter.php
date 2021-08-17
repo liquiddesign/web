@@ -125,6 +125,7 @@ class CoverPresenter extends BackendPresenter
 		$grid->addColumnImage('imageMobile', Cover::IMAGE_DIR, 'mobile', $this->_('imageMobile', 'Obrázek mobil'));
 		$grid->addColumnImage('imageDesktop', Cover::IMAGE_DIR, 'desktop', $this->_('imageDesktop', 'Obrázek desktop'));
 		$grid->addColumnText($this->_('name', 'Název'), 'name', '%s', 'name');
+		$grid->addColumnText('Url', 'showOnPage', '%s', 'showOnPage');
 		$grid->addColumnText($this->_('heightDesktop', 'Výška desktop'), 'heightDesktop', '%s', 'heightDesktop');
 		$grid->addColumnText($this->_('bgColor', 'Barva pozadí'), 'bgColor', '%s', 'bgColor');
 		$grid->addColumnText('CSS class', 'cssClass', '%s', 'cssClass');
