@@ -247,6 +247,7 @@ class MenuPresenter extends BackendPresenter
 		};
 		
 		$form->onSuccess[] = function (AdminForm $form) {
+			$this->generateDirectories([Page::IMAGE_DIR], Page::SUBDIRS);
 			$values = $form->getValues('array');
 			
 			if (!$values['uuid']) {
@@ -265,6 +266,10 @@ class MenuPresenter extends BackendPresenter
 			if (!$values['page']['uuid']) {
 				$values['page']['uuid'] = Connection::generateUuid();
 				$values['page']['params'] = 'page=' . $values['page']['uuid'] . '&';
+			}
+
+			if ($values['page']['opengraph']) {
+				$values['page']['opengraph'] = $form['page']['opengraph']->upload($values['page']['uuid'] . '.%2$s');
 			}
 			
 			if (static::CONFIGURATIONS['background']) {
