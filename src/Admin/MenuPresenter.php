@@ -234,7 +234,7 @@ class MenuPresenter extends BackendPresenter
 		$params = $menu && $menu->page ? $menu->page->getParsedParameters() : [];
 		$type = $menu && $menu->page ? $menu->page->getType() : 'content';
 		
-		$form->addPageContainer($type, $params, $nameInput);
+		$form->addPageContainer($type, $params, $nameInput, false, true, false, 'URL a SEO', true);
 		
 		$form->addSubmits(!$menu);
 		
@@ -268,7 +268,7 @@ class MenuPresenter extends BackendPresenter
 				$values['page']['params'] = 'page=' . $values['page']['uuid'] . '&';
 			}
 
-			if ($values['page']['opengraph']) {
+			if (isset($values['page']['opengraph'])) {
 				$values['page']['opengraph'] = $form['page']['opengraph']->upload($values['page']['uuid'] . '.%2$s');
 			}
 			
