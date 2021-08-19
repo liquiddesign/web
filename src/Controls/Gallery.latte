@@ -1,4 +1,4 @@
-<div n:if="$gallery" id="gallery-{$gallery->id}" class="gallery {$gallery->classes}">
+<div n:if="$gallery && !$gallery->hidden" id="gallery-{$gallery->id}" class="gallery {$gallery->classes}">
 	<style>
 		{var $mobileWidth = 100/$gallery->getRatios()['mobile']}
 		{var $tabletWidth = 100/$gallery->getRatios()['tablet']}
@@ -22,8 +22,8 @@
 		}
 	</style>
 	<div class="d-flex flex-wrap justify-content-start">
-		{if $gallery->images->enum() > 0}
-			{foreach $gallery->images as $image}
+		{if $images->enum() > 0}
+			{foreach $images as $image}
 				<a href="{$userUrl}/gallery/origin/{$image->image}" class="gallery-image d-flex align-items-center justify-content-center position-relative" data-lightbox="roadtrip" title="{$image->description}">
 					<div class="position-absolute gallery-image-cover">
 						<img loading="lazy" class="gallery-image-icon" data-src="{$presenter->template->pubUrl}/img/icons/gallery-detail.png" alt="">
