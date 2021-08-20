@@ -163,6 +163,7 @@ class FaqPresenter extends BackendPresenter
 	
 	public function createComponentGrid(): AdminGrid
 	{
+		$this->tItems = $this->_('faqItems', 'Položky');
 		$grid = $this->gridFactory->create($this->faqRepo->many(), 200, 'name', 'ASC', true);
 		$grid->addColumnSelector();
 		$grid->addColumnText($this->_('name', 'Název'), 'name', '%s', 'name');
