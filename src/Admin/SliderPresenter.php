@@ -81,7 +81,7 @@ class SliderPresenter extends BackendPresenter
 		
 		$imagePickerDesktop = $form->addImagePicker('image', 'Obrázek (desktop) *', [
 			HomepageSlide::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'desktop' => static function (Image $image): void {
-				$image->resize(static::DESKTOP_MIN_WIDTH, static::DESKTOP_MIN_HEIGHT, Image::EXACT);
+				$image->resize(static::DESKTOP_MIN_WIDTH, static::DESKTOP_MIN_HEIGHT, Image::FIT);
 			},
 		])->setHtmlAttribute('data-info', 'Nahrávejte obrázky o minimální velikosti ' . static::DESKTOP_MIN_WIDTH . 'x' . static::DESKTOP_MIN_HEIGHT . ' px')
 			->addRule([$this, 'validateSliderImage'], 'Obrázek je příliš malý!', [$form]);
@@ -97,7 +97,7 @@ class SliderPresenter extends BackendPresenter
 
 		$imagePickerMobile = $form->addImagePicker('imageMobile', 'Obrázek (mobil) *', [
 			HomepageSlide::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'mobile' => static function (Image $image): void {
-				$image->resize(static::MOBILE_MIN_WIDTH, static::MOBILE_MIN_HEIGHT, Image::EXACT);
+				$image->resize(static::MOBILE_MIN_WIDTH, static::MOBILE_MIN_HEIGHT, Image::FIT);
 			},
 		])->setHtmlAttribute('data-info', 'Nahrávejte obrázky o minimální velikosti ' . static::MOBILE_MIN_WIDTH . 'x' . static::MOBILE_MIN_HEIGHT . ' px')
 			->addRule([$this, 'validateSliderImageMobile'], 'Obrázek je příliš malý!', [$form]);
