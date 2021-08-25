@@ -17,18 +17,6 @@ class MenuAssign extends \StORM\Entity
 	public string $path;
 
 	/**
-	 * Priorita
-	 * @column
-	 */
-	public int $priority = 10;
-
-	/**
-	 * Skryto
-	 * @column
-	 */
-	public bool $hidden = false;
-
-	/**
 	 * Nadřazený
 	 * @relation
 	 * @constraint{"onUpdate":"CASCADE","onDelete":"CASCADE"}

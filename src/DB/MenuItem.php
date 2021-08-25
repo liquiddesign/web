@@ -26,6 +26,18 @@ class MenuItem extends Entity
 	public string $type;
 
 	/**
+	 * Priorita
+	 * @column
+	 */
+	public int $priority = 10;
+
+	/**
+	 * Skryto
+	 * @column
+	 */
+	public bool $hidden = false;
+
+	/**
 	 * @column{"mutations":true}
 	 */
 	public bool $active = false;
