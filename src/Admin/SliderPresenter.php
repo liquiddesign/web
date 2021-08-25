@@ -18,6 +18,11 @@ use StORM\DIConnection;
 
 class SliderPresenter extends BackendPresenter
 {
+	const DESKTOP_MIN_WIDTH = 820;
+	const DESKTOP_MIN_HEIGHT = 410;
+	const MOBILE_MIN_WIDTH = 700;
+	const MOBILE_MIN_HEIGHT = 700;
+
 	/** @inject */
 	public HomepageSlideRepository $slideRepo;
 
@@ -76,9 +81,9 @@ class SliderPresenter extends BackendPresenter
 		
 		$imagePickerDesktop = $form->addImagePicker('image', 'Obrázek (desktop) *', [
 			HomepageSlide::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'desktop' => static function (Image $image): void {
-				$image->resize(820, 410, Image::EXACT);
+				$image->resize(static::DESKTOP_MIN_WIDTH, static::DESKTOP_MIN_HEIGHT, Image::EXACT);
 			},
-		])->setHtmlAttribute('data-info', 'Nahrávejte obrázky o minimální velikosti 820x410 px')
+		])->setHtmlAttribute('data-info', 'Nahrávejte obrázky o minimální velikosti ' . static::DESKTOP_MIN_WIDTH . 'x' . static::DESKTOP_MIN_HEIGHT . ' px')
 			->addRule([$this, 'validateSliderImage'], 'Obrázek je příliš malý!', [$form]);
 
 		$imagePickerDesktop->onDelete[] = function (array $directories, $filename) use ($homepageSlide, $imageDir) {
@@ -92,9 +97,9 @@ class SliderPresenter extends BackendPresenter
 
 		$imagePickerMobile = $form->addImagePicker('imageMobile', 'Obrázek (mobil) *', [
 			HomepageSlide::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'mobile' => static function (Image $image): void {
-				$image->resize(700, 700, Image::EXACT);
+				$image->resize(static::MOBILE_MIN_WIDTH, static::MOBILE_MIN_HEIGHT, Image::EXACT);
 			},
-		])->setHtmlAttribute('data-info', 'Nahrávejte obrázky o minimální velikosti 700x700 px')
+		])->setHtmlAttribute('data-info', 'Nahrávejte obrázky o minimální velikosti ' . static::MOBILE_MIN_WIDTH . 'x' . static::MOBILE_MIN_HEIGHT . ' px')
 			->addRule([$this, 'validateSliderImageMobile'], 'Obrázek je příliš malý!', [$form]);
 
 		$imagePickerMobile->onDelete[] = function (array $directories, $filename) use ($homepageSlide, $imageDir) {
@@ -192,7 +197,7 @@ class SliderPresenter extends BackendPresenter
 			if ($uploaderDesktop->isOk()) {
 				[$width, $height] = $uploaderDesktop->getImageSize();
 				
-				if ($width < 820 || $height < 410) {
+				if ($width < static::DESKTOP_MIN_WIDTH || $height < static::DESKTOP_MIN_HEIGHT) {
 					return false;
 				}
 			}
@@ -212,7 +217,7 @@ class SliderPresenter extends BackendPresenter
 			if ($uploaderMobile->isOk()) {
 				[$width, $height] = $uploaderMobile->getImageSize();
 				
-				if ($width < 700 || $height < 700) {
+				if ($width < static::MOBILE_MIN_WIDTH || $height < static::MOBILE_MIN_HEIGHT) {
 					return false;
 				}
 			}
