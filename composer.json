@@ -1,46 +1,50 @@
 {
-	"name": "liquiddesign/web",
-	"description": "Ⓦ Služby, entity, administrace a kontroly pro CMS",
-	"license": "MIT",
-	"autoload": {
-		"psr-4": {"Web\\": "src/"},
-		"classmap": []
-	},
-	"autoload-dev": {
-		"psr-4": { "Web\\Tests\\": "tests/" }
-	},
-	"require" :
-	{
-		"php":">=7.4",
-		"nette/application":"^3.0",
-		"nette/http":"^3.0",
-		"nette/utils":"^3.0",
-		"league/csv": "^9.0",
-		"liquiddesign/storm": "@dev",
-		"liquiddesign/forms": "@dev",
-		"liquiddesign/security": "@dev",
-		"liquiddesign/messages": "@dev",
-		"liquiddesign/translator": "@dev",
-		"liquiddesign/pages": "@dev",
-		"liquiddesign/admin": "v2.x-dev",
-		"liquiddesign/grid": "@dev",
-		"liquiddesign/common": "@dev",
-		"ext-pdo": "*",
-		"ext-intl": "*"
-	},
-	"require-dev": 
-	{
-		"nette/tester":"*",
-		"tracy/tracy":"*",
-		"composer/composer": "*",
-		"liquiddesign/codestyle": "@dev",
-		"liquiddesign/migrator": "@dev",
-		"phpstan/phpstan": "*"
-	},
-	"scripts": {
-		"phpstan": "phpstan analyse --memory-limit 1G -c phpstan.neon",
-		"phpcs": "phpcs --standard=ruleset.xml --ignore=assets src",
-		"phpcsfix": "phpcbf --standard=ruleset.xml --ignore=assets src",
-		"tester": "tester tests/Cases/*.phpt  -c tests/php.ini --setup tests/setup.php"
-	}
+  "name": "liquiddesign/web",
+  "description": "Ⓦ Služby, entity, administrace a kontroly pro CMS",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Web\\": "src/"
+    },
+    "classmap": []
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Web\\Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "php": ">=7.4",
+    "nette/application": "^3.0",
+    "nette/http": "^3.0",
+    "nette/utils": "^3.0",
+    "league/csv": "^9.0",
+    "liquiddesign/storm": "@dev",
+    "liquiddesign/forms": "@dev",
+    "liquiddesign/security": "@dev",
+    "liquiddesign/messages": "@dev",
+    "liquiddesign/translator": "@dev",
+    "liquiddesign/pages": "@dev",
+    "liquiddesign/admin": "v2.x-dev",
+    "liquiddesign/grid": "@dev",
+    "liquiddesign/common": "@dev",
+    "ext-pdo": "*",
+    "ext-intl": "*",
+    "ext-iconv": "*",
+    "onnov/detect-encoding": "^2.0"
+  },
+  "require-dev": {
+    "nette/tester": "*",
+    "tracy/tracy": "*",
+    "composer/composer": "*",
+    "liquiddesign/codestyle": "@dev",
+    "liquiddesign/migrator": "@dev",
+    "phpstan/phpstan": "*"
+  },
+  "scripts": {
+    "phpstan": "phpstan analyse --memory-limit 1G -c phpstan.neon",
+    "phpcs": "phpcs --standard=ruleset.xml --ignore=assets src",
+    "phpcsfix": "phpcbf --standard=ruleset.xml --ignore=assets src",
+    "tester": "tester tests/Cases/*.phpt  -c tests/php.ini --setup tests/setup.php"
+  }
 }

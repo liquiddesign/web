@@ -7,11 +7,28 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Forms\Form;
+use League\Csv\Reader;
+use Nette\Application\Responses\FileResponse;
+use Nette\Http\FileUpload;
+use Nette\Utils\FileSystem;
+use Nette\Utils\Strings;
+use Onnov\DetectEncoding\EncodingDetector;
 use Pages\DB\Redirect;
 use Pages\DB\RedirectRepository;
 
 class RedirectPresenter extends BackendPresenter
 {
+	protected const CONFIGURATION = [
+		'importColumns' => [
+			'fromUrl' => 'Z URL',
+			'toUrl' => 'Do URL',
+			'fromMutation' => 'Z mutace',
+			'toMutation' => 'Do mutace',
+			'priority' => 'Priorita',
+		],
+		'importExampleFile' => null
+	];
+
 	/** @inject */
 	public RedirectRepository $redirectRepository;
 
@@ -81,7 +98,7 @@ class RedirectPresenter extends BackendPresenter
 		$this->template->headerTree = [
 			[$this->tRedirect],
 		];
-		$this->template->displayButtons = [$this->createNewItemButton('new')];
+		$this->template->displayButtons = [$this->createNewItemButton('new'), $this->createButton('importCsv', '<i class="fas fa-file-upload mr-1"></i>Import')];
 		$this->template->displayControls = [$this->getComponent('grid')];
 	}
 
@@ -107,6 +124,200 @@ class RedirectPresenter extends BackendPresenter
 		];
 		$this->template->displayButtons = [$this->createBackButton('default')];
 		$this->template->displayControls = [$this->getComponent('form')];
+	}
+
+	public function renderImportCsv()
+	{
+		$this->template->headerLabel = 'Import zdrojového souboru';
+		$this->template->headerTree = [
+			['Přesměrování', 'default'],
+			['Import zdrojového souboru']
+		];
+		$this->template->displayButtons = [$this->createBackButton('default')];
+		$this->template->displayControls = [$this->getComponent('importCsvForm')];
+	}
+
+	public function handleDownloadImportExampleFile()
+	{
+		if (isset(static::CONFIGURATION['importExampleFile']) && static::CONFIGURATION['importExampleFile']) {
+			$this->getPresenter()->sendResponse(new FileResponse($this->wwwDir . '/userfiles/' . static::CONFIGURATION['importExampleFile'], "example.csv", 'text/csv'));
+		}
+	}
+
+	public function createComponentImportCsvForm(): AdminForm
+	{
+		$form = $this->formFactory->create();
+
+		$filename = 'redirects';
+
+		$lastUpdate = null;
+		$path = \dirname(__DIR__, 5) . "/userfiles/$filename.csv";
+
+		if (\file_exists($path)) {
+			$lastUpdate = \filemtime($path);
+		}
+
+		$form->addText('lastProductFileUpload', 'Poslední aktualizace souboru')->setDisabled()->setDefaultValue($lastUpdate ? \date('d.m.Y G:i', $lastUpdate) : null);
+
+		$allowedColumns = '';
+
+		foreach (static::CONFIGURATION['importColumns'] as $key => $value) {
+			$allowedColumns .= "$key, $value<br>";
+		}
+
+		$filePicker = $form->addFilePicker('file', 'Soubor (CSV)')
+			->setRequired()
+			->addRule($form::MIME_TYPE, 'Neplatný soubor!', 'text/csv');
+
+		$info = '';
+
+		if (isset(static::CONFIGURATION['importExampleFile']) && static::CONFIGURATION['importExampleFile']) {
+			$info .= 'Vzorový soubor: <a href="' . $this->link('downloadImportExampleFile!') . '">' . static::CONFIGURATION['importExampleFile'] . '</a><br>';
+		}
+
+		$info .= 'Podporuje <b>pouze</b> formátování Windows a Linux (UTF-8)!';
+
+		$filePicker->setHtmlAttribute('data-info', $info);
+
+		$form->addSelect('delimiter', 'Oddělovač', [
+			';' => 'Středník (;)',
+			',' => 'Čárka (,)',
+			'	' => 'Tab (\t)',
+			' ' => 'Mezera ( )',
+			'|' => 'Pipe (|)',
+		])->setHtmlAttribute('data-info', '<h5 class="mt-2">Nápověda</h5>
+Soubor <b>musí obsahovat</b> hlavičku a sloupce "Z URL" a "Do URL".<br><br>
+Povolené sloupce hlavičky (lze použít obě varianty kombinovaně):<br>
+' . $allowedColumns . '<br>
+<b>Pozor!</b> Pokud pracujete se souborem na zařízeních Apple, ujistětě se, že vždy při ukládání použijete možnost uložit do formátu Windows nebo Linux (UTF-8)!');
+
+		$form->addSubmit('submit', 'Importovat');
+
+		$form->onValidate[] = function (AdminForm $form) {
+			$values = $form->getValues('array');
+
+			/** @var FileUpload $file */
+			$file = $values['file'];
+
+			if (!$file->hasFile()) {
+				$form['file']->addError('Neplatný soubor!');
+			}
+		};
+
+		$form->onSuccess[] = function (AdminForm $form) use ($filename) {
+			$values = $form->getValues('array');
+
+			/** @var FileUpload $file */
+			$file = $values['file'];
+
+			$file->move(\dirname(__DIR__, 5) . "/userfiles/$filename.csv");
+			\touch(\dirname(__DIR__, 5) . "/userfiles/$filename.csv");
+
+			$connection = $this->redirectRepository->getConnection();
+
+			$connection->getLink()->beginTransaction();
+
+			try {
+				$this->importCsv(\dirname(__DIR__, 5) . "/userfiles/$filename.csv",
+					$values['delimiter']
+				);
+
+				$connection->getLink()->commit();
+				$this->flashMessage('Provedeno', 'success');
+			} catch (\Exception $e) {
+				FileSystem::delete(\dirname(__DIR__, 5) . "/userfiles/$filename.csv");
+				$connection->getLink()->rollBack();
+
+				$this->flashMessage($e->getMessage() != '' ? $e->getMessage() : 'Import dat se nezdařil!', 'error');
+			}
+
+			$this->redirect('this');
+		};
+
+		return $form;
+	}
+
+	protected function importCsv(string $filePath, string $delimiter = ';')
+	{
+		if (!\ini_get("auto_detect_line_endings")) {
+			\ini_set("auto_detect_line_endings", '1');
+		}
+
+		$csvData = FileSystem::read($filePath);
+
+		$detector = new EncodingDetector();
+
+		$detector->disableEncoding([
+			EncodingDetector::ISO_8859_5,
+			EncodingDetector::KOI8_R
+		]);
+
+		$encoding = $detector->getEncoding($csvData);
+
+		if ($encoding !== 'utf-8') {
+			$csvData = \iconv('windows-1250', 'utf-8', $csvData);
+			$reader = Reader::createFromString($csvData);
+			unset($csvData);
+		} else {
+			unset($csvData);
+			$reader = Reader::createFromPath($filePath);
+		}
+
+		$reader->setDelimiter($delimiter);
+		$reader->setHeaderOffset(0);
+		$mutation = $this->redirectRepository->getConnection()->getMutation();
+		$mutations = $this->redirectRepository->getConnection()->getAvailableMutations();
+
+		$header = $reader->getHeader();
+		$parsedHeader = [];
+
+		foreach ($header as $headerItem) {
+			if (isset(static::CONFIGURATION['importColumns'][$headerItem])) {
+				$parsedHeader[$headerItem] = $headerItem;
+			} elseif ($key = \array_search($headerItem, static::CONFIGURATION['importColumns'])) {
+				$parsedHeader[$key] = $headerItem;
+			}
+		}
+
+		if (\count($parsedHeader) == 0) {
+			throw new \Exception('Soubor neobsahuje hlavičku nebo nebyl nalezen žádný použitelný sloupec!');
+		}
+
+		if (!isset($parsedHeader['fromUrl']) || !isset($parsedHeader['toUrl'])) {
+			throw new \Exception('Soubor neobsahuje zdrojovou nebo cílovou URL!');
+		}
+
+		foreach ($reader->getRecords() as $record) {
+			$newValues = [];
+
+			foreach ($record as $key => $value) {
+				$key = \array_search($key, $parsedHeader);
+
+				if (!$key) {
+					continue;
+				}
+
+				if ($key == 'fromMutation' || $key == 'toMutation') {
+					if (isset($mutations[$value])) {
+						$newValues[$key] = $value;
+					}
+				} elseif ($key == 'priority') {
+					$newValues[$key] = \intval($value);
+				} elseif (!isset($attributes[$key])) {
+					$newValues[$key] = $value;
+				}
+			}
+
+			try {
+				if (!isset($newValues['fromUrl']) && !isset($newValues['toUrl'])) {
+					continue;
+				}
+
+				$this->redirectRepository->syncOne($newValues);
+			} catch (\Exception $e) {
+				throw new \Exception('Chyba při zpracování dat!');
+			}
+		}
 	}
 
 	public function actionDetail(Redirect $redirect)
