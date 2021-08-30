@@ -34,28 +34,28 @@ class MenuPresenter extends BackendPresenter
 		],
 		*/
 	];
-	
+
 	public array $menuTypes = [];
-	
+
 	/** @inject */
 	public MenuItemRepository $menuItemRepository;
-	
+
 	/** @inject */
 	public PageRepository $pageRepository;
-	
+
 	/** @inject */
 	public MenuTypeRepository $menuTypeRepository;
-	
+
 	/** @inject */
 	public MenuAssignRepository $menuAssignRepository;
-	
+
 	/** @persistent */
 	public string $tab = 'main';
-	
+
 	protected array $pageTypes = ['index' => '', 'content' => null, 'contact' => null, 'news' => '', 'pickup_points' => null];
-	
+
 	private array $selectedAncestors = [];
-	
+
 	public function createComponentGrid()
 	{
 		$grid = $this->gridFactory->create($this->menuItemRepository->many()
@@ -63,155 +63,155 @@ class MenuPresenter extends BackendPresenter
 			->join(['type' => 'web_menutype'], 'nxn.fk_menutype = type.uuid')
 			->where('type.uuid', $this->tab)
 			->select(['path' => 'nxn.path']), 20);
-		
+
 		$grid->setDefaultOrder('this.priority');
-		
+
 		$grid->setNestingCallback(static function ($source, $parent) {
 			if (!$parent) {
 				return $source->where('LENGTH(path)=4');
 			}
-			
+
 			return $source->where('path!=:parent AND path LIKE :path',
 				['path' => $parent->path . '%', 'parent' => $parent->path]);
 		});
-		
+
 		$grid->addColumnSelector();
-		
+
 		$grid->addColumnText('Název', 'name', '%s', 'name')->onRenderCell[] = function (\Nette\Utils\Html $td, $object) {
 			$level = \strlen($object->path) / 4 - 1;
 			$td->setHtml(\str_repeat('- - ', $level) . $td->getHtml());
 		};
-		
+
 		$grid->addColumnText('Titulek', 'page.title', '%s', 'page.title_cs');
 		$grid->addColumnText('URL', 'getUrl',
 			'<a href="%1$s"  target="_blank"><i class="fa fa-external-link-square-alt"></i> %1$s</a>');
-		
+
 		$grid->addColumnInputInteger('Priorita', 'priority', '', '', 'priority', [], true);
 		$grid->addColumnInputCheckbox('<i title="Skryto" class="far fa-eye-slash"></i>', 'hidden', '', '', 'hidden');
-		
+
 		$grid->addColumnLinkDetail('Detail');
-		
+
 		$btnSecondary = 'btn btn-sm btn-outline-danger';
 		$removeIco = "<a href='%s' class='$btnSecondary' title='Odebrat z menu'><i class='far fa-minus-square'\"'></i></a>";
 		$grid->addColumnAction('', $removeIco, function (MenuItem $menuItem) {
 			$this->onRemove($menuItem);
 			$menuItem->delete();
 		}, [], null, ['class' => 'minimal']);
-		
+
 		$deleteCb = function (?MenuItem $menuItem) {
 			if (!$menuItem) {
 				return;
 			}
-			
+
 			$this->onRemove($menuItem);
-			
+
 			$page = $menuItem->page;
 			$menuItem->update(['page' => null]);
-			
+
 			if (!$menuItem->isSystemic()) {
 				$page->delete();
 			}
 		};
-		
+
 		$grid->addColumnActionDelete($deleteCb);
 		$grid->addButtonSaveAll();
 		$grid->addButtonDeleteSelected($deleteCb, false, null, 'this.uuid');
-		
+
 		$grid->addFilterTextInput('search', ['this.name_cs'], null, 'Název');
 		$grid->addFilterButtons();
-		
+
 		return $grid;
 	}
-	
+
 	public function createComponentPageGrid()
 	{
 		$types = $this->pageTypes;
-		
+
 		$grid = $this->gridFactory->create($this->pageRepository->getPagesWithoutMenu($types), 20, 'this.type');
 		$grid->addColumnSelector();
-		
+
 		$grid->addColumnText('Název', 'name', '%s', 'this.name_cs');
-		
+
 		$btnSecondary = 'btn btn-sm btn-outline-primary';
 		$baseUrl = $this->getHttpRequest()->getUrl()->getBaseUrl();
-		
+
 		$grid->addColumn('URL', static function ($item) use ($baseUrl) {
 			return '<a href="' . $baseUrl . $item->url . '" target="_blank"><i class="fa fa-external-link-square-alt"></i>&nbsp;' . $baseUrl . $item->url . '</a>';
 		}, '%s', 'this.url_cs');
-		
+
 		$grid->addColumnInputCheckbox('Nedostupná', 'isOffline');
-		
+
 		$grid->addColumn('', function ($object, $datagrid) {
 			return $datagrid->getPresenter()->link('linkMenuItemToPage', $object);
 		}, "<a class='$btnSecondary' title='Zařadit do menu' href='%s'><i class='fa fa-plus-square'></i></a>", null,
 			['class' => 'minimal']);
-		
+
 		$grid->addColumnLinkDetail('PageDetail');
-		
+
 		$grid->addColumnActionDeleteSystemic();
-		
+
 		$grid->addButtonSaveAll([], [], 'this.uuid');
-		
+
 		$grid->addButtonDeleteSelected(null, false, function (Page $page) {
 			return !$page->isSystemic();
-		},'this.uuid');
-		
+		}, 'this.uuid');
+
 		$grid->addFilterTextInput('search', ['this.name_cs', 'this.url_cs', 'this.title_cs'], null,
 			'Název, URL, titulek');
-		
+
 		$grid->addFilterButtons();
-		
+
 		return $grid;
 	}
-	
+
 	public function createComponentForm(): Form
 	{
 		$form = $this->formFactory->create(true);
 		$form->setPrettyPages(true);
-		
+
 		/** @var MenuItem $menu */
 		$menu = $this->getParameter('menuItem');
-		
+
 		$nameInput = $form->addLocaleText('name', 'Název');
-		
+
 		if (static::CONFIGURATIONS['background']) {
 			$imagePicker = $form->addImagePicker('image', 'Pozadí (desktop)', [
 					Page::IMAGE_DIR => null,
 				]
 			);
-			
+
 			$imagePicker->onDelete[] = function ($dir, $file) use ($menu) {
-				
+
 				if ($menu->page) {
 					$menu->page->update(['image' => null]);
 				}
 				$this->redirect('this');
 			};
-			
+
 			$imagePicker = $form->addImagePicker('mobileImage', 'Pozadí (mobil)', [
 					Page::IMAGE_DIR => null,
 				]
 			);
-			
+
 			$imagePicker->onDelete[] = function ($dir, $file) use ($menu) {
-				
+
 				if ($menu->page) {
 					$menu->page->update(['mobileImage' => null]);
 				}
 				$this->redirect('this');
 			};
 		}
-		
+
 		$form->addLocaleRichEdit('content', 'Obsah');
 		$form->addDataMultiSelect('types', 'Umístění',
 			$this->menuItemRepository->getTreeArrayForSelect(false, null, $menu))->setRequired();
 		$form->addInteger('priority', 'Priorita')->setRequired()->setDefaultValue(10);
-		
+
 		if (isset(static::CONFIGURATIONS['icon']) && static::CONFIGURATIONS['icon']) {
 			$form->addText('icon', $this->_('icon', 'Ikona v menu'))
 				->setOption('description', $this->_('iconDescription', 'Vkládejte kód v tomto formátu') . ' <i class="far fa-address-card"></i>')->setNullable();
 		}
-		
+
 		if (isset(static::CONFIGURATIONS['iconImage'])) {
 			$iconPicker = $form->addImagePicker('iconImage', $this->_('icon', 'Ikona v menu'), [
 				MenuItem::IMAGE_DIR => static function (Image $image): void {
@@ -220,7 +220,7 @@ class MenuPresenter extends BackendPresenter
 					$image->resize($width, $height);
 				},
 			]);
-			
+
 			$iconPicker->onDelete[] = function () use ($menu): void {
 				if ($menu) {
 					$menu->update(['iconImage' => null]);
@@ -228,41 +228,40 @@ class MenuPresenter extends BackendPresenter
 				}
 			};
 		}
-		
+
 		$form->addCheckbox('hidden', 'Skryto');
-		
+
 		$params = $menu && $menu->page ? $menu->page->getParsedParameters() : [];
 		$type = $menu && $menu->page ? $menu->page->getType() : 'content';
-		
+
 		$form->addPageContainer($type, $params, $nameInput, false, true, false, 'URL a SEO', true);
-		
+
 		$form->addSubmits(!$menu);
-		
+
 		$form->onValidate[] = function (AdminForm $form) {
 			if (!$form->isValid()) {
 				return;
 			}
-			
+
 			$this->menuItemRepository->checkAncestors($form, $this->selectedAncestors);
 		};
-		
+
 		$form->onSuccess[] = function (AdminForm $form) {
 			$this->generateDirectories([Page::IMAGE_DIR], Page::SUBDIRS);
 			$values = $form->getValues('array');
-			
+
 			if (!$values['uuid']) {
 				$values['uuid'] = DIConnection::generateUuid();
 			}
-			
+
 			if (isset(static::CONFIGURATIONS['iconImage'])) {
 				$this->generateDirectories([MenuItem::IMAGE_DIR]);
 				$values['iconImage'] = $form['iconImage']->upload($values['uuid'] . '.%2$s');
 			}
-			
+
 			unset($values['types']);
-			
-			
-			
+
+
 			if (!$values['page']['uuid']) {
 				$values['page']['uuid'] = Connection::generateUuid();
 				$values['page']['params'] = 'page=' . $values['page']['uuid'] . '&';
@@ -271,31 +270,31 @@ class MenuPresenter extends BackendPresenter
 			if (isset($values['page']['opengraph'])) {
 				$values['page']['opengraph'] = $form['page']['opengraph']->upload($values['page']['uuid'] . '.%2$s');
 			}
-			
+
 			if (static::CONFIGURATIONS['background']) {
 				if ($values['image']->isOK()) {
 					$values['page']['image'] = $form['image']->upload($values['image']->getSanitizedName());
 				}
-				
+
 				unset($values['image']);
-				
+
 				if ($values['mobileImage']->isOK()) {
 					$values['page']['mobileImage'] = $form['mobileImage']->upload($values['mobileImage']->getSanitizedName());
 				}
-				
+
 				unset($values['mobileImage']);
 			}
-			
-			$values['page']['content'] = $values['content'];
+
+			$values['page']['content'] = static::sanitizePageContent($values['content']);;
 			$values['page']['name'] = $values['name'];
 			$values['page']['params'] = $values['page']['params'] ?: '';
 			$type = $values['page']['type'];
 			$values['page'] = (string)$this->pageRepository->syncOne($values['page']);
-			
+
 			$menuItem = $this->menuItemRepository->syncOne($values, null, true);
-			
+
 			$selectedMenuTypes = [];
-			
+
 			foreach ($this->selectedAncestors as $type) {
 				if (isset($type['item'])) {
 					$ancestor = $this->menuAssignRepository->many()
@@ -305,10 +304,10 @@ class MenuPresenter extends BackendPresenter
 				} else {
 					$ancestor = null;
 				}
-				
+
 				$prefix = $ancestor ? $ancestor->path : '';
 				$path = null;
-				
+
 				do {
 					$path = $prefix . Random::generate(4);
 					$temp = $this->menuItemRepository->many()
@@ -316,12 +315,12 @@ class MenuPresenter extends BackendPresenter
 						->where('nxn.path', $path)
 						->first();
 				} while ($temp);
-				
+
 				$data = [
 					'ancestor' => ($ancestor ? $ancestor->getPK() : null),
 					'path' => $path
 				];
-				
+
 				if ($current = $this->menuAssignRepository->many()
 					->where('fk_menuitem', $menuItem->getPK())
 					->where('fk_menutype', $type['type']->getPK())
@@ -335,12 +334,12 @@ class MenuPresenter extends BackendPresenter
 						'path' => $path
 					]);
 				}
-				
+
 				$this->menuItemRepository->recalculatePaths($type['type']);
-				
+
 				$selectedMenuTypes[$type['type']->getPK()] = true;
 			}
-			
+
 			foreach ($this->menuTypeRepository->many()->whereNot('uuid', \array_keys($selectedMenuTypes))->toArray() as $notSelectedType) {
 				$this->menuAssignRepository->many()->where('fk_menutype', $notSelectedType)->where('fk_menuitem', $menuItem->getPK())->delete();
 			}
@@ -388,115 +387,115 @@ class MenuPresenter extends BackendPresenter
 			if ($type === 'content') {
 				$menuItem->page->update(['params' => 'page=' . $menuItem->page->getPK() . '&']);
 			}
-			
+
 			$this->flashMessage('Uloženo', 'success');
 			$form->processRedirect('detail', 'default', [$menuItem]);
 		};
-		
+
 		return $form;
 	}
-	
+
 	public function createComponentPageForm(): Form
 	{
 		$form = $this->formFactory->create(true);
 		$form->setPrettyPages(true);
-		
+
 		$page = $this->getParameter('page');
 
 		$inputName = $form->addLocaleText('name', 'Název')->forPrimary(function ($input) {
 			$input->setRequired();
 		});
-		
+
 		if (static::CONFIGURATIONS['background']) {
 			$imagePicker = $form->addImagePicker('image', 'Pozadí (desktop)', [
 					Page::IMAGE_DIR => null,
 				]
 			);
-			
+
 			$imagePicker->onDelete[] = function ($dir, $file) use ($page) {
 				$page->update(['image' => null]);
 				$this->redirect('this');
 			};
-			
+
 			$imagePicker = $form->addImagePicker('mobileImage', 'Pozadí (mobil)', [
 					Page::IMAGE_DIR => null,
 				]
 			);
-			
+
 			$imagePicker->onDelete[] = function ($dir, $file) use ($page) {
 				$page->update(['mobileImage' => null]);
 				$this->redirect('this');
 			};
 		}
-		
+
 		$form->addLocaleRichEdit('content', 'Obsah');
-		
+
 		$form->addPageContainer($page ? $page->type : 'content',
 			$this->getParameter('page') ? ['page' => $this->getParameter('page')] : [], $inputName);
 		$form->addSubmits(!$this->getParameter('page'));
-		
+
 		$form->onSuccess[] = function (AdminForm $form) {
 			$values = $form->getValues('array');
-			
+
 			if (!$values['page']['uuid']) {
 				$values['page']['uuid'] = Connection::generateUuid();
 				$values['page']['params'] = 'page=' . $values['page']['uuid'] . '&';
 			}
-			
-			
+
+
 			if (static::CONFIGURATIONS['background']) {
 				if ($values['image']->isOK()) {
 					$values['page']['image'] = $form['image']->upload($values['image']->getSanitizedName());
 				}
-				
+
 				unset($values['image']);
-				
+
 				if ($values['mobileImage']->isOK()) {
 					$values['page']['mobileImage'] = $form['mobileImage']->upload($values['mobileImage']->getSanitizedName());
 				}
-				
+
 				unset($values['mobileImage']);
 			}
-			
+
 			$values['page']['name'] = $values['name'];
-			$values['page']['content'] = $values['content'];
+			$values['page']['content'] = static::sanitizePageContent($values['content']);
 			$page = $this->pageRepository->syncOne($values['page']);
-			
+
 			$this->flashMessage('Uloženo', 'success');
 			$form->processRedirect('pageDetail', 'default', [$page]);
 		};
-		
+
 		return $form;
 	}
-	
+
 	public function createComponentMenuForm()
 	{
 		$form = $this->formFactory->create(true);
 		$form->setPrettyPages(true);
-		
+
 		$form->addLocaleText('name', 'Název menu');
-		
+
 		$form->addDataMultiSelect('types', 'Umístění',
 			$this->menuItemRepository->getTreeArrayForSelect())->setRequired();
 		$form->addInteger('priority', 'Priorita')->setRequired()->setDefaultValue(10);
 		$form->addCheckbox('hidden', 'Skryto');
-		
+
 		$form->addSubmit('submit', 'Uložit');
-		
+
 		$form->onValidate[] = function (AdminForm $form) {
 			$this->menuItemRepository->checkAncestors($form, $this->selectedAncestors);
 		};
-		
+
 		$form->onSuccess[] = function (AdminForm $form) {
 			$values = $form->getValues('array');
 			unset($values['types']);
-			
+
 			$values['uuid'] = DIConnection::generateUuid();
 			$values['page'] = $form->getPresenter()->getParameter('page')->getPK();
-			
+
 			/** @var MenuItem $menuItem */
 			$menuItem = $this->menuItemRepository->createOne($values);
-			
+
 			foreach ($this->selectedAncestors as $type) {
 				if (isset($type['item'])) {
 					$ancestor = $this->menuAssignRepository->many()
@@ -506,10 +505,10 @@ class MenuPresenter extends BackendPresenter
 				} else {
 					$ancestor = null;
 				}
-				
+
 				$prefix = $ancestor ? $ancestor->path : '';
 				$path = null;
-				
+
 				do {
 					$path = $prefix . Random::generate(4);
 					$temp = $this->menuItemRepository->many()
@@ -517,7 +516,7 @@ class MenuPresenter extends BackendPresenter
 						->where('nxn.path', $path)
 						->first();
 				} while ($temp);
-				
+
 				$this->menuAssignRepository->syncOne([
 					'menuitem' => $menuItem->getPK(),
 					'menutype' => $type['type']->getPK(),
@@ -525,20 +524,20 @@ class MenuPresenter extends BackendPresenter
 					'path' => $path
 				]);
 			}
-			
+
 			$this->flashMessage('Uloženo', 'success');
 			$form->getPresenter()->redirect('default');
 		};
-		
+
 		return $form;
 	}
-	
+
 	public function actionLinkMenuItemToPage(Page $page)
 	{
 		$form = $this->getComponent('menuForm');
 		$form['name']->setDefaults($page->toArray()['name']);
 	}
-	
+
 	public function renderLinkMenuItemToPage(Page $page)
 	{
 		$this->template->headerLabel = 'Nová položku menu pro stránku';
@@ -548,14 +547,14 @@ class MenuPresenter extends BackendPresenter
 		$this->template->displayButtons = [$this->createBackButton('default')];
 		$this->template->displayControls = [$this->getComponent('menuForm')];
 	}
-	
+
 	public function renderDefault()
 	{
 		$this->template->headerLabel = 'Menu a stránky';
 		$this->template->headerTree = [
 			['Menu'],
 		];
-		
+
 		if ($this->tab === 'pages') {
 			$this->template->displayControls = [$this->getComponent('pageGrid')];
 			$this->template->displayButtons = [$this->createNewItemButton('newPage')];
@@ -563,16 +562,16 @@ class MenuPresenter extends BackendPresenter
 			$this->template->displayControls = [$this->getComponent('grid')];
 			$this->template->displayButtons = [$this->createNewItemButton('new')];
 		}
-		
+
 		$this->template->tabs = [];
-		
+
 		foreach ($this->menuTypeRepository->getCollection()->toArrayOf('name') as $type => $label) {
 			$this->template->tabs[$type] = " $label";
 		}
-		
+
 		$this->template->tabs['pages'] = "<i class=\"far fa-sticky-note\"></i> Nezařazené stránky";
 	}
-	
+
 	public function renderNew()
 	{
 		$this->template->headerLabel = 'Nová položka menu';
@@ -583,7 +582,7 @@ class MenuPresenter extends BackendPresenter
 		$this->template->displayButtons = [$this->createBackButton('default')];
 		$this->template->displayControls = [$this->getComponent('form')];
 	}
-	
+
 	public function renderNewPage()
 	{
 		$this->template->headerLabel = 'Nová položka';
@@ -594,7 +593,7 @@ class MenuPresenter extends BackendPresenter
 		$this->template->displayButtons = [$this->createBackButton('default')];
 		$this->template->displayControls = [$this->getComponent('pageForm')];
 	}
-	
+
 	public function renderDetail()
 	{
 		$this->template->headerLabel = 'Detail menu';
@@ -605,23 +604,23 @@ class MenuPresenter extends BackendPresenter
 		$this->template->displayButtons = [$this->createBackButton('default')];
 		$this->template->displayControls = [$this->getComponent('form')];
 	}
-	
+
 	public function actionDetail(MenuItem $menuItem)
 	{
 		/** @var Form $form */
 		$form = $this->getComponent('form');
 		$defaults = $menuItem->jsonSerialize();
 		$defaults['types'] = $this->menuItemRepository->getMenuItemPositions($menuItem);
-		
+
 		$form->setDefaults($defaults);
 		$form['content']->setDefaults($defaults['page']['content'] ?? []);
-		
+
 		if (static::CONFIGURATIONS['background']) {
 			$form['image']->setDefaultValue($menuItem->page->image ?? null);
 			$form['mobileImage']->setDefaultValue($menuItem->page->mobileImage ?? null);
 		}
 	}
-	
+
 	public function renderPageDetail()
 	{
 		$this->template->headerLabel = 'Detail';
@@ -632,14 +631,14 @@ class MenuPresenter extends BackendPresenter
 		$this->template->displayButtons = [$this->createBackButton('default')];
 		$this->template->displayControls = [$this->getComponent('pageForm')];
 	}
-	
+
 	public function actionPageDetail(Page $page)
 	{
 		/** @var Form $form */
 		$form = $this->getComponent('pageForm');
 		$form->setDefaults($page->toArray());
 	}
-	
+
 	public function onRemove(MenuItem $menuItem)
 	{
 		$menuItem = $this->menuItemRepository->many()->join(['assign' => 'web_menuassign'], 'this.uuid = assign.fk_menuitem')
@@ -647,11 +646,76 @@ class MenuPresenter extends BackendPresenter
 			->where('this.uuid', $menuItem->getPK())
 			->select(['path' => 'assign.path'])
 			->first();
-		
+
 		$this->menuItemRepository->many()->join(['assign' => 'web_menuassign'], 'this.uuid = assign.fk_menuitem')
 			->where('fk_menutype', $this->tab)
 			->where('assign.path LIKE :path', ['path' => "$menuItem->path%"])
 			->delete();
 	}
-	
+
+	/**
+	 * @param array $content Array with mutations as keys
+	 * @return array
+	 */
+	public static function sanitizePageContent(array $content): array
+	{
+		// $states = ['normal', 'check-control', 'control'];
+
+		foreach ($content as $mutation => $string) {
+			$state = 'normal';
+			$substr = '';
+			$pos = -1;
+			$offset = 0;
+			$length = \strlen($string);
+
+			for ($i = 0; $i < $length; $i++) {
+				$char = $string[$i];
+
+				if ($state == 'check-control') {
+					$substr .= $char;
+
+					if ($substr === 'control') {
+						$state = 'control';
+						$substr = '';
+						$pos = -1;
+						continue;
+					}
+
+					if (\strlen($substr) > 7 || (\strlen($substr) > 0 && \stripos('control', $substr) === false)) {
+						$content[$mutation] = \substr_replace($content[$mutation], '', $pos + $offset, 1);
+						$content[$mutation] = \substr_replace($content[$mutation], '&#123;', $pos + $offset, 0);
+						$offset += 5;
+
+						$state = 'normal';
+						$substr = '';
+						$pos = -1;
+					}
+				}
+
+				if ($state == 'control') {
+					if ($char === '}') {
+						$state = 'normal';
+						continue;
+					}
+				}
+
+				if ($char === '{') {
+					$pos = $i;
+					$state = 'check-control';
+				}
+
+				if ($state == 'normal' && $char === '}') {
+					$content[$mutation] = \substr_replace($content[$mutation], '', $i + $offset, 1);
+					$content[$mutation] = \substr_replace($content[$mutation], '&#125;', $i + $offset, 0);
+					$offset += 5;
+				}
+			}
+
+//			$content[$mutation] = \preg_replace('/({(?!control))/i','&#123;', $string);
+//			$content[$mutation] = \preg_replace('/((?<!control)})/i','&#125;', $content[$mutation]);
+		}
+
+		return $content;
+	}
+
 }
