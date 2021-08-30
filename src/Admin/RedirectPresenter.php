@@ -6,15 +6,20 @@ namespace Web\Admin;
 
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
+use Eshop\DB\Product;
 use Forms\Form;
+use League\Csv\EncloseField;
 use League\Csv\Reader;
+use League\Csv\Writer;
 use Nette\Application\Responses\FileResponse;
 use Nette\Http\FileUpload;
+use Nette\Utils\Arrays;
 use Nette\Utils\FileSystem;
 use Nette\Utils\Strings;
 use Onnov\DetectEncoding\EncodingDetector;
 use Pages\DB\Redirect;
 use Pages\DB\RedirectRepository;
+use StORM\ICollection;
 
 class RedirectPresenter extends BackendPresenter
 {
@@ -60,6 +65,12 @@ class RedirectPresenter extends BackendPresenter
 		$grid->addFilterTextInput('search', ['fromUrl', 'toUrl'], null, 'URL');
 
 		$grid->addFilterButtons();
+
+		$submit = $grid->getForm()->addSubmit('export', 'Exportovat (CSV)')->setHtmlAttribute('class', 'btn btn-outline-primary btn-sm');
+
+		$submit->onClick[] = function ($button) use ($grid) {
+			$grid->getPresenter()->redirect('export', [$grid->getSelectedIds()]);
+		};
 
 		return $grid;
 	}
@@ -327,4 +338,87 @@ Povolené sloupce hlavičky (lze použít obě varianty kombinovaně):<br>
 		$form->setDefaults($redirect->toArray());
 	}
 
+	public function actionExport(array $ids)
+	{
+
+	}
+
+	public function renderExport(array $ids)
+	{
+		$this->template->headerLabel = 'Export přesměrování do CSV';
+		$this->template->headerTree = [
+			['Přesměrování', 'default'],
+			['Export']
+		];
+		$this->template->displayButtons = [$this->createBackButton('default')];
+		$this->template->displayControls = [$this->getComponent('exportForm')];
+	}
+
+	public function createComponentExportForm()
+	{
+		/** @var \Grid\Datagrid $grid */
+		$grid = $this->getComponent('grid');
+
+		$ids = $this->getParameter('ids') ?: [];
+		$totalNo = $grid->getPaginator()->getItemCount();
+		$selectedNo = \count($ids);
+		$mutationSuffix = $this->redirectRepository->getConnection()->getMutationSuffix();
+
+		$form = $this->formFactory->create();
+		$form->setAction($this->link('this', ['selected' => $this->getParameter('selected')]));
+		$form->addRadioList('bulkType', 'Exportovat', [
+			'selected' => "vybrané ($selectedNo)",
+			'all' => "celý výsledek ($totalNo)",
+		])->setDefaultValue('selected');
+
+		$form->addSelect('delimiter', 'Oddělovač', [
+			';' => 'Středník (;)',
+			',' => 'Čárka (,)',
+			'	' => 'Tab (\t)',
+			' ' => 'Mezera ( )',
+			'|' => 'Pipe (|)',
+		]);
+
+		$form->addSubmit('submit', 'Exportovat');
+
+		$form->onSuccess[] = function (AdminForm $form) use ($ids, $grid) {
+			$values = $form->getValues('array');
+
+			$items = $values['bulkType'] == 'selected' ? $this->redirectRepository->many()->where('this.uuid', $ids) : $grid->getFilteredSource();
+
+			$tempFilename = \tempnam($this->tempDir, "csv");
+
+			$this->csvExport(
+				$items,
+				Writer::createFromPath($tempFilename),
+				$values['delimiter'],
+				static::CONFIGURATION['importColumns']
+			);
+
+			$this->getPresenter()->sendResponse(new FileResponse($tempFilename, "products.csv", 'text/csv'));
+		};
+
+		return $form;
+	}
+
+	protected function csvExport(ICollection $items, Writer $writer, string $delimiter = ';', ?array $header = null): void
+	{
+		$writer->setDelimiter($delimiter);
+
+		EncloseField::addTo($writer, "\t\22");
+
+		if ($header) {
+			$writer->insertOne($header);
+		}
+
+		while ($item = $items->fetch()) {
+			$row = [];
+
+			foreach ($header as $columnKey => $columnValue) {
+				$row[] = $item->getValue($columnKey) === false ? '0' : $item->getValue($columnKey);
+			}
+
+			$writer->insertOne($row);
+		}
+	}
 }
