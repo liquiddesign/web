@@ -662,6 +662,10 @@ class MenuPresenter extends BackendPresenter
 		// $states = ['normal', 'check-control', 'control'];
 
 		foreach ($content as $mutation => $string) {
+			if ($string == null) {
+				continue;
+			}
+
 			$state = 'normal';
 			$substr = '';
 			$pos = -1;
