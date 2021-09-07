@@ -6,6 +6,7 @@ namespace Web\Admin;
 
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
+use Nette\Forms\Controls\HiddenField;
 use Nette\Utils\Arrays;
 use Nette\Utils\Image;
 use Nette\Utils\Random;
@@ -167,6 +168,9 @@ class MenuPresenter extends BackendPresenter
 	public function createComponentForm(): Form
 	{
 		$form = $this->formFactory->create(true);
+		if (\count($form->getMutations()) === 1) {
+			$form->addLocaleHidden('active')->forAll(function (HiddenField $hidden) { $hidden->addFilter(function ($value) {return (bool) $value;})->setDefaultValue(true);} );
+		}
 		$form->setPrettyPages(true);
 
 		/** @var MenuItem $menu */
