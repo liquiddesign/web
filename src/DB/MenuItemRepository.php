@@ -145,9 +145,8 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 			\array_push($ancestors, $parent->menuitem);
 			$parent = $parent->ancestor;
 		} while ($parent);
-		
-		\array_reverse($ancestors);
-		return $ancestors;
+
+		return \array_reverse($ancestors);
 	}
 
 	/**
