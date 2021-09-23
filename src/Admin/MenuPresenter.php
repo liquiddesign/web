@@ -613,7 +613,7 @@ class MenuPresenter extends BackendPresenter
 	{
 		/** @var Form $form */
 		$form = $this->getComponent('form');
-		$defaults = $menuItem->jsonSerialize();
+		$defaults = $menuItem->toArray(['page']);
 		$defaults['types'] = $this->menuItemRepository->getMenuItemPositions($menuItem);
 
 		$form->setDefaults($defaults);
