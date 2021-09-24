@@ -107,7 +107,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		$menuItemRepository = $this;
 		$menuRepository = $this->getConnection()->findRepository(MenuType::class);
 		
-		return $this->cache->load('categoryTree', function (&$dependencies) use ($menuRepository, $menuItemRepository) {
+		return $this->cache->load('menuTree', function (&$dependencies) use ($menuRepository, $menuItemRepository) {
 			$dependencies = [
 				Cache::TAGS => ['menu'],
 			];
