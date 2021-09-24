@@ -114,7 +114,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 			$menu = [];
 			
 			foreach ($menuRepository->many() as $type) {
-				$menu[$type->getPK()] = $menuItemRepository->getFrontendTree($type->getPK());
+				$menu[$type->getPK()] = $menuItemRepository->getFrontendTree($type);
 			}
 			
 			return $menu;
