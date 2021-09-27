@@ -14,7 +14,7 @@ use StORM\Collection;
 use StORM\DIConnection;
 use StORM\Repository;
 use StORM\SchemaManager;
-use StORM\SerializedArray;
+use StORM\ArrayWrapper;
 
 /**
  * @extends \StORM\Repository<\Web\DB\MenuItem>
@@ -122,7 +122,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		});
 		
 		foreach ($menu as $key => $source) {
-			$menu[$key] = new SerializedArray($source, $menuItemRepository, ['children' => $menuItemRepository]);
+			$menu[$key] = new ArrayWrapper($source, $menuItemRepository, ['children' => $menuItemRepository]);
 		}
 		
 		return $menu;
