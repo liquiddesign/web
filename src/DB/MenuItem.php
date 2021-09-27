@@ -69,7 +69,7 @@ class MenuItem extends Entity
 	 * Pomocí repositářové metody getTree($type)
 	 * @var \Web\DB\MenuItem[]
 	 */
-	public array $children = [];
+	public $children = [];
 
 	/**
 	 * Zařazení do menu

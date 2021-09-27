@@ -14,6 +14,7 @@ use StORM\Collection;
 use StORM\DIConnection;
 use StORM\Repository;
 use StORM\SchemaManager;
+use StORM\SerializedArray;
 
 /**
  * @extends \StORM\Repository<\Web\DB\MenuItem>
@@ -107,7 +108,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		$menuItemRepository = $this;
 		$menuRepository = $this->getConnection()->findRepository(MenuType::class);
 		
-		return $this->cache->load('menuTree', function (&$dependencies) use ($menuRepository, $menuItemRepository) {
+		$menu = $this->cache->load('menuTree', function (&$dependencies) use ($menuRepository, $menuItemRepository) {
 			$dependencies = [
 				Cache::TAGS => ['menu'],
 			];
@@ -119,6 +120,12 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 			
 			return $menu;
 		});
+		
+		foreach ($menu as $key => $source) {
+			$menu[$key] = new SerializedArray($source, $menuItemRepository, ['children' => $menuItemRepository]);
+		}
+		
+		return $menu;
 	}
 	
 	public function getFrontendTree($menuType = null): array
@@ -189,6 +196,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 				}
 				
 				$element->menuitem->ancestor = $element->ancestor ? $element->ancestor->menuitem : null;
+				$element->menuitem->page; // preload page for cache
 				$element->menuitem->path = $element->path;
 				$branch[] = $element->menuitem;
 			}
