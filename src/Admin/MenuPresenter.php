@@ -13,6 +13,7 @@ use Nette\Utils\Random;
 use Nette\Utils\Strings;
 use StORM\DIConnection;
 use StORM\Entity;
+use Web\DB\DocumentRepository;
 use Web\DB\MenuAssign;
 use Web\DB\MenuAssignRepository;
 use Web\DB\MenuItem;
@@ -28,6 +29,7 @@ class MenuPresenter extends BackendPresenter
 	protected const CONFIGURATIONS = [
 		'background' => false,
 		'icon' => 'false',
+		'documents' => 'false',
 		/*
 		'iconImage' => [
 		 	'width' => 32,
@@ -49,6 +51,9 @@ class MenuPresenter extends BackendPresenter
 
 	/** @inject */
 	public MenuAssignRepository $menuAssignRepository;
+	
+	/** @inject */
+	public DocumentRepository $documentRepository;
 
 	/** @persistent */
 	public string $tab = 'main';
@@ -232,6 +237,10 @@ class MenuPresenter extends BackendPresenter
 				}
 			};
 		}
+		
+		if (isset(static::CONFIGURATIONS['documents']) && static::CONFIGURATIONS['documents']) {
+			$form['page']->addMultiSelect2('documents', $this->_('documents', 'Dokumenty'), $this->documentRepository->many()->toArray());
+		}
 
 		$form->addCheckbox('hidden', 'Skryto');
 
@@ -262,9 +271,13 @@ class MenuPresenter extends BackendPresenter
 				$this->generateDirectories([MenuItem::IMAGE_DIR]);
 				$values['iconImage'] = $form['iconImage']->upload($values['uuid'] . '.%2$s');
 			}
+			
+			if (isset(static::CONFIGURATIONS['documents']) && static::CONFIGURATIONS['documents']) {
+				$values['page']['documents'] = $values['documents'];
+				unset($values['documents']);
+			}
 
 			unset($values['types']);
-
 
 			if (!$values['page']['uuid']) {
 				$values['page']['uuid'] = Connection::generateUuid();
@@ -431,6 +444,10 @@ class MenuPresenter extends BackendPresenter
 				$this->redirect('this');
 			};
 		}
+		
+		if (isset(static::CONFIGURATIONS['documents']) && static::CONFIGURATIONS['documents']) {
+			$form['page']->addMultiSelect2('documents', $this->_('documents', 'Dokumenty'), $this->documentRepository->many()->toArray());
+		}
 
 		$form->addLocaleRichEdit('content', 'Obsah');
 
@@ -445,7 +462,6 @@ class MenuPresenter extends BackendPresenter
 				$values['page']['uuid'] = Connection::generateUuid();
 				$values['page']['params'] = 'page=' . $values['page']['uuid'] . '&';
 			}
-
 
 			if (static::CONFIGURATIONS['background']) {
 				if ($values['image']->isOK()) {
@@ -614,6 +630,7 @@ class MenuPresenter extends BackendPresenter
 		/** @var Form $form */
 		$form = $this->getComponent('form');
 		$defaults = $menuItem->toArray(['page']);
+		$defaults['page'] = $menuItem->page->toArray(['documents']);
 		$defaults['types'] = $this->menuItemRepository->getMenuItemPositions($menuItem);
 
 		$form->setDefaults($defaults);
@@ -640,7 +657,7 @@ class MenuPresenter extends BackendPresenter
 	{
 		/** @var Form $form */
 		$form = $this->getComponent('pageForm');
-		$form->setDefaults($page->toArray());
+		$form->setDefaults($page->toArray(['documents']));
 	}
 
 	public function onRemove(MenuItem $menuItem)
