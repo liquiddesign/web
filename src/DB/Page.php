@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Web\DB;
 
+use StORM\RelationCollection;
+
 /**
  * @table
  * @index{"name":"pages_page_type_params","unique":true,"columns":["type","params"]}
@@ -83,6 +85,13 @@ class Page extends \Pages\DB\Page
 	 * @column{"mutations":true}
 	 */
 	public bool $active = false;
+	
+	/**
+	 * Dokumenty stránky
+	 * @relationNxN
+	 * @var \Web\DB\Document[]|\StORM\RelationCollection<\Web\DB\Document>
+	 */
+	public RelationCollection $documents;
 	
 	public function isSystemic(): bool
 	{
