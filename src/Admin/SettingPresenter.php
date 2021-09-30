@@ -218,7 +218,8 @@ class SettingPresenter extends BackendPresenter
 		$grid->addColumnText('E-mail', 'email', '<a href="mailto:%1$s"><i class="far fa-envelope"></i> %1$s</a>')->onRenderCell[] = [$grid, 'decoratorEmpty'];
 		$grid->addColumnInputInteger('Priorita', 'priority', '', '', 'priority');
 		$grid->addColumnInputCheckbox('<i title="Skryto" class="far fa-eye-slash"></i>', 'hidden', '', '', 'hidden');
-		
+
+		$grid->addColumnMutations('name', false);
 		$grid->addColumnLinkDetail('detailContact');
 		$grid->addColumnActionDelete();
 		

@@ -99,6 +99,8 @@ class TinyTemplatePresenter extends BackendPresenter
 		$grid->addColumnText($this->_('adminWebTinytemplate.description', 'Popis'), 'description', '%s', 'description');
 		$grid->addColumnInputInteger($this->_('admin.priority', 'Pořadí'), 'priority', '', '', 'priority', [], true);
 		$grid->addColumnInputCheckbox('<i title="'. $this->_('admin.hidden', 'Skryto') .'" class="far fa-eye-slash"></i>', 'hidden', '', '', 'hidden');
+
+		$grid->addColumnMutations('active', false);
 		$grid->addColumnLinkDetail();
 		$grid->addColumnActionDelete();
 		$grid->addButtonSaveAll();
