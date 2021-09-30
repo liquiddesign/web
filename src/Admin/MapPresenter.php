@@ -101,6 +101,7 @@ class MapPresenter extends BackendPresenter
 		$grid->addColumnText($this->_('name', 'Název'), 'name', '%s', 'name');
 		$grid->addColumnText($this->_('.code', 'Kód'), 'id', '{control map-%s}', 'id');
 		$grid->addColumnText($this->_('address', 'Adresa'), 'address', '%s', 'address');
+		$grid->addColumnMutations('active', false);
 		$grid->addColumnLinkDetail();
 		$grid->addColumnActionDelete();
 		$grid->addButtonSaveAll();

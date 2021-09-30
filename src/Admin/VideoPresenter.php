@@ -97,6 +97,7 @@ class VideoPresenter extends BackendPresenter
 		$grid->addColumnText($this->_('.code', 'Kód'), 'id', '{control video-%s}', 'id');
 		$grid->addColumnText($this->_('link', 'Link'), 'link', '%s', 'link');
 		$grid->addColumnPriority();
+		$grid->addColumnMutations('active', false);
 		$grid->addColumnLinkDetail();
 		$grid->addColumnActionDelete();
 		$grid->addButtonSaveAll();

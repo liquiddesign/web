@@ -169,6 +169,7 @@ class FaqPresenter extends BackendPresenter
 		$grid->addColumnText($this->_('name', 'Název'), 'name', '%s', 'name');
 		$grid->addColumnText($this->_('.code', 'Kód'), 'id', '{control faq-%s}', 'id');
 		$grid->addColumnLink('Items', '<i title="'. $this->tItems .'" class="fas fa-list-ul"></i> '. $this->tItems .'');
+		$grid->addColumnMutations('active', false);
 		$grid->addColumnLinkDetail();
 		$grid->addColumnActionDelete();
 		$grid->addButtonSaveAll();
@@ -185,6 +186,7 @@ class FaqPresenter extends BackendPresenter
 		$grid->addColumnText($this->_('question', 'Dotaz'), 'question', '%s', 'question');
 		$grid->addColumnHidden();
 		$grid->addColumnPriority();
+		$grid->addColumnMutations('active', false);
 		$grid->addColumnLinkDetail('detailItem');
 		$grid->addColumnActionDelete();
 		$grid->addButtonSaveAll();

@@ -312,6 +312,7 @@ class GalleryPresenter extends BackendPresenter
 		$grid->addColumnText($this->_('galleryThumbHeight', 'Náhled výška (px)'), 'thumbHeight', '%s', 'thumbHeight');
 		$grid->addColumnHidden();
 		$grid->addColumnLink('Items', '<i title="'. $tPictures .'" class="far fa-images"></i> '. $tPictures .'');
+		$grid->addColumnMutations('active', false);
 		$grid->addColumnLinkDetail();
 		$grid->addColumnActionDelete([$this->galleryRepo, 'deleteImages']);
 		$grid->addButtonSaveAll();
@@ -328,6 +329,7 @@ class GalleryPresenter extends BackendPresenter
 		$grid->addColumnText($this->_('itemDescription', 'Popis'), 'description', '%s', 'description');
 		$grid->addColumnHidden();
 		$grid->addColumnPriority();
+		$grid->addColumnMutations('active', false);
 		$grid->addColumnLinkDetail('DetailItem');
 		$grid->addColumnActionDelete([$this->galleryImageRepo, 'deleteImage']);
 		$grid->addButtonSaveAll();

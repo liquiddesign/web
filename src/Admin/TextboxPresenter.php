@@ -98,6 +98,7 @@ class TextboxPresenter extends BackendPresenter
 		$grid->addColumnText($this->_('name', 'Název'), 'name', '%s', 'name');
 		$grid->addColumnText($this->_('.code', 'Kód'), 'id', '{control textbox-%s}', 'id');
 		$grid->addColumnPriority();
+		$grid->addColumnMutations('active', false);
 		$grid->addColumnLinkDetail();
 		$grid->addColumnActionDeleteSystemic();
 		$grid->addButtonSaveAll();

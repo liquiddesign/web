@@ -25,5 +25,5 @@ class MenuType extends Entity
 	 * Maximální úroven zanoření
 	 * @column
 	 */
-	public int $maxLevel = 3;
+	public int $maxLevel = 2;
 }

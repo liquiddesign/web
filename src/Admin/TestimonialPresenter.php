@@ -128,6 +128,7 @@ class TestimonialPresenter extends BackendPresenter
 		$grid->addColumnText($this->_('fullName', 'Jméno'), 'fullName', '%s', 'fullName');
 		$grid->addColumnText($this->_('.code', 'Kód'), 'id', '{control testimonial-%s}', 'id');
 		$grid->addColumnText('Pozice', 'position', '%s', 'position');
+		$grid->addColumnMutations('active', false);
 		$grid->addColumnLinkDetail();
 		$grid->addColumnActionDelete();
 		$grid->addButtonSaveAll();
