@@ -122,7 +122,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		});
 		
 		foreach ($menu as $key => $source) {
-			$menu[$key] = new ArrayWrapper($source, $menuItemRepository, ['children' => $menuItemRepository]);
+			$menu[$key] = new ArrayWrapper($source, $menuItemRepository, ['children' => $menuItemRepository], true);
 		}
 		
 		return $menu;
