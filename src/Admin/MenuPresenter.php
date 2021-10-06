@@ -7,14 +7,10 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Nette\Forms\Controls\HiddenField;
-use Nette\Utils\Arrays;
 use Nette\Utils\Image;
 use Nette\Utils\Random;
-use Nette\Utils\Strings;
 use StORM\DIConnection;
-use StORM\Entity;
 use Web\DB\DocumentRepository;
-use Web\DB\MenuAssign;
 use Web\DB\MenuAssignRepository;
 use Web\DB\MenuItem;
 use Web\DB\MenuItemRepository;
@@ -29,7 +25,7 @@ class MenuPresenter extends BackendPresenter
 	protected const CONFIGURATIONS = [
 		'background' => false,
 		'icon' => 'false',
-		'documents' => 'false',
+		'documents' => false,
 		/*
 		'iconImage' => [
 		 	'width' => 32,
