@@ -418,7 +418,7 @@ class MenuPresenter extends BackendPresenter
 			}
 
 			$this->cache->clean([
-				Cache::TAGS => ['menuTree'],
+				Cache::TAGS => ['menu'],
 			]);
 
 			$this->flashMessage('Uloženo', 'success');
@@ -498,7 +498,7 @@ class MenuPresenter extends BackendPresenter
 			$page = $this->pageRepository->syncOne($values['page']);
 
 			$this->cache->clean([
-				Cache::TAGS => ['menuTree'],
+				Cache::TAGS => ['menu'],
 			]);
 
 			$this->flashMessage('Uloženo', 'success');
@@ -569,7 +569,7 @@ class MenuPresenter extends BackendPresenter
 			}
 
 			$this->cache->clean([
-				Cache::TAGS => ['menuTree'],
+				Cache::TAGS => ['menu'],
 			]);
 
 			$this->flashMessage('Uloženo', 'success');
