@@ -6,6 +6,8 @@ namespace Web\Admin;
 
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
+use Nette\Caching\Cache;
+use Nette\Caching\Storage;
 use Nette\Forms\Controls\HiddenField;
 use Nette\Utils\Image;
 use Nette\Utils\Random;
@@ -47,9 +49,14 @@ class MenuPresenter extends BackendPresenter
 
 	/** @inject */
 	public MenuAssignRepository $menuAssignRepository;
-	
+
 	/** @inject */
 	public DocumentRepository $documentRepository;
+
+	/** @inject */
+	public Storage $storage;
+
+	protected Cache $cache;
 
 	/** @persistent */
 	public string $tab = 'main';
@@ -57,6 +64,13 @@ class MenuPresenter extends BackendPresenter
 	protected array $pageTypes = ['index' => '', 'content' => null, 'contact' => null, 'news' => '', 'pickup_points' => null];
 
 	private array $selectedAncestors = [];
+
+	protected function startup()
+	{
+		parent::startup();
+
+		$this->cache = new Cache($this->storage);
+	}
 
 	public function createComponentGrid()
 	{
@@ -170,7 +184,11 @@ class MenuPresenter extends BackendPresenter
 	{
 		$form = $this->formFactory->create(true);
 		if (\count($form->getMutations()) === 1) {
-			$form->addLocaleHidden('active')->forAll(function (HiddenField $hidden) { $hidden->addFilter(function ($value) {return (bool) $value;})->setDefaultValue(true);} );
+			$form->addLocaleHidden('active')->forAll(function (HiddenField $hidden) {
+				$hidden->setDefaultValue(true)->addFilter(function ($value) {
+					return (bool)$value;
+				});
+			});
 		}
 		$form->setPrettyPages(true);
 
@@ -186,7 +204,6 @@ class MenuPresenter extends BackendPresenter
 			);
 
 			$imagePicker->onDelete[] = function ($dir, $file) use ($menu) {
-
 				if ($menu->page) {
 					$menu->page->update(['image' => null]);
 				}
@@ -199,7 +216,6 @@ class MenuPresenter extends BackendPresenter
 			);
 
 			$imagePicker->onDelete[] = function ($dir, $file) use ($menu) {
-
 				if ($menu->page) {
 					$menu->page->update(['mobileImage' => null]);
 				}
@@ -233,7 +249,7 @@ class MenuPresenter extends BackendPresenter
 				}
 			};
 		}
-		
+
 		if (isset(static::CONFIGURATIONS['documents']) && static::CONFIGURATIONS['documents']) {
 			$form['page']->addMultiSelect2('documents', $this->_('documents', 'Dokumenty'), $this->documentRepository->many()->toArray());
 		}
@@ -267,7 +283,7 @@ class MenuPresenter extends BackendPresenter
 				$this->generateDirectories([MenuItem::IMAGE_DIR]);
 				$values['iconImage'] = $form['iconImage']->upload($values['uuid'] . '.%2$s');
 			}
-			
+
 			if (isset(static::CONFIGURATIONS['documents']) && static::CONFIGURATIONS['documents']) {
 				$values['page']['documents'] = $values['documents'];
 				unset($values['documents']);
@@ -401,6 +417,10 @@ class MenuPresenter extends BackendPresenter
 				$menuItem->page->update(['params' => 'page=' . $menuItem->page->getPK() . '&']);
 			}
 
+			$this->cache->clean([
+				Cache::TAGS => ['menuTree'],
+			]);
+
 			$this->flashMessage('Uloženo', 'success');
 			$form->processRedirect('detail', 'default', [$menuItem]);
 		};
@@ -440,7 +460,7 @@ class MenuPresenter extends BackendPresenter
 				$this->redirect('this');
 			};
 		}
-		
+
 		if (isset(static::CONFIGURATIONS['documents']) && static::CONFIGURATIONS['documents']) {
 			$form['page']->addMultiSelect2('documents', $this->_('documents', 'Dokumenty'), $this->documentRepository->many()->toArray());
 		}
@@ -477,6 +497,10 @@ class MenuPresenter extends BackendPresenter
 			$values['page']['content'] = static::sanitizePageContent($values['content']);
 			$page = $this->pageRepository->syncOne($values['page']);
 
+			$this->cache->clean([
+				Cache::TAGS => ['menuTree'],
+			]);
+
 			$this->flashMessage('Uloženo', 'success');
 			$form->processRedirect('pageDetail', 'default', [$page]);
 		};
@@ -489,10 +513,9 @@ class MenuPresenter extends BackendPresenter
 		$form = $this->formFactory->create(true);
 		$form->setPrettyPages(true);
 
-		$form->addLocaleText('name', 'Název menu');
+		$form->addLocaleText('name', 'Název položky');
 
-		$form->addDataMultiSelect('types', 'Umístění',
-			$this->menuItemRepository->getTreeArrayForSelect())->setRequired();
+		$form->addDataMultiSelect('types', 'Umístění', $this->menuItemRepository->getTreeArrayForSelect())->setRequired();
 		$form->addInteger('priority', 'Priorita')->setRequired()->setDefaultValue(10);
 		$form->addCheckbox('hidden', 'Skryto');
 
@@ -508,6 +531,10 @@ class MenuPresenter extends BackendPresenter
 
 			$values['uuid'] = DIConnection::generateUuid();
 			$values['page'] = $form->getPresenter()->getParameter('page')->getPK();
+
+			foreach ($this->menuItemRepository->getConnection()->getAvailableMutations() as $mutation => $suffix) {
+				$values['active'][$mutation] = true;
+			}
 
 			/** @var MenuItem $menuItem */
 			$menuItem = $this->menuItemRepository->createOne($values);
@@ -540,6 +567,10 @@ class MenuPresenter extends BackendPresenter
 					'path' => $path
 				]);
 			}
+
+			$this->cache->clean([
+				Cache::TAGS => ['menuTree'],
+			]);
 
 			$this->flashMessage('Uloženo', 'success');
 			$form->getPresenter()->redirect('default');
@@ -628,6 +659,10 @@ class MenuPresenter extends BackendPresenter
 		$defaults = $menuItem->toArray(['page']);
 		$defaults['page'] = $menuItem->page->toArray(['documents']);
 		$defaults['types'] = $this->menuItemRepository->getMenuItemPositions($menuItem);
+
+		foreach ($this->menuItemRepository->getConnection()->getAvailableMutations() as $mutation => $suffix) {
+			$defaults['active'][$mutation] = $defaults['active'][$mutation] ? '1' : '0';
+		}
 
 		$form->setDefaults($defaults);
 		$form['content']->setDefaults($defaults['page']['content'] ?? []);
