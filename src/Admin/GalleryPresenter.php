@@ -329,7 +329,6 @@ class GalleryPresenter extends BackendPresenter
 		$grid->addColumnText($this->_('itemDescription', 'Popis'), 'description', '%s', 'description');
 		$grid->addColumnHidden();
 		$grid->addColumnPriority();
-		$grid->addColumnMutations('active', false);
 		$grid->addColumnLinkDetail('DetailItem');
 		$grid->addColumnActionDelete([$this->galleryImageRepo, 'deleteImage']);
 		$grid->addButtonSaveAll();

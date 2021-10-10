@@ -5,11 +5,22 @@ declare(strict_types=1);
 namespace Web\DB;
 
 use Nette\Utils\Image;
+use StORM\DIConnection;
 use StORM\Repository;
+use StORM\SchemaManager;
 
 class GalleryRepository extends Repository
 {
 	public string $wwwDir;
+	
+	private GalleryImageRepository $galleryImageRepository;
+	
+	public function __construct(DIConnection $connection, SchemaManager $schemaManager, GalleryImageRepository $galleryImageRepository)
+	{
+		parent::__construct($connection, $schemaManager);
+		
+		$this->galleryImageRepository = $galleryImageRepository;
+	}
 	
 	public function resizeImagesFromUploaded(Gallery $gallery): void
 	{
@@ -39,7 +50,7 @@ class GalleryRepository extends Repository
 	public function deleteImages(Gallery $gallery): void
 	{
 		foreach ($gallery->images as $image) {
-			$this->getConnection()->findRepository(GalleryImage::class)->deleteImage($image);
+			$this->galleryImageRepository->deleteImage($image);
 		}
 	}
 }
