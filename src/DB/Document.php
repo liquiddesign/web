@@ -20,6 +20,11 @@ class Document extends Entity
 	 * @column{"mutations":true}
 	 */
 	public ?string $filename;
+
+	/**
+	 * @column{"mutations":true}
+	 */
+	public ?int $fileSize;
 	
 	/**
 	 * Priorita

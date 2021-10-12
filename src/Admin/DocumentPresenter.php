@@ -85,6 +85,7 @@ class DocumentPresenter extends BackendPresenter
 			/** @var \Nette\Http\FileUpload $file */
 			foreach ($files as $lang => $file) {
 				if ($file->isOk()) {
+					$values['fileSize'][$lang] = $file->getSize();
 					$fileExt = \strtolower(\mb_substr($file->getSanitizedName(), \strrpos($file->getSanitizedName(), ".")));
 					$fileName = $values['uuid'] . $fileExt;
 					$file->move($this->wwwDir . '/userfiles/' . Document::FILE_DIR . '/' . $lang . '/' . $fileName);
