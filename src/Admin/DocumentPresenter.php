@@ -86,8 +86,7 @@ class DocumentPresenter extends BackendPresenter
 			foreach ($files as $lang => $file) {
 				if ($file->isOk()) {
 					$values['fileSize'][$lang] = $file->getSize();
-					$fileExt = \strtolower(\mb_substr($file->getSanitizedName(), \strrpos($file->getSanitizedName(), ".")));
-					$fileName = $values['uuid'] . $fileExt;
+					$fileName = $file->getSanitizedName();
 					$file->move($this->wwwDir . '/userfiles/' . Document::FILE_DIR . '/' . $lang . '/' . $fileName);
 					$values['filename'][$lang] = $fileName;
 				} else {
