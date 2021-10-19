@@ -70,7 +70,7 @@ class HubspotPresenter extends BackendPresenter
 	{
 		$form = $this->formFactory->create(true, true, true);
 		$form->addLocaleText('name', $this->_('name', 'Název'))->setRequired();
-		$form->addTextArea('script', $this->_('formText', 'Script formuláře'))->setRequired();
+		$form->addLocaleTextArea('script', $this->_('formText', 'Script formuláře'))->setRequired();
 		$form->addInteger('priority', $this->_('.priority', 'Pořadí'))->setRequired()->setDefaultValue(10);
 		$form->addCheckbox('hidden', $this->_('.hidden', 'Skryto'));
 		$form->addHidden('id')->setDefaultValue(Random::generate(4));

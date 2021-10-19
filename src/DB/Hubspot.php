@@ -17,7 +17,7 @@ class Hubspot extends Entity
 	public ?string $name;
 	
 	/**
-	 * @column{"type":"longtext"}
+	 * @column{"type":"longtext","mutations":true}
 	 */
 	public ?string $script;
 	
