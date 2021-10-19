@@ -77,6 +77,11 @@ class Cover extends Entity
 	/**
 	 * @column
 	 */
+	public ?string $imageTablet = null;
+
+	/**
+	 * @column
+	 */
 	public ?string $imageMobile = null;
 	
 	/**

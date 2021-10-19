@@ -66,6 +66,10 @@ class CoverPresenter extends BackendPresenter
 		$imagePicker = $form->addImagePicker('imageDesktop', $this->_('imageDesktop', 'Obrázek Desktop'), [
 			Cover::IMAGE_DIR . '/desktop' => null,
 		]);
+
+		$tabletPicker = $form->addImagePicker('imageTablet', $this->_('imageTablet', 'Obrázek Tablet'), [
+			Cover::IMAGE_DIR . '/tablet' => null,
+		]);
 		
 		$mobilePicker = $form->addImagePicker('imageMobile', $this->_('imageMobile', 'Obrázek Mobil'), [
 			Cover::IMAGE_DIR . '/mobile' => null,
@@ -77,6 +81,11 @@ class CoverPresenter extends BackendPresenter
 		if ($cover) {
 			$imagePicker->onDelete[] = function () use ($cover): void {
 				$cover->update(['imageDesktop' => null]);
+				$this->redirect('this');
+			};
+
+			$tabletPicker->onDelete[] = function () use ($cover): void {
+				$cover->update(['imageTablet' => null]);
 				$this->redirect('this');
 			};
 			
@@ -104,9 +113,10 @@ class CoverPresenter extends BackendPresenter
 		
 		$form->onSuccess[] = function (AdminForm $form) use ($cover): void {
 			$values = $form->getValues('array');
-			$this->generateDirectories([Cover::IMAGE_DIR], ['desktop', 'mobile']);
+			$this->generateDirectories([Cover::IMAGE_DIR], ['desktop', 'tablet', 'mobile']);
 			
 			$values['imageDesktop'] = $form['imageDesktop']->upload($values['uuid'] . '.%2$s');
+			$values['imageTablet'] = $form['imageTablet']->upload($values['uuid'] . '.%2$s');
 			$values['imageMobile'] = $form['imageMobile']->upload($values['uuid'] . '.%2$s');
 			
 			$cover = $this->coverRepo->syncOne($values, null, true);
