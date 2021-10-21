@@ -11,6 +11,7 @@ use Web\DB\Testimonial;
 use Web\DB\TestimonialRepository;
 use Nette\Utils\Image;
 use Nette\Utils\Random;
+use Web\Helpers;
 
 class TestimonialPresenter extends BackendPresenter
 {
@@ -107,6 +108,7 @@ class TestimonialPresenter extends BackendPresenter
 			
 			$values['image'] = $form['image']->upload($values['uuid'] . '.%2$s');
 			$values['logo'] = $form['logo']->upload($values['uuid'] . '.%2$s');
+			$values['text'] = Helpers::sanitizeMutationsStrings($values['text']);
 			
 			$testimonial = $this->testimonialRepo->syncOne($values, null, true);
 			

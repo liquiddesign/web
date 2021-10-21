@@ -12,6 +12,7 @@ use Web\DB\FaqItem;
 use Web\DB\FaqItemRepository;
 use Web\DB\FaqRepository;
 use Nette\Utils\Random;
+use Web\Helpers;
 
 class FaqPresenter extends BackendPresenter
 {
@@ -153,6 +154,9 @@ class FaqPresenter extends BackendPresenter
 		$form->addSubmits(!$faqItem);
 		$form->onSuccess[] = function (AdminForm $form) use ($faqItem): void {
 			$values = $form->getValues('array');
+
+			$values['answer'] = Helpers::sanitizeMutationsStrings($values['answer']);
+
 			$faqItem = $this->faqItemRepo->syncOne($values, null, true);
 			$this->flashMessage($this->_('.saved', 'Uloženo'), 'success');
 			$form->processRedirect('detailItem', 'items', [$faqItem], [$faqItem->faq]);

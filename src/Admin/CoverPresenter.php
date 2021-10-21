@@ -11,6 +11,7 @@ use Nette\Forms\Controls\TextInput;
 use Web\DB\Cover;
 use Web\DB\CoverRepository;
 use Nette\Utils\Random;
+use Web\Helpers;
 
 class CoverPresenter extends BackendPresenter
 {
@@ -118,6 +119,7 @@ class CoverPresenter extends BackendPresenter
 			$values['imageDesktop'] = $form['imageDesktop']->upload($values['uuid'] . '.%2$s');
 			$values['imageTablet'] = $form['imageTablet']->upload($values['uuid'] . '.%2$s');
 			$values['imageMobile'] = $form['imageMobile']->upload($values['uuid'] . '.%2$s');
+			$values['text'] = Helpers::sanitizeMutationsStrings($values['text']);
 			
 			$cover = $this->coverRepo->syncOne($values, null, true);
 			

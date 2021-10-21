@@ -21,6 +21,7 @@ use Web\DB\Page;
 use Web\DB\PageRepository;
 use Forms\Form;
 use StORM\Connection;
+use Web\Helpers;
 
 class MenuPresenter extends BackendPresenter
 {
@@ -314,7 +315,7 @@ class MenuPresenter extends BackendPresenter
 				unset($values['mobileImage']);
 			}
 
-			$values['page']['content'] = static::sanitizePageContent($values['content']);;
+			$values['page']['content'] = static::sanitizePageContent($values['content']);
 			$values['page']['name'] = $values['name'];
 			$values['page']['params'] = $values['page']['params'] ?: '';
 			$type = $values['page']['type'];
@@ -708,70 +709,11 @@ class MenuPresenter extends BackendPresenter
 	/**
 	 * @param array $content Array with mutations as keys
 	 * @return array
+	 * @deprecated user function from Helpers
 	 */
 	public static function sanitizePageContent(array $content): array
 	{
-		// $states = ['normal', 'check-control', 'control'];
-
-		foreach ($content as $mutation => $string) {
-			if ($string == null) {
-				continue;
-			}
-
-			$state = 'normal';
-			$substr = '';
-			$pos = -1;
-			$offset = 0;
-			$length = \strlen($string);
-
-			for ($i = 0; $i < $length; $i++) {
-				$char = $string[$i];
-
-				if ($state == 'check-control') {
-					$substr .= $char;
-
-					if ($substr === 'control') {
-						$state = 'control';
-						$substr = '';
-						$pos = -1;
-						continue;
-					}
-
-					if (\strlen($substr) > 7 || (\strlen($substr) > 0 && \stripos('control', $substr) === false)) {
-						$content[$mutation] = \substr_replace($content[$mutation], '', $pos + $offset, 1);
-						$content[$mutation] = \substr_replace($content[$mutation], '&#123;', $pos + $offset, 0);
-						$offset += 5;
-
-						$state = 'normal';
-						$substr = '';
-						$pos = -1;
-					}
-				}
-
-				if ($state == 'control') {
-					if ($char === '}') {
-						$state = 'normal';
-						continue;
-					}
-				}
-
-				if ($char === '{') {
-					$pos = $i;
-					$state = 'check-control';
-				}
-
-				if ($state == 'normal' && $char === '}') {
-					$content[$mutation] = \substr_replace($content[$mutation], '', $i + $offset, 1);
-					$content[$mutation] = \substr_replace($content[$mutation], '&#125;', $i + $offset, 0);
-					$offset += 5;
-				}
-			}
-
-//			$content[$mutation] = \preg_replace('/({(?!control))/i','&#123;', $string);
-//			$content[$mutation] = \preg_replace('/((?<!control)})/i','&#125;', $content[$mutation]);
-		}
-
-		return $content;
+		return Helpers::sanitizeMutationsStrings($content);
 	}
 
 }

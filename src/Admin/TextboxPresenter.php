@@ -10,6 +10,7 @@ use Admin\Controls\AdminGrid;
 use Web\DB\Textbox;
 use Web\DB\TextboxRepository;
 use Nette\Utils\Random;
+use Web\Helpers;
 
 class TextboxPresenter extends BackendPresenter
 {
@@ -82,7 +83,11 @@ class TextboxPresenter extends BackendPresenter
 		$form->onSuccess[] = function (AdminForm $form) use ($textbox): void {
 			$values = $form->getValues('array');
 			$changedProperties = $form->getChangedProperties();
+
+			$values['text'] = Helpers::sanitizeMutationsStrings($values['text']);
+
 			$textbox = $this->textboxRepo->syncOne($values, $changedProperties, true, true);
+
 			$this->flashMessage($this->_('.saved', 'Uloženo'), 'success');
 			$form->processRedirect('detail', 'default', [$textbox]);
 		};
