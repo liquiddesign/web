@@ -241,7 +241,7 @@ class SliderPresenter extends BackendPresenter
 		}
 	}
 	
-	protected function createImageDirs(string $dir)
+	protected function createImageDirs(string $dir): void
 	{
 		$subDirs = ['desktop', 'mobile', 'video'];
 		$rootDir = $this->wwwDir . \DIRECTORY_SEPARATOR . 'userfiles' . \DIRECTORY_SEPARATOR . $dir;
