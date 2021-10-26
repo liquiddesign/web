@@ -22,7 +22,7 @@ class IntegrationPresenter extends BackendPresenter
 	/** @inject */
 	public ContactItemRepository $contactItemRepo;
 	
-	public function beforeRender()
+	public function beforeRender(): void
 	{
 		parent::beforeRender();
 		
