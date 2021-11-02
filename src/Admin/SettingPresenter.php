@@ -20,9 +20,7 @@ class SettingPresenter extends BackendPresenter
 			'support',
 			'map'
 		],
-		'allowedSettings' => [
-			'headCode'
-		]
+		'allowedSettings' => []
 	];
 
 	/** @inject */
