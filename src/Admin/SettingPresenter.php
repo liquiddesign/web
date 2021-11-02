@@ -20,6 +20,11 @@ class SettingPresenter extends BackendPresenter
 			'support',
 			'map'
 		],
+		'tabs' => [
+			'@default' => 'Hlavní informace a mapa',
+			'@contacts' => 'Kontakty',
+			'@social' => 'Sítě',
+		],
 		'allowedSettings' => []
 	];
 
@@ -33,12 +38,7 @@ class SettingPresenter extends BackendPresenter
 	{
 		parent::beforeRender();
 
-		$this->template->tabs = [
-			'@default' => 'Hlavní informace a mapa',
-			'@contacts' => 'Kontakty',
-			'@social' => 'Sítě',
-			'@others' => 'Ostatní',
-		];
+		$this->template->tabs = $this::CONFIGURATION['tabs'];
 	}
 
 	public function actionDefault()
