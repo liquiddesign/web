@@ -128,15 +128,18 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		return $menu;
 	}
 	
-	public function getFrontendTree($menuType = null): array
+	public function getFrontendTree($menuType = null, $usePageOffline = true): array
 	{
 		$collection = $this->menuAssignRepository->many()
 			->join(['item' => 'web_menuitem'], 'item.uuid = this.fk_menuitem')
 			->where('LENGTH(path) <= 40')
-			->where('menuitem.page.isOffline', false)
 			->where('menuitem.hidden', false)
 			->where('menuitem.active_' . $this->getConnection()->getMutation(), true)
 			->orderBy(['item.priority']);
+		
+		if ($usePageOffline) {
+			$collection->where('menuitem.page.isOffline', false);
+		}
 		
 		if ($menuType) {
 			if (!$menuType instanceof MenuType) {
