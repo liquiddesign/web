@@ -138,7 +138,8 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 			->orderBy(['item.priority']);
 		
 		if ($usePageOffline) {
-			$collection->where('menuitem.page.isOffline', false);
+			$collection->join(['webPage' => 'web_page'], 'webPage.uuid = item.fk_page');
+			$collection->where('webPage.isOffline', false);
 		}
 		
 		if ($menuType) {
