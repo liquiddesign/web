@@ -509,4 +509,11 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 			}
 		}
 	}
+
+	public function clearMenuCache(): void
+	{
+		$this->cache->clean([
+			Cache::TAGS => ['menu'],
+		]);
+	}
 }

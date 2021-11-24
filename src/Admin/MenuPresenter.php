@@ -128,11 +128,17 @@ class MenuPresenter extends BackendPresenter
 			if (!$menuItem->isSystemic()) {
 				$page->delete();
 			}
+
+			$this->menuItemRepository->clearMenuCache();
 		};
 
 		$grid->addColumnActionDelete($deleteCb);
-		$grid->addButtonSaveAll();
-		$grid->addButtonDeleteSelected($deleteCb, false, null, 'this.uuid');
+		$grid->addButtonSaveAll([],[],null,false,null,null, true, null, function (){
+			$this->menuItemRepository->clearMenuCache();
+		});
+		$grid->addButtonDeleteSelected($deleteCb, false, null, 'this.uuid', function () {
+			$this->menuItemRepository->clearMenuCache();
+		});
 
 		$grid->addFilterTextInput('search', ['this.name_cs'], null, 'Název');
 		$grid->addFilterButtons();
@@ -183,7 +189,7 @@ class MenuPresenter extends BackendPresenter
 
 	public function createComponentForm(): Form
 	{
-		$form = $this->formFactory->create(true);
+		$form = $this->formFactory->create(true, true);
 		if (\count($form->getMutations()) === 1) {
 			$form->addLocaleHidden('active')->forAll(function (HiddenField $hidden) {
 				$hidden->setDefaultValue(true)->addFilter(function ($value) {
@@ -418,9 +424,7 @@ class MenuPresenter extends BackendPresenter
 				$menuItem->page->update(['params' => 'page=' . $menuItem->page->getPK() . '&']);
 			}
 
-			$this->cache->clean([
-				Cache::TAGS => ['menu'],
-			]);
+			$this->menuItemRepository->clearMenuCache();
 
 			$this->flashMessage('Uloženo', 'success');
 			$form->processRedirect('detail', 'default', [$menuItem]);
@@ -498,9 +502,7 @@ class MenuPresenter extends BackendPresenter
 			$values['page']['content'] = static::sanitizePageContent($values['content']);
 			$page = $this->pageRepository->syncOne($values['page']);
 
-			$this->cache->clean([
-				Cache::TAGS => ['menu'],
-			]);
+			$this->menuItemRepository->clearMenuCache();
 
 			$this->flashMessage('Uloženo', 'success');
 			$form->processRedirect('pageDetail', 'default', [$page]);
@@ -532,10 +534,6 @@ class MenuPresenter extends BackendPresenter
 
 			$values['uuid'] = DIConnection::generateUuid();
 			$values['page'] = $form->getPresenter()->getParameter('page')->getPK();
-
-			foreach ($this->menuItemRepository->getConnection()->getAvailableMutations() as $mutation => $suffix) {
-				$values['active'][$mutation] = true;
-			}
 
 			/** @var MenuItem $menuItem */
 			$menuItem = $this->menuItemRepository->createOne($values);
@@ -569,9 +567,7 @@ class MenuPresenter extends BackendPresenter
 				]);
 			}
 
-			$this->cache->clean([
-				Cache::TAGS => ['menu'],
-			]);
+			$this->menuItemRepository->clearMenuCache();
 
 			$this->flashMessage('Uloženo', 'success');
 			$form->getPresenter()->redirect('default');
