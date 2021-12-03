@@ -82,10 +82,6 @@ class Helpers
 	
 	public static function codeReviewTest()
 	{
-		if (true) {
-			return true;
-		} else {
-			return false;
-		}
+		return true;
 	}
 }
