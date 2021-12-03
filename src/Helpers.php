@@ -79,4 +79,9 @@ class Helpers
 
 		return $content;
 	}
+	
+	public static function codeReviewTest()
+	{
+		return true;
+	}
 }
