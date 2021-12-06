@@ -513,7 +513,14 @@ class MenuPresenter extends BackendPresenter
 
 	public function createComponentMenuForm()
 	{
-		$form = $this->formFactory->create(true);
+		$form = $this->formFactory->create(true, true);
+		if (\count($form->getMutations()) === 1) {
+			$form->addLocaleHidden('active')->forAll(function (HiddenField $hidden) {
+				$hidden->setDefaultValue(true)->addFilter(function ($value) {
+					return (bool)$value;
+				});
+			});
+		}
 		$form->setPrettyPages(true);
 
 		$form->addLocaleText('name', 'Název položky');
@@ -700,6 +707,8 @@ class MenuPresenter extends BackendPresenter
 			->where('fk_menutype', $this->tab)
 			->where('assign.path LIKE :path', ['path' => "$menuItem->path%"])
 			->delete();
+
+		$this->menuItemRepository->clearMenuCache();
 	}
 
 	/**
