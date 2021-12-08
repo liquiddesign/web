@@ -1,12 +1,8 @@
 # Ⓦ Web
 Služby, entity, administrace a kontroly pro CMS
- 
-![Travis](https://travis-ci.org/liquiddesign/web.svg?branch=master)
-![Release](https://img.shields.io/github/v/release/liquiddesign/web.svg?1)
+
+![Actions](https://github.com/liquiddesign/web/actions/workflows/php.yml/badge.svg)
+![Release](https://img.shields.io/github/v/release/liquiddesign/web)
 
 ## Dokumentace
 ☞ [Dropbox paper](https://paper.dropbox.com/doc/W-Web--BGZLihaxZHQ3iGcTOQkPYfXrAg-eOMqwxUnWnQGWEGWGxnHl)
-
-## TODO
-
-##Cache

@@ -7,13 +7,15 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
+use Nette\Utils\Random;
 use Web\DB\Video;
 use Web\DB\VideoRepository;
-use Nette\Utils\Random;
 
 class VideoPresenter extends BackendPresenter
 {
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public VideoRepository $videoRepo;
 	
 	public string $tVideos;

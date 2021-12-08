@@ -6,20 +6,25 @@ namespace Web\Admin;
 
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
-use Web\DB\Page;
-use Web\DB\PageRepository;
+use Admin\Controls\AdminGrid;
 use Forms\Form;
 use Pages\Pages;
+use Web\DB\Page;
+use Web\DB\PageRepository;
 
 class PagePresenter extends BackendPresenter
 {
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public PageRepository $pageRepository;
 	
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public Pages $pages;
 	
-	public function createComponentGrid()
+	public function createComponentGrid(): AdminGrid
 	{
 		$grid = $this->gridFactory->create($this->pageRepository->many(), 20, 'this.type');
 		$grid->addColumnSelector();
@@ -28,7 +33,7 @@ class PagePresenter extends BackendPresenter
 		
 		$grid->addColumn('URL', static function ($item) use ($baseUrl) {
 			return '<a href="' . $baseUrl . $item->url . '" target="_blank"><i class="fa fa-external-link-square-alt"></i>&nbsp;' . $baseUrl . $item->url . '</a>';
-		},'%s','this.url_cs');
+		}, '%s', 'this.url_cs');
 		
 		$grid->addColumnText('Titulek a popisek', ['title', 'description'], '%s<br><small>%s</small>', 'title');
 		
@@ -46,7 +51,7 @@ class PagePresenter extends BackendPresenter
 			return $page->isDeletable();
 		});
 		
-		$column->onRenderCell[] = function (\Nette\Utils\Html $td, Page $object) {
+		$column->onRenderCell[] = function (\Nette\Utils\Html $td, Page $object): void {
 			if ($object->isSystemic()) {
 				$td[0] = "<button type='button' class='btn btn-sm btn-danger disabled' title='Systémová stránka'><i class='far fa-trash-alt'></i></button>";
 			}
@@ -64,6 +69,7 @@ class PagePresenter extends BackendPresenter
 		$grid->addFilterTextInput('search', ['this.name_cs', 'this.url_cs', 'this.title_cs'], null, 'Název, url, titulek');
 		
 		$types = [];
+
 		foreach ($this->pages->getPageTypes() as $type => $pageType) {
 			$types[$type] = $pageType->getName();
 		}
@@ -86,11 +92,13 @@ class PagePresenter extends BackendPresenter
 		
 		if (!$page) {
 			$pageTypes = [];
+
 			foreach ($this->pages->getPageTypes() as $id => $pageType) {
 				$pageTypes[$id] = $pageType->getName();
 			}
 			
 			$select = $form->addSelect('type', 'Typ stránky', $pageTypes)->setRequired(true)->setPrompt('Žádný');
+
 			foreach (\array_keys($this->pages->getPageTypes()) as $typeId) {
 				$select->addCondition($form::EQUAL, $typeId)->toggle($typeId);
 			}
@@ -100,16 +108,16 @@ class PagePresenter extends BackendPresenter
 					->setOption("container", \Nette\Utils\Html::el("fieldset")->style('display:none;'))
 					->setOption('id', $typeId);
 				$container = $form->addContainer("_$typeId");
-				foreach ($pageType->getRequiredParameters() as $name => $parameter) {
+
+				foreach (\array_keys($pageType->getRequiredParameters()) as $name) {
 					$container->addText($name, \ucfirst($name))->addConditionOn($select, $form::EQUAL, $typeId)->setRequired();
 				}
 				
-				foreach ($pageType->getOptionalParameters() as $name => $parameter) {
+				foreach (\array_keys($pageType->getOptionalParameters()) as $name) {
 					$container->addText($name, \ucfirst($name))->setNullable();
 				}
 			}
 		}
-		
 		
 		$pageContainer = $form->addPageContainer($page ? $page->type : null, $page->getParsedParameters());
 		$pageContainer->addText('robots', 'Robots');
@@ -126,15 +134,18 @@ class PagePresenter extends BackendPresenter
 		$form->addSubmits(!$this->getParameter('page'));
 		
 		if (!$page) {
-			$form->onValidate[] = function (AdminForm $form) {
+			$form->onValidate[] = function (AdminForm $form): void {
 				$values = $form->getValues('array');
-				if ($this->pageRepository->getPageByTypeAndParams($values['type'], null,  $values["_$values[type]"])) {
-					$form['type']->addError($values["_$values[type]"] ? 'Stránka s těmito parametry již exituje' : 'Tento typ stránky již existuje');
+
+				if (!$this->pageRepository->getPageByTypeAndParams($values['type'], null, $values["_$values[type]"])) {
+					return;
 				}
+
+				$form['type']->addError($values["_$values[type]"] ? 'Stránka s těmito parametry již exituje' : 'Tento typ stránky již existuje');
 			};
 		}
 		
-		$form->onSuccess[] = function (AdminForm $form) {
+		$form->onSuccess[] = function (AdminForm $form): void {
 			
 			$values = $form->getValues('array');
 			
@@ -154,7 +165,7 @@ class PagePresenter extends BackendPresenter
 		return $form;
 	}
 	
-	public function renderDefault()
+	public function renderDefault(): void
 	{
 		$this->template->headerLabel = 'Vstupní stránky';
 		$this->template->headerTree = [
@@ -164,7 +175,7 @@ class PagePresenter extends BackendPresenter
 		$this->template->displayControls = [$this->getComponent('grid')];
 	}
 	
-	public function renderNew()
+	public function renderNew(): void
 	{
 		$this->template->headerLabel = 'Nová vstupní stránka';
 		$this->template->headerTree = [
@@ -175,7 +186,7 @@ class PagePresenter extends BackendPresenter
 		$this->template->displayControls = [$this->getComponent('form')];
 	}
 	
-	public function renderDetail()
+	public function renderDetail(): void
 	{
 		$this->template->headerLabel = 'Detail stránky';
 		$this->template->headerTree = [
@@ -186,9 +197,9 @@ class PagePresenter extends BackendPresenter
 		$this->template->displayControls = [$this->getComponent('form')];
 	}
 	
-	public function actionDetail(Page $page)
+	public function actionDetail(Page $page): void
 	{
-		/** @var Form $form */
+		/** @var \Forms\Form $form */
 		$form = $this->getComponent('form');
 		
 		$form->setDefaults($page->toArray());

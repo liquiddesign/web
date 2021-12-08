@@ -6,5 +6,4 @@ use StORM\Repository;
 
 class DocumentRepository extends Repository
 {
-
 }

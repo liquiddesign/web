@@ -12,7 +12,9 @@ class DocumentPresenter extends BackendPresenter
 {
 	public string $tDocuments;
 	
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public DocumentRepository $documentRepository;
 	
 	public function beforeRender(): void

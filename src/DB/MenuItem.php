@@ -78,7 +78,7 @@ class MenuItem extends Entity
 	 */
 	public RelationCollection $types;
 	
-	public function getUrl(?string $langPrefix = null)
+	public function getUrl(?string $langPrefix = null): ?string
 	{
 		return $this->page ? $this->getRepository()->getBaseUrl() . ($langPrefix ? "$langPrefix/" : '') . $this->page->url : $this->absoluteUrl;
 	}

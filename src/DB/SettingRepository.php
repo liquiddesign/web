@@ -13,6 +13,10 @@ use StORM\Repository;
  */
 class SettingRepository extends Repository implements IGeneralRepository
 {
+	/**
+	 * @param bool $includeHidden
+	 * @return string[]
+	 */
 	public function getArrayForSelect(bool $includeHidden = true): array
 	{
 		return $this->getCollection($includeHidden)->toArrayOf('name');
@@ -20,9 +24,14 @@ class SettingRepository extends Repository implements IGeneralRepository
 
 	public function getCollection(bool $includeHidden = false): Collection
 	{
+		unset($includeHidden);
+		
 		return $this->many();
 	}
-
+	
+	/**
+	 * @return string[]
+	 */
 	public function getValues(): array
 	{
 		return $this->many()->setIndex('name')->toArrayOf('value');

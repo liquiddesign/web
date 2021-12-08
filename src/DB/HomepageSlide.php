@@ -11,7 +11,7 @@ use StORM\Entity;
  */
 class HomepageSlide extends Entity
 {
-	const IMAGE_DIR = 'homepage_slides';
+	public const IMAGE_DIR = 'homepage_slides';
 
 	/**
 	 * Text

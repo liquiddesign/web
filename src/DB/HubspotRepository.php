@@ -8,5 +8,4 @@ use StORM\Repository;
 
 class HubspotRepository extends Repository
 {
-
 }

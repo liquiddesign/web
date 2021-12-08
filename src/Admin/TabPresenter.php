@@ -7,18 +7,22 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
+use Nette\Utils\Random;
 use Web\DB\Tab;
 use Web\DB\TabItem;
 use Web\DB\TabItemRepository;
 use Web\DB\TabRepository;
-use Nette\Utils\Random;
 
 class TabPresenter extends BackendPresenter
 {
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public TabRepository $tabRepo;
 	
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public TabItemRepository $tabItemRepo;
 	
 	public string $tTabs;

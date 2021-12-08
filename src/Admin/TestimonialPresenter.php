@@ -7,15 +7,17 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
-use Web\DB\Testimonial;
-use Web\DB\TestimonialRepository;
 use Nette\Utils\Image;
 use Nette\Utils\Random;
+use Web\DB\Testimonial;
+use Web\DB\TestimonialRepository;
 use Web\Helpers;
 
 class TestimonialPresenter extends BackendPresenter
 {
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public TestimonialRepository $testimonialRepo;
 	
 	public string $tTestimonials;

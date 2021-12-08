@@ -8,11 +8,14 @@ use StORM\Repository;
 
 class TinyTemplateRepository extends Repository
 {
-	public function getTemplates()
+	/**
+	 * @return \Web\DB\TinyTemplate[]
+	 */
+	public function getTemplates(): array
 	{
 		$suffix = $this->getConnection()->getMutationSuffix();
 		
-		$collection  = $this->many()->setSelect([
+		$collection = $this->many()->setSelect([
 			'title' => "name$suffix",
 			'description' => "description$suffix",
 			'content' => "html",

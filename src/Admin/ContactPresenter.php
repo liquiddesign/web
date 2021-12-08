@@ -7,13 +7,15 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
+use Nette\Utils\Random;
 use Web\DB\Contact;
 use Web\DB\ContactRepository;
-use Nette\Utils\Random;
 
 class ContactPresenter extends BackendPresenter
 {
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public ContactRepository $contactRepo;
 	
 	public string $tContacts;

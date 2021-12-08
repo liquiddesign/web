@@ -18,20 +18,24 @@ class SettingPresenter extends BackendPresenter
 		'groups' => [
 			'company',
 			'support',
-			'map'
+			'map',
 		],
 		'tabs' => [
 			'@default' => 'Hlavní informace a mapa',
 			'@contacts' => 'Kontakty',
 			'@social' => 'Sítě',
 		],
-		'allowedSettings' => []
+		'allowedSettings' => [],
 	];
 
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public SettingRepository $settingsRepo;
 
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public ContactItemRepository $contactItemRepo;
 
 	public function beforeRender(): void
@@ -41,7 +45,7 @@ class SettingPresenter extends BackendPresenter
 		$this->template->tabs = $this::CONFIGURATION['tabs'];
 	}
 
-	public function actionDefault()
+	public function actionDefault(): void
 	{
 		/** @var \Admin\Controls\AdminForm $form */
 		$form = $this->getComponent('form');
@@ -49,7 +53,7 @@ class SettingPresenter extends BackendPresenter
 		$form->setDefaults($this->settingsRepo->many()->setIndex('name')->toArrayOf('value'));
 	}
 
-	public function actionSocial()
+	public function actionSocial(): void
 	{
 		/** @var \Admin\Controls\AdminForm $form */
 		$form = $this->getComponent('socialForm');
@@ -57,7 +61,7 @@ class SettingPresenter extends BackendPresenter
 		$form->setDefaults($this->settingsRepo->many()->setIndex('name')->toArrayOf('value'));
 	}
 
-	public function actionOthers()
+	public function actionOthers(): void
 	{
 		/** @var \Admin\Controls\AdminForm $form */
 		$form = $this->getComponent('othersForm');
@@ -65,7 +69,7 @@ class SettingPresenter extends BackendPresenter
 		$form->setDefaults($this->settingsRepo->many()->setIndex('name')->toArrayOf('value'));
 	}
 
-	public function renderDefault()
+	public function renderDefault(): void
 	{
 		$this->template->headerLabel = 'Kontakty';
 		$this->template->headerTree = [
@@ -75,7 +79,7 @@ class SettingPresenter extends BackendPresenter
 		$this->template->displayControls = [$this->getComponent('form')];
 	}
 
-	public function renderSocial()
+	public function renderSocial(): void
 	{
 		$this->template->headerLabel = 'Sítě';
 		$this->template->headerTree = [
@@ -89,20 +93,20 @@ class SettingPresenter extends BackendPresenter
 	{
 		$form = $this->formFactory->create();
 
-		if (\in_array('company', static::CONFIGURATION['groups'])) {
+		if (\in_array('company', self::CONFIGURATION['groups'])) {
 			$form->addGroup('Společnost');
 			$form->addText('companyName', 'Název společnosti')->setNullable();
 			$form->addTextArea('legalInfo', 'Informace o zápisu')->setHtmlAttribute('cols', 70)->setNullable();
 		}
 
-		if (\in_array('support', static::CONFIGURATION['groups'])) {
+		if (\in_array('support', self::CONFIGURATION['groups'])) {
 			$form->addGroup('Podpora');
 			$form->addText('supportEmail', 'E-mail')->setNullable()->addCondition(Form::FILLED)->addRule($form::EMAIL);
 			$form->addText('supportPhone', 'Telefon')->setNullable();
 			$form->addText('supportPhoneTime', 'Dostupnost telefonu')->setNullable()->setHtmlAttribute('data-info', 'Zvolte libovolný formát');
 		}
 
-		if (\in_array('map', static::CONFIGURATION['groups'])) {
+		if (\in_array('map', self::CONFIGURATION['groups'])) {
 			$form->addGroup('Mapa');
 			$form->addText('contactStreet', 'Ulice')->setHtmlAttribute('data-info', 'Např.: Josefská 15')->setNullable();
 			$form->addText('contactCity', 'Město')->setHtmlAttribute('data-info', 'Např.: 602 00 Brno')->setNullable();
@@ -112,7 +116,7 @@ class SettingPresenter extends BackendPresenter
 
 		$form->addSubmit('submit', 'Uložit');
 
-		$form->onSuccess[] = function (AdminForm $form) {
+		$form->onSuccess[] = function (AdminForm $form): void {
 			$values = $form->getValues('array');
 
 			foreach ($values as $key => $value) {
@@ -138,7 +142,7 @@ class SettingPresenter extends BackendPresenter
 
 		$form->addSubmit('submit', 'Uložit');
 
-		$form->onSuccess[] = function (AdminForm $form) {
+		$form->onSuccess[] = function (AdminForm $form): void {
 			$values = $form->getValues('array');
 
 			foreach ($values as $key => $value) {
@@ -156,7 +160,7 @@ class SettingPresenter extends BackendPresenter
 	{
 		$this->template->headerLabel = 'Kontakty a sítě';
 		$this->template->headerTree = [
-			['Kontakty a sítě', 'default']
+			['Kontakty a sítě', 'default'],
 		];
 
 
@@ -166,7 +170,7 @@ class SettingPresenter extends BackendPresenter
 
 	public function actionDetailContact(ContactItem $contactItem): void
 	{
-		/** @var AdminForm $form */
+		/** @var \Admin\Controls\AdminForm $form */
 		$form = $this->getComponent('contactForm');
 		$form->setDefaults($contactItem->toArray());
 	}
@@ -176,7 +180,7 @@ class SettingPresenter extends BackendPresenter
 		$this->template->headerLabel = 'Kontakty a sítě';
 		$this->template->headerTree = [
 			['Kontakty a sítě', 'default'],
-			['Nový kontakt']
+			['Nový kontakt'],
 		];
 
 		$this->template->displayButtons = [$this->createBackButton('contacts')];
@@ -186,11 +190,12 @@ class SettingPresenter extends BackendPresenter
 
 	public function renderDetailContact(ContactItem $contactItem): void
 	{
+		unset($contactItem);
 		$this->template->headerLabel = 'Nastavení webu - Kontakty';
 		$this->template->headerTree = [
 			['Nastavení webu', 'default'],
 			['Kontakty', 'contacts'],
-			['Detail']
+			['Detail'],
 		];
 		$this->template->displayButtons = [$this->createBackButton('contacts')];
 		$this->template->displayControls = [$this->getComponent('contactForm')];
@@ -250,7 +255,7 @@ class SettingPresenter extends BackendPresenter
 	{
 		$this->template->headerLabel = 'Ostatní nastavení';
 		$this->template->headerTree = [
-			['Ostatní nastavení', 'default']
+			['Ostatní nastavení', 'default'],
 		];
 
 		$this->template->displayButtons = [];

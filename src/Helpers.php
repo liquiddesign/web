@@ -6,8 +6,8 @@ class Helpers
 {
 	/**
 	 * Replace { and } with HTML code unless {control ...}
-	 * @param array $content Array with mutations as keys
-	 * @return array Sanitized strings
+	 * @param mixed[] $content Array with mutations as keys
+	 * @return mixed[] Sanitized strings
 	 */
 	public static function sanitizeMutationsStrings(array $content): array
 	{
@@ -16,7 +16,7 @@ class Helpers
 		$toDeleteStrings = [];
 
 		foreach ($content as $mutation => $string) {
-			if ($string == null) {
+			if ($string === null) {
 				continue;
 			}
 
@@ -33,13 +33,14 @@ class Helpers
 			for ($i = 0; $i < $length; $i++) {
 				$char = $string[$i];
 
-				if ($state == 'check-control') {
+				if ($state === 'check-control') {
 					$substr .= $char;
 
 					if ($substr === 'control') {
 						$state = 'control';
 						$substr = '';
 						$pos = -1;
+
 						continue;
 					}
 
@@ -54,9 +55,10 @@ class Helpers
 					}
 				}
 
-				if ($state == 'control') {
+				if ($state === 'control') {
 					if ($char === '}') {
 						$state = 'normal';
+
 						continue;
 					}
 				}
@@ -66,11 +68,13 @@ class Helpers
 					$state = 'check-control';
 				}
 
-				if ($state == 'normal' && $char === '}') {
-					$content[$mutation] = \substr_replace($content[$mutation], '', $i + $offset, 1);
-					$content[$mutation] = \substr_replace($content[$mutation], '&#125;', $i + $offset, 0);
-					$offset += 5;
+				if ($state !== 'normal' || $char !== '}') {
+					continue;
 				}
+
+				$content[$mutation] = \substr_replace($content[$mutation], '', $i + $offset, 1);
+				$content[$mutation] = \substr_replace($content[$mutation], '&#125;', $i + $offset, 0);
+				$offset += 5;
 			}
 
 //			$content[$mutation] = \preg_replace('/({(?!control))/i','&#123;', $string);
@@ -78,10 +82,5 @@ class Helpers
 		}
 
 		return $content;
-	}
-	
-	public static function codeReviewTest()
-	{
-		return true;
 	}
 }

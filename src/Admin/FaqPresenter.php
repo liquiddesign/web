@@ -7,19 +7,23 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
+use Nette\Utils\Random;
 use Web\DB\Faq;
 use Web\DB\FaqItem;
 use Web\DB\FaqItemRepository;
 use Web\DB\FaqRepository;
-use Nette\Utils\Random;
 use Web\Helpers;
 
 class FaqPresenter extends BackendPresenter
 {
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public FaqRepository $faqRepo;
 	
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public FaqItemRepository $faqItemRepo;
 	
 	public string $tItems;

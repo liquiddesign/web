@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Web\DB;
 
+use StORM\Collection;
 use StORM\Entity;
 use StORM\RelationCollection;
 
@@ -34,7 +35,7 @@ class Faq extends Entity
 	 */
 	public RelationCollection $items;
 	
-	public function getItems()
+	public function getItems(): Collection
 	{
 		return $this->items->where('hidden', false)->orderBy(['priority']);
 	}

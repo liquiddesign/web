@@ -7,14 +7,16 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
+use Nette\Utils\Random;
 use Web\DB\Textbox;
 use Web\DB\TextboxRepository;
-use Nette\Utils\Random;
 use Web\Helpers;
 
 class TextboxPresenter extends BackendPresenter
 {
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public TextboxRepository $textboxRepo;
 	
 	public string $tTextbox;

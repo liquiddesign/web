@@ -24,7 +24,11 @@ class TagRepository extends Repository implements IGeneralRepository
 		
 		return $collection->orderBy(['priority', "name$suffix"]);
 	}
-
+	
+	/**
+	 * @param bool $includeHidden
+	 * @return string[]
+	 */
 	public function getArrayForSelect(bool $includeHidden = true): array
 	{
 		return $this->getCollection($includeHidden)->toArrayOf('name');

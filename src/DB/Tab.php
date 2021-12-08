@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Web\DB;
 
+use StORM\Collection;
 use StORM\Entity;
 use StORM\RelationCollection;
 
@@ -39,7 +40,7 @@ class Tab extends Entity
 	 */
 	public bool $active = false;
 	
-	public function getItems()
+	public function getItems(): Collection
 	{
 		$items = $this->items->clear();
 		

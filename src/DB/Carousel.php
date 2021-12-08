@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Web\DB;
 
+use StORM\Collection;
 use StORM\Entity;
 use StORM\RelationCollection;
 
@@ -40,8 +41,8 @@ class Carousel extends Entity
 	 * @var \StORM\RelationCollection<\Web\DB\CarouselSlide>|\Web\DB\CarouselSlide[]
 	 */
 	public RelationCollection $slides;
-	
-	public function getSlides()
+
+	public function getSlides(): Collection
 	{
 		$slides = $this->slides->clear();
 		

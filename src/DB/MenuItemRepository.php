@@ -10,11 +10,11 @@ use Nette\Caching\Cache;
 use Nette\Caching\Storage;
 use Nette\Http\Request;
 use Nette\Utils\Strings;
+use StORM\ArrayWrapper;
 use StORM\Collection;
 use StORM\DIConnection;
 use StORM\Repository;
 use StORM\SchemaManager;
-use StORM\ArrayWrapper;
 
 /**
  * @extends \StORM\Repository<\Web\DB\MenuItem>
@@ -36,9 +36,9 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		Request $request,
 		MenuTypeRepository $menuTypeRepository,
 		MenuAssignRepository $menuAssignRepository
-	)
-	{
+	) {
 		parent::__construct($connection, $schemaManager);
+
 		$this->cache = new Cache($storage);
 		$this->request = $request;
 		$this->menuTypeRepository = $menuTypeRepository;
@@ -50,6 +50,10 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		return $this->request->getUrl()->getBaseUrl();
 	}
 	
+	/**
+	 * @param bool $includeHidden
+	 * @return string[]
+	 */
 	public function getArrayForSelect(bool $includeHidden = true): array
 	{
 		return $this->getCollection($includeHidden)->toArrayOf('name');
@@ -67,8 +71,12 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		return $collection->orderBy(['this.priority', "this.name$suffix"]);
 	}
 	
-	/** @deprecated use getTree($type) */
-	public function getMenuItemsByType($type)
+	/**
+	 * @param mixed $type
+	 * @return \Web\DB\MenuItem[]
+	 * @deprecated use getTree($type)
+	 */
+	public function getMenuItemsByType($type): array
 	{
 		if (!$type instanceof MenuType) {
 			if (!$type = $this->one($type)) {
@@ -79,6 +87,12 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		return $this->getTree($type);
 	}
 	
+	/**
+	 * @param mixed $menuType
+	 * @param bool $useHidden
+	 * @return \Web\DB\MenuItem[]
+	 * @throws \StORM\Exception\NotFoundException
+	 */
 	public function getTree($menuType = null, bool $useHidden = false): array
 	{
 		$collection = $this->menuAssignRepository->many()
@@ -103,6 +117,10 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		return $this->buildTree($collection->toArray());
 	}
 	
+	/**
+	 * @return \Web\DB\MenuItem[]
+	 * @throws \Throwable
+	 */
 	public function getFullTree(): array
 	{
 		$menuItemRepository = $this;
@@ -128,7 +146,13 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		return $menu;
 	}
 	
-	public function getFrontendTree($menuType = null, $usePageOffline = true): array
+	/**
+	 * @param mixed $menuType
+	 * @param bool $usePageOffline
+	 * @return \Web\DB\MenuItem[]
+	 * @throws \StORM\Exception\NotFoundException
+	 */
+	public function getFrontendTree($menuType = null, bool $usePageOffline = true): array
 	{
 		$collection = $this->menuAssignRepository->many()
 			->join(['item' => 'web_menuitem'], 'item.uuid = this.fk_menuitem')
@@ -155,6 +179,11 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		return $this->buildTree($collection->toArray());
 	}
 	
+	/**
+	 * @param $menuItem
+	 * @return string[]|null
+	 * @throws \StORM\Exception\NotFoundException
+	 */
 	public function getBreadcrumbStructure($menuItem): ?array
 	{
 		if (!$menuItem) {
@@ -170,9 +199,11 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		}
 		
 		$menuAssign = $this->menuAssignRepository->many()->where('fk_menuitem', $menuItem->getPK())->first();
+
 		if (\strlen($menuAssign->path) / 4 === 1) {
 			return [];
 		}
+
 		$ancestors = [];
 		$parent = $menuAssign->ancestor;
 		
@@ -182,31 +213,6 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		} while ($parent);
 		
 		return \array_reverse($ancestors);
-	}
-	
-	/**
-	 * @param \Web\DB\MenuAssign[] $elements
-	 * @param string|null $ancestorId
-	 * @return \Web\DB\MenuItem[]
-	 */
-	private function buildTree(array $elements, ?string $ancestorId = null): array
-	{
-		$branch = [];
-		
-		foreach ($elements as $element) {
-			if ($element->getValue('ancestor') === $ancestorId) {
-				if ($children = $this->buildTree($elements, $element->getPK())) {
-					$element->menuitem->children = $children;
-				}
-				
-				$element->menuitem->ancestor = $element->ancestor ? $element->ancestor->menuitem : null;
-				$element->menuitem->page; // preload page for cache
-				$element->menuitem->path = $element->path;
-				$branch[] = $element->menuitem;
-			}
-		}
-		
-		return $branch;
 	}
 	
 	/**
@@ -220,22 +226,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 			$this->doRecalculatePaths($item, $menuType);
 		}
 	}
-	
-	private function doRecalculatePaths($item, MenuType $menuType): void
-	{
-		foreach ($item->children as $child) {
-			$this->menuAssignRepository->syncOne([
-				'menutype' => $menuType->getPK(),
-				'menuitem' => $child->getPK(),
-				'path' => $item->path . \substr($child->path, -4)
-			]);
-			
-			if (\count($child->children) > 0) {
-				$this->doRecalculatePaths($child, $menuType);
-			}
-		}
-	}
-	
+
 	public function findElementInTree(MenuItem $targetMenuType, ?MenuItem $menuType = null): ?MenuItem
 	{
 		if (!$menuType) {
@@ -250,7 +241,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		}
 		
 		foreach ($children as $child) {
-			if ($child->getPK() == $targetMenuType->getPK()) {
+			if ($child->getPK() === $targetMenuType->getPK()) {
 				return $child;
 			}
 			
@@ -264,6 +255,13 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		return null;
 	}
 	
+	/**
+	 * @param bool $includeHidden
+	 * @param null $menuType
+	 * @param \Web\DB\MenuItem|null $menuItem
+	 * @return string[]
+	 * @throws \StORM\Exception\NotFoundException
+	 */
 	public function getTreeArrayForSelect(bool $includeHidden = true, $menuType = null, ?MenuItem $menuItem = null): array
 	{
 		$menuTypes = $this->menuTypeRepository->getCollection($includeHidden)->toArray();
@@ -278,7 +276,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 			$menuTypes = [$menuType];
 		}
 		
-		$menuItemLevel = null;
+		//$menuItemLevel = null;
 		
 		if ($menuItem) {
 			$menuItem = $this->getCollection($includeHidden)
@@ -298,8 +296,9 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 				->where('fk_menutype', $type->getPK());
 			
 			if ($menuItem) {
-				$maxDeep = $this->getMaxDeepLevel($menuItem, $type);
-				$deep = $this->getDeepLevel($menuItem, $type);
+				//$maxDeep = $this->getMaxDeepLevel($menuItem, $type);
+				//$deep = $this->getDeepLevel($menuItem, $type);
+
 				if ($menuItemDeep = $this->getMaxDeepLevel($menuItem, $type) - $this->getDeepLevel($menuItem, $type)) {
 					$collection->where('(LENGTH(path)/4) + :deep < type.maxLevel', ['deep' => $menuItemDeep]);
 				}
@@ -318,31 +317,9 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	}
 	
 	/**
-	 * @param \Web\DB\MenuAssign[] $elements
-	 * @param string|null $ancestorId
-	 * @param array $list
-	 * @return \Web\DB\MenuItem[]
+	 * @param \Web\DB\MenuItem $menuItem
+	 * @return string[]
 	 */
-	private function buildTreeArrayForSelect(array $elements, ?string $ancestorId = null, array &$list = []): array
-	{
-		$branch = [];
-		
-		foreach ($elements as $element) {
-			if ($element->getValue('ancestor') === $ancestorId) {
-				$list[$element->getPK()] = \str_repeat('—',
-						\strlen($element->path) / 4) . " " . $element->menuitem->name;
-				
-				if ($children = $this->buildTreeArrayForSelect($elements, $element->getPK(), $list)) {
-					$element->menuitem->children = $children;
-				}
-				
-				$branch[] = $element->menuitem;
-			}
-		}
-		
-		return $branch;
-	}
-	
 	public function getMenuItemPositions(MenuItem $menuItem): array
 	{
 		$items = $this->menuAssignRepository->many()
@@ -409,7 +386,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 			->setOrderBy(['LENGTH(path)' => 'DESC'])
 			->first();
 		
-		return $item ? (\strlen($item->path) / 4) : (\strlen($menuItem->path) / 4);
+		return $item ? \strlen($item->path) / 4 : \strlen($menuItem->path) / 4;
 	}
 	
 	public function hasChildren($menuItem): bool
@@ -460,7 +437,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 			->select(['path' => 'nxn.path'])
 			->first();
 		
-		return $menuItem ? (\strlen($menuItem->path) / 4) : null;
+		return $menuItem ? \strlen($menuItem->path) / 4 : null;
 	}
 	
 	public function checkAncestors(Form $form, array &$selectedAncestors): void
@@ -480,12 +457,12 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 				}
 				
 				$selectedAncestors[$type->getPK()] = [
-					'type' => $type
+					'type' => $type,
 				];
 				
 				$selectedTypes[] = $type->getPK();
 			} else {
-				/** @var MenuItem $selectedAncestor */
+				/** @var \Web\DB\MenuItem $selectedAncestor */
 				$selectedAncestor = $this->many()
 					->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
 					->select(['path' => 'nxn.path'])
@@ -502,7 +479,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 				
 				$selectedAncestors[$type->getPK()] = [
 					'type' => $type,
-					'item' => $selectedAncestor
+					'item' => $selectedAncestor,
 				];
 				
 				$selectedTypes[] = $type->getPK();
@@ -515,5 +492,76 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		$this->cache->clean([
 			Cache::TAGS => ['menu'],
 		]);
+	}
+
+	/**
+	 * @param \Web\DB\MenuAssign[] $elements
+	 * @param string|null $ancestorId
+	 * @return \Web\DB\MenuItem[]
+	 */
+	private function buildTree(array $elements, ?string $ancestorId = null): array
+	{
+		$branch = [];
+		
+		foreach ($elements as $element) {
+			if ($element->getValue('ancestor') === $ancestorId) {
+				if ($children = $this->buildTree($elements, $element->getPK())) {
+					$element->menuitem->children = $children;
+				}
+				
+				$element->menuitem->ancestor = $element->ancestor ? $element->ancestor->menuitem : null;
+				// preload page for cache
+				$element->menuitem->page;
+				$element->menuitem->path = $element->path;
+				$branch[] = $element->menuitem;
+			}
+		}
+		
+		return $branch;
+	}
+	
+	private function doRecalculatePaths($item, MenuType $menuType): void
+	{
+		foreach ($item->children as $child) {
+			$this->menuAssignRepository->syncOne([
+				'menutype' => $menuType->getPK(),
+				'menuitem' => $child->getPK(),
+				'path' => $item->path . \substr($child->path, -4),
+			]);
+			
+			if (\count($child->children) <= 0) {
+				continue;
+			}
+
+			$this->doRecalculatePaths($child, $menuType);
+		}
+	}
+	
+	/**
+	 * @param \Web\DB\MenuAssign[] $elements
+	 * @param string|null $ancestorId
+	 * @param array $list
+	 * @return \Web\DB\MenuItem[]
+	 */
+	private function buildTreeArrayForSelect(array $elements, ?string $ancestorId = null, array &$list = []): array
+	{
+		$branch = [];
+		
+		foreach ($elements as $element) {
+			if ($element->getValue('ancestor') === $ancestorId) {
+				$list[$element->getPK()] = \str_repeat(
+					'—',
+					\strlen($element->path) / 4,
+				) . " " . $element->menuitem->name;
+				
+				if ($children = $this->buildTreeArrayForSelect($elements, $element->getPK(), $list)) {
+					$element->menuitem->children = $children;
+				}
+				
+				$branch[] = $element->menuitem;
+			}
+		}
+		
+		return $branch;
 	}
 }
