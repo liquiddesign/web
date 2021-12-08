@@ -299,9 +299,11 @@ class GalleryPresenter extends BackendPresenter
 			
 			$this->flashMessage($this->_('.saved', 'Uloženo'), 'success');
 			
-			if (isset($galleryImage)) {
-				$form->processRedirect('detailItem', 'items', [$galleryImage], [$galleryImage->gallery]);
+			if (!isset($galleryImage)) {
+				return;
 			}
+			
+			$form->processRedirect('detailItem', 'items', [$galleryImage], [$galleryImage->gallery]);
 		};
 		
 		return $form;
