@@ -6,12 +6,10 @@ namespace Web\Admin;
 
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
+use Admin\Controls\AdminGrid;
 use Forms\Form;
-use League\Csv\Reader;
-use League\Csv\Writer;
 use Nette\Application\Application;
 use Nette\Application\Responses\FileResponse;
-use Nette\Utils\DateTime;
 use Nette\Utils\FileSystem;
 use StORM\DIConnection;
 use Translator\DB\Translation;
@@ -19,16 +17,22 @@ use Translator\DB\TranslationRepository;
 
 class MicrotextPresenter extends BackendPresenter
 {
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public TranslationRepository $translationRepository;
 
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public DIConnection $storm;
 	
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public Application $application;
 
-	public function createComponentGrid()
+	public function createComponentGrid(): AdminGrid
 	{
 		$grid = $this->gridFactory->create($this->translationRepository->many(), 20, 'name', 'ASC', true);
 		$grid->addColumnSelector();
@@ -64,7 +68,7 @@ class MicrotextPresenter extends BackendPresenter
 
 		$form->addSubmits();
 
-		$form->onSuccess[] = function (AdminForm $form) {
+		$form->onSuccess[] = function (AdminForm $form): void {
 			$values = $form->getValues('array');
 
 			if (!$values['uuid']) {
@@ -80,7 +84,7 @@ class MicrotextPresenter extends BackendPresenter
 		return $form;
 	}
 
-	public function renderDefault()
+	public function renderDefault(): void
 	{
 		$this->template->headerLabel = 'Mikrotexty';
 		$this->template->headerTree = [
@@ -90,12 +94,12 @@ class MicrotextPresenter extends BackendPresenter
 		$this->template->displayButtons = [
 			$this->createButtonWithClass('import', '<i class="fas fa-arrow-alt-circle-down"></i> Import textů', 'btn btn-outline-primary btn-sm'),
 			$this->createButtonWithClass('export', '<i class="fas fa-arrow-alt-circle-up"></i> Export textů', 'btn btn-outline-primary btn-sm'),
-			$this->createButtonWithClass('restoreLastImport!', '<i class="fas fa-sync"></i> Obnovit poslední zálohu', 'btn btn-outline-primary btn-sm')
+			$this->createButtonWithClass('restoreLastImport!', '<i class="fas fa-sync"></i> Obnovit poslední zálohu', 'btn btn-outline-primary btn-sm'),
 		];
 		$this->template->displayControls = [$this->getComponent('grid')];
 	}
 
-	public function renderDetail()
+	public function renderDetail(): void
 	{
 		$this->template->headerLabel = 'Detail textu';
 		$this->template->headerTree = [
@@ -106,9 +110,9 @@ class MicrotextPresenter extends BackendPresenter
 		$this->template->displayControls = [$this->getComponent('form')];
 	}
 
-	public function actionDetail(Translation $translation)
+	public function actionDetail(Translation $translation): void
 	{
-		/** @var Form $form */
+		/** @var \Forms\Form $form */
 		$form = $this->getComponent('form');
 
 		$form->setDefaults($translation->toArray());
@@ -145,9 +149,9 @@ class MicrotextPresenter extends BackendPresenter
 			$this->redirect('this');
 		}
 
-		$files = \scandir($backupDir, SCANDIR_SORT_DESCENDING);
+		$files = \scandir($backupDir, \SCANDIR_SORT_DESCENDING);
 
-		if (!$files || \count($files) == 0) {
+		if (!$files || \count($files) === 0) {
 			$this->flashMessage('Obnova poslední zálohy se nezdařila! ', 'error');
 			$this->redirect('this');
 		}
@@ -176,12 +180,12 @@ class MicrotextPresenter extends BackendPresenter
 
 		$form->addSubmit('submit', 'Exportovat');
 
-		$form->onSubmit[] = function (Form $form) {
+		$form->onSubmit[] = function (Form $form): void {
 			$dir = $this->tempDir . \DIRECTORY_SEPARATOR . 'export';
 			FileSystem::createDir($dir);
 			$tempFilename = \tempnam($dir, 'csv');
 
-			$this->application->onShutdown[] = function () use ($tempFilename) {
+			$this->application->onShutdown[] = function () use ($tempFilename): void {
 				\unlink($tempFilename);
 			};
 
@@ -208,7 +212,7 @@ class MicrotextPresenter extends BackendPresenter
 		$form->addFilePicker('csvFile', 'CSV soubor')->setRequired();
 		$form->addSubmit('submit', 'Importovat');
 
-		$form->onSubmit[] = function (Form $form) {
+		$form->onSubmit[] = function (Form $form): void {
 			$backupDir = $this->tempDir . \DIRECTORY_SEPARATOR . 'translations_backup';
 
 			$this->translationRepository->createTranslationsSnapshot($backupDir, \array_keys($this->storm->getAvailableMutations()));

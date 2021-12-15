@@ -69,14 +69,14 @@ class Widget extends Nette\Application\UI\Component
 		$this->defaultTemplates[$class] = $template;
 	}
 
-	public function createComponentTextbox()
+	public function createComponentTextbox(): Nette\Application\UI\Multiplier
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			return $this->textboxFactory->create($id);
 		});
 	}
 
-	public function createComponentGallery()
+	public function createComponentGallery(): Nette\Application\UI\Multiplier
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$galleryControl = $this->galleryFactory->create($id);
@@ -90,7 +90,7 @@ class Widget extends Nette\Application\UI\Component
 		});
 	}
 
-	public function createComponentTestimonial()
+	public function createComponentTestimonial(): Nette\Application\UI\Multiplier
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$testimonial = $this->testimonialFactory->create($id);
@@ -104,7 +104,7 @@ class Widget extends Nette\Application\UI\Component
 		});
 	}
 
-	public function createComponentContact()
+	public function createComponentContact(): Nette\Application\UI\Multiplier
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$contactControl = $this->contactFactory->create($id);
@@ -118,7 +118,7 @@ class Widget extends Nette\Application\UI\Component
 		});
 	}
 
-	public function createComponentCarousel()
+	public function createComponentCarousel(): Nette\Application\UI\Multiplier
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$carouselControl = $this->carouselFactory->create($id);
@@ -132,7 +132,7 @@ class Widget extends Nette\Application\UI\Component
 		});
 	}
 
-	public function createComponentFaq()
+	public function createComponentFaq(): Nette\Application\UI\Multiplier
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$faqControl = $this->faqFactory->create($id);
@@ -146,7 +146,7 @@ class Widget extends Nette\Application\UI\Component
 		});
 	}
 
-	public function createComponentTab()
+	public function createComponentTab(): Nette\Application\UI\Multiplier
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$tabControl = $this->tabFactory->create($id);
@@ -160,7 +160,7 @@ class Widget extends Nette\Application\UI\Component
 		});
 	}
 
-	public function createComponentVideo()
+	public function createComponentVideo(): Nette\Application\UI\Multiplier
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$videoControl = $this->videoFactory->create($id);
@@ -174,7 +174,7 @@ class Widget extends Nette\Application\UI\Component
 		});
 	}
 
-	public function createComponentBanner()
+	public function createComponentBanner(): Nette\Application\UI\Multiplier
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$bannerControl = $this->bannerFactory->create($id);
@@ -188,7 +188,7 @@ class Widget extends Nette\Application\UI\Component
 		});
 	}
 
-	public function createComponentMap()
+	public function createComponentMap(): Nette\Application\UI\Multiplier
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$mapControl = $this->mapFactory->create($id);
@@ -202,7 +202,7 @@ class Widget extends Nette\Application\UI\Component
 		});
 	}
 
-	public function createComponentHubspot()
+	public function createComponentHubspot(): Nette\Application\UI\Multiplier
 	{
 		return new Nette\Application\UI\Multiplier(function ($id) {
 			$hubspotControl = $this->hubspotFactory->create($id);

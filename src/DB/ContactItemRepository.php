@@ -13,7 +13,11 @@ use StORM\Repository;
  */
 class ContactItemRepository extends Repository implements IGeneralRepository
 {
-	public function getArrayForSelect(bool $includeHidden = true):array
+	/**
+	 * @param bool $includeHidden
+	 * @return string[]
+	 */
+	public function getArrayForSelect(bool $includeHidden = true): array
 	{
 		return $this->getCollection($includeHidden)->toArrayOf('name');
 	}

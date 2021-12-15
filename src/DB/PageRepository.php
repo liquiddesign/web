@@ -38,9 +38,7 @@ class PageRepository extends \Pages\DB\PageRepository implements IGeneralReposit
 	/**
 	 * Sitemaps format example:
 	 * [$pagetype1 => $param1, $pagetype2, $pagetype3 => $param3 ....]
-	 *
 	 * @param array $sitemaps
-	 * @return \StORM\Collection
 	 */
 	public function getPagesForSitemap(array $sitemaps): Collection
 	{
@@ -56,7 +54,7 @@ class PageRepository extends \Pages\DB\PageRepository implements IGeneralReposit
 		$mutations = $this->getConnection()->getAvailableMutations();
 		$urlExpression = new \StORM\Expression();
 		
-		foreach ($mutations as $key => $lang) {
+		foreach ($mutations as $lang) {
 			$urlExpression->add('OR', "this.url$lang=pr.fromUrl", []);
 		}
 		
@@ -65,13 +63,18 @@ class PageRepository extends \Pages\DB\PageRepository implements IGeneralReposit
 			->where('isOffline', false)->where($expression->getSql(), $expression->getVars());
 	}
 	
-	public function getArrayForSelect(bool $includeHidden = true):array
+	/**
+	 * @param bool $includeHidden
+	 * @return string[]
+	 */
+	public function getArrayForSelect(bool $includeHidden = true): array
 	{
 		return $this->getCollection($includeHidden)->toArrayOf('title');
 	}
 	
 	public function getCollection(bool $includeHidden = false): Collection
 	{
+		unset($includeHidden);
 		$suffix = $this->getConnection()->getMutationSuffix();
 		
 		return $this->many()->orderBy(['priority', "title$suffix"]);

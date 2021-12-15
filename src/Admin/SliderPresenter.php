@@ -6,30 +6,34 @@ namespace Web\Admin;
 
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
-use Web\DB\HomepageSlide;
-use Web\DB\HomepageSlideRepository;
-use Nette\Forms\Control;
-use Nette\Http\FileUpload;
+use Admin\Controls\AdminGrid;
+use Nette\Forms\IControl;
 use Nette\Http\Request;
 use Nette\Utils\FileSystem;
 use Nette\Utils\Html;
 use Nette\Utils\Image;
 use StORM\DIConnection;
+use Web\DB\HomepageSlide;
+use Web\DB\HomepageSlideRepository;
 
 class SliderPresenter extends BackendPresenter
 {
-	const DESKTOP_MIN_WIDTH = 820;
-	const DESKTOP_MIN_HEIGHT = 410;
-	const MOBILE_MIN_WIDTH = 700;
-	const MOBILE_MIN_HEIGHT = 700;
+	public const DESKTOP_MIN_WIDTH = 820;
+	public const DESKTOP_MIN_HEIGHT = 410;
+	public const MOBILE_MIN_WIDTH = 700;
+	public const MOBILE_MIN_HEIGHT = 700;
 
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public HomepageSlideRepository $slideRepo;
 
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public Request $request;
 
-	public function renderDefault()
+	public function renderDefault(): void
 	{
 		$this->template->headerLabel = 'Slider na úvodu';
 		$this->template->headerTree = [
@@ -39,56 +43,54 @@ class SliderPresenter extends BackendPresenter
 		$this->template->displayControls = [$this->getComponent('grid')];
 	}
 
-	public function renderNew()
+	public function renderNew(): void
 	{
 		$this->template->headerLabel = 'Nový slider';
 		$this->template->headerTree = [
 			['Slider na úvodu', 'default'],
-			['Nový']
+			['Nový'],
 		];
 		$this->template->displayButtons = [$this->createBackButton('default')];
 		$this->template->displayControls = [$this->getComponent('form')];
 	}
 
-	public function renderDetail()
+	public function renderDetail(): void
 	{
 		$this->template->headerLabel = 'Detail slideru';
 		$this->template->headerTree = [
 			['Slider', 'default'],
-			['Detail']
+			['Detail'],
 		];
 		$this->template->displayButtons = [$this->createBackButton('default')];
 		$this->template->displayControls = [$this->getComponent('form')];
 	}
 
-	public function actionDetail(HomepageSlide $slide)
+	public function actionDetail(HomepageSlide $slide): void
 	{
-		/** @var AdminForm $form */
+		/** @var \Admin\Controls\AdminForm $form */
 		$form = $this->getComponent('form');
 		$form->setDefaults($slide->toArray());
 	}
 
 	public function createComponentForm(): AdminForm
 	{
-		$presenter = $this;
-
 		$form = $this->formFactory->create(true);
 		$imageDir = $this->wwwDir . \DIRECTORY_SEPARATOR . 'userfiles' . \DIRECTORY_SEPARATOR . HomepageSlide::IMAGE_DIR;
 
-		/** @var HomepageSlide $homepageSlide */
+		/** @var \Web\DB\HomepageSlide $homepageSlide */
 		$homepageSlide = $this->getParameter('slide');
 
 		$form->addLocaleRichEdit('text', 'Popisek');
 		$form->addRadioList('type', 'Typ', ['image' => 'Obrázek', 'video' => 'Video'])->setDefaultValue('image');
 		
 		$imagePickerDesktop = $form->addImagePicker('image', 'Obrázek (desktop) *', [
-			HomepageSlide::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'desktop' => static function (Image $image) use ($presenter): void {
-				$image->resize($presenter::DESKTOP_MIN_WIDTH, $presenter::DESKTOP_MIN_HEIGHT, Image::FIT);
+			HomepageSlide::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'desktop' => static function (Image $image): void {
+				$image->resize(self::DESKTOP_MIN_WIDTH, self::DESKTOP_MIN_HEIGHT, Image::FIT);
 			},
-		])->setHtmlAttribute('data-info', 'Nahrávejte obrázky o minimální velikosti ' . $this::DESKTOP_MIN_WIDTH . 'x' . $this::DESKTOP_MIN_HEIGHT . ' px')
-			->addRule([$this, 'validateSliderImage'], 'Obrázek je příliš malý!', [$form, $this::DESKTOP_MIN_WIDTH, $this::DESKTOP_MIN_HEIGHT]);
+		])->setHtmlAttribute('data-info', 'Nahrávejte obrázky o minimální velikosti ' . self::DESKTOP_MIN_WIDTH . 'x' . self::DESKTOP_MIN_HEIGHT . ' px')
+			->addRule([$this, 'validateSliderImage'], 'Obrázek je příliš malý!', [$form]);
 
-		$imagePickerDesktop->onDelete[] = function (array $directories, $filename) use ($homepageSlide, $imageDir) {
+		$imagePickerDesktop->onDelete[] = function (array $directories, $filename) use ($homepageSlide, $imageDir): void {
 			if ($homepageSlide->image) {
 				FileSystem::delete($imageDir . \DIRECTORY_SEPARATOR . 'desktop' . \DIRECTORY_SEPARATOR . $homepageSlide->image);
 			}
@@ -98,13 +100,13 @@ class SliderPresenter extends BackendPresenter
 		};
 
 		$imagePickerMobile = $form->addImagePicker('imageMobile', 'Obrázek (mobil) *', [
-			HomepageSlide::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'mobile' => static function (Image $image) use ($presenter): void {
-				$image->resize($presenter::MOBILE_MIN_WIDTH, $presenter::MOBILE_MIN_HEIGHT, Image::FIT);
+			HomepageSlide::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'mobile' => static function (Image $image): void {
+				$image->resize(self::MOBILE_MIN_WIDTH, self::MOBILE_MIN_HEIGHT, Image::FIT);
 			},
-		])->setHtmlAttribute('data-info', 'Nahrávejte obrázky o minimální velikosti ' . $this::MOBILE_MIN_WIDTH . 'x' . $this::MOBILE_MIN_HEIGHT . ' px')
-			->addRule([$this, 'validateSliderImageMobile'], 'Obrázek je příliš malý!', [$form, $this::MOBILE_MIN_WIDTH, $this::MOBILE_MIN_HEIGHT]);
+		])->setHtmlAttribute('data-info', 'Nahrávejte obrázky o minimální velikosti ' . self::MOBILE_MIN_WIDTH . 'x' . self::MOBILE_MIN_HEIGHT . ' px')
+			->addRule([$this, 'validateSliderImageMobile'], 'Obrázek je příliš malý!', [$form]);
 
-		$imagePickerMobile->onDelete[] = function (array $directories, $filename) use ($homepageSlide, $imageDir) {
+		$imagePickerMobile->onDelete[] = function (array $directories, $filename) use ($homepageSlide, $imageDir): void {
 			if ($homepageSlide->imageMobile) {
 				FileSystem::delete($imageDir . \DIRECTORY_SEPARATOR . 'mobile' . \DIRECTORY_SEPARATOR . $homepageSlide->imageMobile);
 			}
@@ -116,20 +118,19 @@ class SliderPresenter extends BackendPresenter
 		$videoUploader = $form->addFilePicker('video', 'Vybrat video', HomepageSlide::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'video')
 			->addRule($form::MIME_TYPE, 'Soubor musí být video!', 'video/*');
 
-		if ($homepageSlide && $homepageSlide->type == 'video' && $homepageSlide->image) {
+		if ($homepageSlide && $homepageSlide->type === 'video' && $homepageSlide->image) {
 			$videoUploader->setHtmlAttribute('data-info', 'Nahráním se přepíše aktuálně nahrané video!');
 		}
 		
 		$form->addText('priority', 'Priorita')->addRule($form::INTEGER)->setRequired()->setDefaultValue(10);
 		$form->addCheckbox('hidden', 'Skryto');
-		$form->addCheckbox('animate', 'Animovat')->setHtmlAttribute('data-info','Slider bude mít efekt přibližování.');
+		$form->addCheckbox('animate', 'Animovat')->setHtmlAttribute('data-info', 'Slider bude mít efekt přibližování.');
 
 		$form->addSubmits(!$this->getParameter('slide'));
 		
 		
-		$form->onSuccess[] = function (AdminForm $form) use ($homepageSlide, $imageDir) {
+		$form->onSuccess[] = function (AdminForm $form) use ($homepageSlide): void {
 			$values = $form->getValues('array');
-		;
 			$this->createImageDirs(HomepageSlide::IMAGE_DIR);
 			
 			if ($homepageSlide && $homepageSlide->type !== $values['type']) {
@@ -140,7 +141,7 @@ class SliderPresenter extends BackendPresenter
 				$values['uuid'] = DIConnection::generateUuid();
 			}
 			
-			if ($values['type'] == 'video') {
+			if ($values['type'] === 'video') {
 				$values['image'] = $form['video']->upload($values['uuid'] . '.%2$s');
 				unset($values['imageMobile'], $values['video']);
 			} else {
@@ -158,18 +159,18 @@ class SliderPresenter extends BackendPresenter
 		return $form;
 	}
 
-	public function createComponentGrid()
+	public function createComponentGrid(): AdminGrid
 	{
 		$grid = $this->gridFactory->create($this->slideRepo->many(), 20, 'priority', 'ASC', true);
 		$grid->addColumnSelector();
-		$grid->addColumnImage('image' , HomepageSlide::IMAGE_DIR, 'desktop', 'Desktop')->onRenderCell[] = function (Html $td, HomepageSlide $slide) {
-			$td->setHtml($slide->type == 'image' ? $td->getHtml() : '');
+		$grid->addColumnImage('image', HomepageSlide::IMAGE_DIR, 'desktop', 'Desktop')->onRenderCell[] = function (Html $td, HomepageSlide $slide): void {
+			$td->setHtml($slide->type === 'image' ? $td->getHtml() : '');
 		};
-		$grid->addColumnImage('imageMobile' , HomepageSlide::IMAGE_DIR, 'mobile', 'Mobil')->onRenderCell[] = function (Html $td, HomepageSlide $slide) {
-			$td->setHtml($slide->type == 'image' ? $td->getHtml() : '');
+		$grid->addColumnImage('imageMobile', HomepageSlide::IMAGE_DIR, 'mobile', 'Mobil')->onRenderCell[] = function (Html $td, HomepageSlide $slide): void {
+			$td->setHtml($slide->type === 'image' ? $td->getHtml() : '');
 		};
 		$grid->addColumn('Typ', function (HomepageSlide $slide) {
-			return $slide->type == 'image' ? 'Obrázek' : 'Video';
+			return $slide->type === 'image' ? 'Obrázek' : 'Video';
 		}, '%s', null, ['class' => 'fit']);
 		$grid->addColumnText('Popisek', 'text|striptags', '%s');
 		$grid->addColumnInputInteger('Priorita', 'priority', '', '', 'priority', [], true);
@@ -188,47 +189,7 @@ class SliderPresenter extends BackendPresenter
 		return $grid;
 	}
 	
-	public static function validateSliderImage(Control $control, array $args): bool
-	{
-		[$form, $desktopMinWidth, $desktopMinHeight] = $args;
-		
-		if ($form['type']->getValue() == 'image') {
-			/** @var FileUpload $uploaderDesktop */
-			$uploaderDesktop = $control->getValue();
-			
-			if ($uploaderDesktop->isOk()) {
-				[$width, $height] = $uploaderDesktop->getImageSize();
-				
-				if ($width < $desktopMinWidth || $height < $desktopMinHeight) {
-					return false;
-				}
-			}
-		}
-		
-		return true;
-	}
-	
-	public static function validateSliderImageMobile(Control $control, array $args): bool
-	{
-		[$form, $mobileMinWidth, $mobileMinHeight] = $args;
-		
-		if ($form['type']->getValue() == 'image') {
-			/** @var FileUpload $uploaderMobile */
-			$uploaderMobile = $control->getValue();
-			
-			if ($uploaderMobile->isOk()) {
-				[$width, $height] = $uploaderMobile->getImageSize();
-				
-				if ($width < $mobileMinWidth || $height < $mobileMinHeight) {
-					return false;
-				}
-			}
-		}
-		
-		return true;
-	}
-	
-	public function deleteImages(HomepageSlide $slide)
+	public function deleteImages(HomepageSlide $slide): void
 	{
 		$subDirs = $slide->type === 'image' ? ['desktop' => 'image', 'mobile' => 'imageMobile'] : ['video' => 'image'];
 		$dir = HomepageSlide::IMAGE_DIR;
@@ -241,6 +202,46 @@ class SliderPresenter extends BackendPresenter
 			$rootDir = $this->wwwDir . \DIRECTORY_SEPARATOR . 'userfiles' . \DIRECTORY_SEPARATOR . $dir;
 			FileSystem::delete($rootDir . \DIRECTORY_SEPARATOR . $subDir . \DIRECTORY_SEPARATOR . $slide->$property);
 		}
+	}
+
+	public static function validateSliderImage(IControl $control, array $args): bool
+	{
+		[$form] = $args;
+		
+		if ($form['type']->getValue() === 'image') {
+			/** @var \Nette\Http\FileUpload $uploaderDesktop */
+			$uploaderDesktop = $control->getValue();
+			
+			if ($uploaderDesktop->isOk()) {
+				[$width, $height] = $uploaderDesktop->getImageSize();
+				
+				if ($width < self::DESKTOP_MIN_WIDTH || $height < self::DESKTOP_MIN_HEIGHT) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	public static function validateSliderImageMobile(IControl $control, array $args): bool
+	{
+		[$form] = $args;
+		
+		if ($form['type']->getValue() === 'image') {
+			/** @var \Nette\Http\FileUpload $uploaderMobile */
+			$uploaderMobile = $control->getValue();
+			
+			if ($uploaderMobile->isOk()) {
+				[$width, $height] = $uploaderMobile->getImageSize();
+				
+				if ($width < self::MOBILE_MIN_WIDTH || $height < self::MOBILE_MIN_HEIGHT) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
 	}
 	
 	protected function createImageDirs(string $dir): void

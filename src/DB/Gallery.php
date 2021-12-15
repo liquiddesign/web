@@ -84,7 +84,10 @@ class Gallery extends Entity
 	 */
 	public RelationCollection $images;
 	
-	public function getRatios()
+	/**
+	 * @return mixed[]
+	 */
+	public function getRatios(): array
 	{
 		$ratios = \explode('/', $this->ratio);
 		

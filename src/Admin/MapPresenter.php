@@ -7,13 +7,15 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
+use Nette\Utils\Random;
 use Web\DB\Map;
 use Web\DB\MapRepository;
-use Nette\Utils\Random;
 
 class MapPresenter extends BackendPresenter
 {
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public MapRepository $mapRepo;
 	
 	public string $tMaps;

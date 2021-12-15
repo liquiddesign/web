@@ -11,7 +11,9 @@ use Web\DB\BannerRepository;
 
 class BannerPresenter extends BackendPresenter
 {
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public BannerRepository $bannerRepo;
 	
 	public string $tBanners;

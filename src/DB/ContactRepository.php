@@ -6,5 +6,4 @@ use StORM\Repository;
 
 class ContactRepository extends Repository
 {
-
 }

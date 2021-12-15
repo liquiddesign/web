@@ -7,18 +7,22 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
+use Nette\Utils\Random;
 use Web\DB\Carousel;
 use Web\DB\CarouselRepository;
 use Web\DB\CarouselSlide;
 use Web\DB\CarouselSlideRepository;
-use Nette\Utils\Random;
 
 class CarouselPresenter extends BackendPresenter
 {
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public CarouselRepository $carouselRepo;
 	
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public CarouselSlideRepository $carouselSlideRepo;
 	
 	public string $tDefault;

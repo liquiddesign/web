@@ -8,5 +8,4 @@ use StORM\Repository;
 
 class MapRepository extends Repository
 {
-
 }

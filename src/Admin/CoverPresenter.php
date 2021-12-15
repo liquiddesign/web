@@ -8,14 +8,16 @@ use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
 use Nette\Forms\Controls\TextInput;
+use Nette\Utils\Random;
 use Web\DB\Cover;
 use Web\DB\CoverRepository;
-use Nette\Utils\Random;
 use Web\Helpers;
 
 class CoverPresenter extends BackendPresenter
 {
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public CoverRepository $coverRepo;
 	
 	public function renderDefault(): void
@@ -101,7 +103,7 @@ class CoverPresenter extends BackendPresenter
 		$form->addText('styles', $this->_('styles', 'Styly'));
 		$form->addText('blend', $this->_('blend', 'Blend mode'));
 		$form->addText('cssClass', $this->_('cssClass', 'CSS třída'));
-		$form->addLocaleText('showOnPage', $this->_('showOnPage', 'Zobrazit na URL'))->forAll(function (TextInput $input) {
+		$form->addLocaleText('showOnPage', $this->_('showOnPage', 'Zobrazit na URL'))->forAll(function (TextInput $input): void {
 			$input->setRequired(false)->addFilter(function ($value) {
 				return \strpos($value, '/') !== false ? $value : '/' . $value;
 			});

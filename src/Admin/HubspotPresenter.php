@@ -7,15 +7,17 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
+use Nette\Utils\Random;
 use Web\DB\Hubspot;
 use Web\DB\HubspotRepository;
-use Nette\Utils\Random;
 
 class HubspotPresenter extends BackendPresenter
 {
 	public string $tHubspots;
 	
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public HubspotRepository $hubspotRepo;
 	
 	public function beforeRender(): void

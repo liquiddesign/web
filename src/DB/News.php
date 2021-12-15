@@ -12,7 +12,7 @@ use StORM\RelationCollection;
  */
 class News extends Entity
 {
-	const IMAGE_DIR = 'news_images';
+	public const IMAGE_DIR = 'news_images';
 
 	/**
 	 * @column{"mutations":true}

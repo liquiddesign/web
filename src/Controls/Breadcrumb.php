@@ -11,11 +11,14 @@ class Breadcrumb extends Control
 	 */
 	private array $items = [];
 	
-	public function addItem(string $name, ?string $link = null)
+	public function addItem(string $name, ?string $link = null): void
 	{
 		$this->items[] = (object) ['name' => $name, 'link' => $link];
 	}
-
+	
+	/**
+	 * @return \stdClass[]
+	 */
 	public function getItems(): array
 	{
 		return $this->items;

@@ -17,10 +17,14 @@ use Web\DB\GalleryRepository;
 
 class GalleryPresenter extends BackendPresenter
 {
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public GalleryRepository $galleryRepo;
 	
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public GalleryImageRepository $galleryImageRepo;
 	
 	public string $tGallery;
@@ -77,7 +81,8 @@ class GalleryPresenter extends BackendPresenter
 			[$this->tGallery, 'default'],
 			[$this->tGalleryItems],
 		];
-		$this->template->displayButtons = [$this->createBackButton('default'), $this->createNewItemButton('newItem', [$gallery]), $this->createNewItemButton('newMultipleItems', [$gallery],$tNewItems)];
+		$newItem = $this->createNewItemButton('newItem', [$gallery]);
+		$this->template->displayButtons = [$this->createBackButton('default'), $newItem, $this->createNewItemButton('newMultipleItems', [$gallery], $tNewItems)];
 		$this->template->displayControls = [$this->getComponent('itemGrid')];
 	}
 	
@@ -293,6 +298,11 @@ class GalleryPresenter extends BackendPresenter
 			}
 			
 			$this->flashMessage($this->_('.saved', 'Uloženo'), 'success');
+			
+			if (!isset($galleryImage)) {
+				return;
+			}
+			
 			$form->processRedirect('detailItem', 'items', [$galleryImage], [$galleryImage->gallery]);
 		};
 		

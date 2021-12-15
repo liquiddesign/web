@@ -6,20 +6,24 @@ namespace Web\Admin;
 
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
+use Admin\Controls\AdminGrid;
 use Forms\Form;
 use Messages\DB\Template;
 use Messages\DB\TemplateRepository;
-use StORM\DIConnection;
 
 class MessagePresenter extends BackendPresenter
 {
-	/** @persistent */
+	/**
+	 * @persistent
+	 */
 	public string $tab = 'outgoing';
 
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public TemplateRepository $templateRepository;
 
-	public function createComponentGrid()
+	public function createComponentGrid(): AdminGrid
 	{
 		$grid = $this->gridFactory->create($this->templateRepository->many()->where('type', $this->tab), 20, 'name', 'ASC', true);
 		$grid->addColumnSelector();
@@ -50,7 +54,7 @@ class MessagePresenter extends BackendPresenter
 		$form->addLocaleText('subject', 'Předmět');
 		$form->addText('email', $this->tab === 'outgoing' ? 'Odesílatel' : 'E-mail')->setRequired();
 		$form->addText('cc', 'Posílat kopie')
-		->setHtmlAttribute('data-info','Zadejte e-mailové adresy oddělené středníkem ";".');
+		->setHtmlAttribute('data-info', 'Zadejte e-mailové adresy oddělené středníkem ";".');
 		$form->addText('replyTo', 'Adresa pro odpověď');
 		$form->addText('alias', 'Alias');
 		$form->addLocaleRichEdit('html', 'HTML');
@@ -59,7 +63,7 @@ class MessagePresenter extends BackendPresenter
 		$form->addSubmits(!$this->getParameter('template'));
 		$form->bind($this->templateRepository->getStructure());
 
-		$form->onSuccess[] = function (AdminForm $form) {
+		$form->onSuccess[] = function (AdminForm $form): void {
 			$values = $form->getValues('array');
 			
 			$template = $this->templateRepository->syncOne($values, null, true);
@@ -71,7 +75,7 @@ class MessagePresenter extends BackendPresenter
 		return $form;
 	}
 
-	public function renderDefault()
+	public function renderDefault(): void
 	{
 		$this->template->headerLabel = 'Šablony e-mailů';
 		$this->template->headerTree = [
@@ -86,7 +90,7 @@ class MessagePresenter extends BackendPresenter
 		$this->template->displayControls = [$this->getComponent('grid')];
 	}
 
-	public function renderNew()
+	public function renderNew(): void
 	{
 		$this->template->headerLabel = 'Nová položka';
 		$this->template->headerTree = [
@@ -97,7 +101,7 @@ class MessagePresenter extends BackendPresenter
 		$this->template->displayControls = [$this->getComponent('newForm')];
 	}
 
-	public function renderDetail()
+	public function renderDetail(): void
 	{
 		$this->template->headerLabel = 'Detail';
 		$this->template->headerTree = [
@@ -108,9 +112,9 @@ class MessagePresenter extends BackendPresenter
 		$this->template->displayControls = [$this->getComponent('newForm')];
 	}
 
-	public function actionDetail(Template $template)
+	public function actionDetail(Template $template): void
 	{
-		/** @var Form $form */
+		/** @var \Forms\Form $form */
 		$form = $this->getComponent('newForm');
 
 		$form->setDefaults($template->toArray());

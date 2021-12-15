@@ -16,10 +16,14 @@ use Web\DB\SettingRepository;
  */
 class IntegrationPresenter extends BackendPresenter
 {
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public SettingRepository $settingsRepo;
 	
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public ContactItemRepository $contactItemRepo;
 	
 	public function beforeRender(): void
@@ -33,15 +37,15 @@ class IntegrationPresenter extends BackendPresenter
 		];
 	}
 	
-	public function actionDefault()
+	public function actionDefault(): void
 	{
-		/** @var AdminForm $form */
+		/** @var \Admin\Controls\AdminForm $form */
 		$form = $this->getComponent('form');
 		
 		$form->setDefaults($this->settingsRepo->many()->setIndex('name')->toArrayOf('value'));
 	}
 	
-	public function renderDefault()
+	public function renderDefault(): void
 	{
 		$this->template->headerLabel = 'Integrace';
 		$this->template->headerTree = [
@@ -58,7 +62,7 @@ class IntegrationPresenter extends BackendPresenter
 		
 		$form->addSubmit('submit', 'Uložit');
 		
-		$form->onSuccess[] = function (AdminForm $form) {
+		$form->onSuccess[] = function (AdminForm $form): void {
 			$values = $form->getValues('array');
 			
 			foreach ($values as $key => $value) {
@@ -72,20 +76,20 @@ class IntegrationPresenter extends BackendPresenter
 		return $form;
 	}
 
-	public function actionZasilkovna()
+	public function actionZasilkovna(): void
 	{
-		/** @var AdminForm $form */
+		/** @var \Admin\Controls\AdminForm $form */
 		$form = $this->getComponent('zasilkovnaForm');
 
 		$form->setDefaults($this->settingsRepo->many()->setIndex('name')->toArrayOf('value'));
 	}
 
-	public function renderZasilkovna()
+	public function renderZasilkovna(): void
 	{
 		$this->template->headerLabel = 'Integrace';
 		$this->template->headerTree = [
 			['Integrace'],
-			['Zásilkovna']
+			['Zásilkovna'],
 		];
 		$this->template->displayButtons = [];
 		$this->template->displayControls = [$this->getComponent('zasilkovnaForm')];
@@ -99,7 +103,7 @@ class IntegrationPresenter extends BackendPresenter
 
 		$form->addSubmit('submit', 'Uložit');
 
-		$form->onSuccess[] = function (AdminForm $form) {
+		$form->onSuccess[] = function (AdminForm $form): void {
 			$values = $form->getValues('array');
 
 			foreach ($values as $key => $value) {
@@ -113,20 +117,20 @@ class IntegrationPresenter extends BackendPresenter
 		return $form;
 	}
 
-	public function actionMailerLite()
+	public function actionMailerLite(): void
 	{
-		/** @var AdminForm $form */
+		/** @var \Admin\Controls\AdminForm $form */
 		$form = $this->getComponent('mailerLiteForm');
 
 		$form->setDefaults($this->settingsRepo->many()->setIndex('name')->toArrayOf('value'));
 	}
 
-	public function renderMailerLite()
+	public function renderMailerLite(): void
 	{
 		$this->template->headerLabel = 'Integrace';
 		$this->template->headerTree = [
 			['Integrace'],
-			['MailerLite']
+			['MailerLite'],
 		];
 		$this->template->displayButtons = [];
 		$this->template->displayControls = [$this->getComponent('mailerLiteForm')];
@@ -139,7 +143,7 @@ class IntegrationPresenter extends BackendPresenter
 
 		$form->addSubmit('submit', 'Uložit');
 
-		$form->onSuccess[] = function (AdminForm $form) {
+		$form->onSuccess[] = function (AdminForm $form): void {
 			$values = $form->getValues('array');
 
 			foreach ($values as $key => $value) {

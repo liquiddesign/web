@@ -12,7 +12,9 @@ use Web\DB\TinyTemplateRepository;
 
 class TinyTemplatePresenter extends BackendPresenter
 {
-	/** @inject */
+	/**
+	 * @inject
+	 */
 	public TinyTemplateRepository $tinyRepo;
 
 	public string $tTiny;

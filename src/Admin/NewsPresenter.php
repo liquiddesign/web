@@ -6,22 +6,22 @@ namespace Web\Admin;
 
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
-use Web\DB\News;
-use Web\DB\NewsRepository;
-use Web\DB\TagRepository;
+use Admin\Controls\AdminGrid;
 use DateTime;
-use Web\DB\Tag;
 use Forms\Form;
 use Nette\Utils\Image;
 use Pages\DB\PageRepository;
 use Pages\Helpers;
 use StORM\DIConnection;
+use Web\DB\News;
+use Web\DB\NewsRepository;
+use Web\DB\TagRepository;
 
 class NewsPresenter extends BackendPresenter
 {
 	public const TABS = [
 		'news' => 'Články',
-		'tags' => 'Tagy'
+		'tags' => 'Tagy',
 	];
 
 	public const TYPES = [
@@ -40,7 +40,7 @@ class NewsPresenter extends BackendPresenter
 	/** @inject */
 	public TagRepository $tagRepository;
 
-	public function createComponentGrid()
+	public function createComponentGrid(): AdminGrid
 	{
 		$grid = $this->gridFactory->create($this->newsRepository->many()->where('type', 'news'), 20, 'published', 'DESC');
 		$grid->addColumnSelector();
@@ -51,14 +51,14 @@ class NewsPresenter extends BackendPresenter
 		$grid->addColumn('Název', function (News $news, $grid) {
 			return [$grid->getPresenter()->link(':Web:Article:detail', ['article' => (string)$news]), $news->name];
 		}, '<a href="%s" target="_blank"> %s</a>', 'name');
-
+		
 		$grid->addColumn('Tagy', function (News $news) {
-			return \implode(', ', \array_values($this->tagRepository->getCollection(true)
-					->join(['nxn' => 'web_news_nxn_web_tag'], 'this.uuid = nxn.fk_tag')
-					->where('nxn.fk_news', $news->getPK())
-					->toArrayOf('name')
-				)
-			);
+			$tags = $this->tagRepository->getCollection(true)
+				->join(['nxn' => 'web_news_nxn_web_tag'], 'this.uuid = nxn.fk_tag')
+				->where('nxn.fk_news', $news->getPK())
+				->toArrayOf('name');
+			
+			return \implode(', ', \array_values($tags));
 		});
 		$grid->addColumnInputCheckbox('<i title="Skryto" class="far fa-eye-slash"></i>', 'hidden', '', '', 'hidden');
 		$grid->addColumnInputCheckbox('<i title="Doporučeno" class="far fa-thumbs-up"></i>', 'recommended', '', '', 'recommended');
@@ -77,7 +77,7 @@ class NewsPresenter extends BackendPresenter
 		return $grid;
 	}
 
-	public function createComponentWebTagGrid()
+	public function createComponentWebTagGrid(): AdminGrid
 	{
 		$grid = $this->gridFactory->create($this->tagRepository->many(), 20, 'priority', 'ASC', true);
 		$grid->addColumnSelector();
@@ -103,7 +103,6 @@ class NewsPresenter extends BackendPresenter
 		return $grid;
 	}
 
-
 	public function createComponentNewForm(): Form
 	{
 		$form = $this->formFactory->create(true);
@@ -121,10 +120,10 @@ class NewsPresenter extends BackendPresenter
 			},
 		]);
 
-		/** @var News $news */
+		/** @var \Web\DB\News $news */
 		$news = $this->getParameter('news');
 
-		$imagePicker->onDelete[] = function () use ($news) {
+		$imagePicker->onDelete[] = function () use ($news): void {
 			$this->onDelete($news);
 		};
 
@@ -141,7 +140,7 @@ class NewsPresenter extends BackendPresenter
 
 		$form->addSubmits(!$news);
 
-		$form->onSuccess[] = function (AdminForm $form) use ($news) {
+		$form->onSuccess[] = function (AdminForm $form) use ($news): void {
 			$values = $form->getValues('array');
 
 			$this->createImageDirs(News::IMAGE_DIR);
@@ -158,10 +157,10 @@ class NewsPresenter extends BackendPresenter
 				$values['imageFileName'] = $uploader->upload($values['uuid'] . '.%2$s');
 			}
 
-			/** @var News $news */
+			/** @var \Web\DB\News $news */
 			$news = $this->newsRepository->syncOne($values, null, true);
 
-			$form->syncPages(function () use ($news, $values) {
+			$form->syncPages(function () use ($news, $values): void {
 				$values['page']['params'] = Helpers::serializeParameters(['article' => $news->getPK()]);
 				$this->pageRepository->syncOne($values['page']);
 			});
@@ -190,7 +189,7 @@ class NewsPresenter extends BackendPresenter
 
 		$form->addSubmits(!$tag);
 
-		$form->onSuccess[] = function (AdminForm $form) {
+		$form->onSuccess[] = function (AdminForm $form): void {
 			$values = $form->getValues('array');
 
 			if (!$values['uuid']) {
@@ -199,7 +198,7 @@ class NewsPresenter extends BackendPresenter
 
 			$tag = $this->tagRepository->syncOne($values, null, true);
 
-			$form->syncPages(function () use ($tag, $values) {
+			$form->syncPages(function () use ($tag, $values): void {
 				$values['page']['params'] = Helpers::serializeParameters(['tag' => $tag->getPK()]);
 				$this->pageRepository->syncOne($values['page']);
 			});
@@ -211,17 +210,17 @@ class NewsPresenter extends BackendPresenter
 		return $form;
 	}
 
-	public function renderDefault()
+	public function renderDefault(): void
 	{
 		$this->template->headerLabel = 'Články';
 		$this->template->headerTree = [
 			['Články'],
 		];
 
-		if ($this->tab == 'news') {
+		if ($this->tab === 'news') {
 			$this->template->displayButtons = [$this->createNewItemButton('new')];
 			$this->template->displayControls = [$this->getComponent('grid')];
-		} elseif ($this->tab == 'tags') {
+		} elseif ($this->tab === 'tags') {
 			$this->template->displayButtons = [$this->createNewItemButton('newTag')];
 			$this->template->displayControls = [$this->getComponent('webTagGrid')];
 		}
@@ -229,7 +228,7 @@ class NewsPresenter extends BackendPresenter
 		$this->template->tabs = self::TABS;
 	}
 
-	public function renderNew()
+	public function renderNew(): void
 	{
 		$this->template->headerLabel = 'Nová položka';
 		$this->template->headerTree = [
@@ -240,7 +239,7 @@ class NewsPresenter extends BackendPresenter
 		$this->template->displayControls = [$this->getComponent('newForm')];
 	}
 
-	public function renderDetail()
+	public function renderDetail(): void
 	{
 		$this->template->headerLabel = 'Detail';
 		$this->template->headerTree = [
@@ -253,21 +252,21 @@ class NewsPresenter extends BackendPresenter
 
 	public function actionNew(): void
 	{
-		/** @var Form $form */
+		/** @var \Forms\Form $form */
 		$form = $this->getComponent('newForm');
 		$form->setDefaults([
-			'published' => (new DateTime())->format('Y-m-d\TH:i')
+			'published' => (new DateTime())->format('Y-m-d\TH:i'),
 		]);
 	}
 
-	public function actionDetail(News $news)
+	public function actionDetail(News $news): void
 	{
-		/** @var Form $form */
+		/** @var \Forms\Form $form */
 		$form = $this->getComponent('newForm');
 		$form->setDefaults($news->toArray(['tags']));
 	}
 
-	public function renderNewTag()
+	public function renderNewTag(): void
 	{
 		$this->template->headerLabel = 'Nová položka';
 		$this->template->headerTree = [
@@ -279,7 +278,7 @@ class NewsPresenter extends BackendPresenter
 		$this->template->displayControls = [$this->getComponent('tagForm')];
 	}
 
-	public function renderDetailTag()
+	public function renderDetailTag(): void
 	{
 		$this->template->headerLabel = 'Detail';
 		$this->template->headerTree = [
@@ -291,15 +290,9 @@ class NewsPresenter extends BackendPresenter
 		$this->template->displayControls = [$this->getComponent('tagForm')];
 	}
 
-	public function actionNewTag(): void
+	public function actionDetailTag(\Web\DB\Tag $tag): void
 	{
-		/** @var Form $form */
-		$form = $this->getComponent('tagForm');
-	}
-
-	public function actionDetailTag(\Web\DB\Tag $tag)
-	{
-		/** @var Form $form */
+		/** @var \Forms\Form $form */
 		$form = $this->getComponent('tagForm');
 		$form->setDefaults($tag->toArray());
 	}
