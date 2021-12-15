@@ -85,9 +85,9 @@ class SliderPresenter extends BackendPresenter
 		
 		$imagePickerDesktop = $form->addImagePicker('image', 'Obrázek (desktop) *', [
 			HomepageSlide::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'desktop' => static function (Image $image): void {
-				$image->resize(static::DESKTOP_MIN_WIDTH, static::DESKTOP_MIN_HEIGHT, Image::FIT);
+				$image->resize(self::DESKTOP_MIN_WIDTH, self::DESKTOP_MIN_HEIGHT, Image::FIT);
 			},
-		])->setHtmlAttribute('data-info', 'Nahrávejte obrázky o minimální velikosti ' . static::DESKTOP_MIN_WIDTH . 'x' . static::DESKTOP_MIN_HEIGHT . ' px')
+		])->setHtmlAttribute('data-info', 'Nahrávejte obrázky o minimální velikosti ' . self::DESKTOP_MIN_WIDTH . 'x' . self::DESKTOP_MIN_HEIGHT . ' px')
 			->addRule([$this, 'validateSliderImage'], 'Obrázek je příliš malý!', [$form]);
 
 		$imagePickerDesktop->onDelete[] = function (array $directories, $filename) use ($homepageSlide, $imageDir): void {
@@ -101,9 +101,9 @@ class SliderPresenter extends BackendPresenter
 
 		$imagePickerMobile = $form->addImagePicker('imageMobile', 'Obrázek (mobil) *', [
 			HomepageSlide::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'mobile' => static function (Image $image): void {
-				$image->resize(static::MOBILE_MIN_WIDTH, static::MOBILE_MIN_HEIGHT, Image::FIT);
+				$image->resize(self::MOBILE_MIN_WIDTH, self::MOBILE_MIN_HEIGHT, Image::FIT);
 			},
-		])->setHtmlAttribute('data-info', 'Nahrávejte obrázky o minimální velikosti ' . static::MOBILE_MIN_WIDTH . 'x' . static::MOBILE_MIN_HEIGHT . ' px')
+		])->setHtmlAttribute('data-info', 'Nahrávejte obrázky o minimální velikosti ' . self::MOBILE_MIN_WIDTH . 'x' . self::MOBILE_MIN_HEIGHT . ' px')
 			->addRule([$this, 'validateSliderImageMobile'], 'Obrázek je příliš malý!', [$form]);
 
 		$imagePickerMobile->onDelete[] = function (array $directories, $filename) use ($homepageSlide, $imageDir): void {
@@ -204,7 +204,7 @@ class SliderPresenter extends BackendPresenter
 		}
 	}
 
-	public static function validateSliderImage(IControl $control, array $args): bool
+	public static function validateSliderImage(Control $control, array $args): bool
 	{
 		[$form] = $args;
 		
@@ -215,7 +215,7 @@ class SliderPresenter extends BackendPresenter
 			if ($uploaderDesktop->isOk()) {
 				[$width, $height] = $uploaderDesktop->getImageSize();
 				
-				if ($width < static::DESKTOP_MIN_WIDTH || $height < static::DESKTOP_MIN_HEIGHT) {
+				if ($width < self::DESKTOP_MIN_WIDTH || $height < self::DESKTOP_MIN_HEIGHT) {
 					return false;
 				}
 			}
@@ -224,7 +224,7 @@ class SliderPresenter extends BackendPresenter
 		return true;
 	}
 	
-	public static function validateSliderImageMobile(IControl $control, array $args): bool
+	public static function validateSliderImageMobile(Control $control, array $args): bool
 	{
 		[$form] = $args;
 		
@@ -235,7 +235,7 @@ class SliderPresenter extends BackendPresenter
 			if ($uploaderMobile->isOk()) {
 				[$width, $height] = $uploaderMobile->getImageSize();
 				
-				if ($width < static::MOBILE_MIN_WIDTH || $height < static::MOBILE_MIN_HEIGHT) {
+				if ($width < self::MOBILE_MIN_WIDTH || $height < self::MOBILE_MIN_HEIGHT) {
 					return false;
 				}
 			}
