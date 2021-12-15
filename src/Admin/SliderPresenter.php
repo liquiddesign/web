@@ -74,6 +74,8 @@ class SliderPresenter extends BackendPresenter
 
 	public function createComponentForm(): AdminForm
 	{
+		$presenter = $this;
+
 		$form = $this->formFactory->create(true);
 		$imageDir = $this->wwwDir . \DIRECTORY_SEPARATOR . 'userfiles' . \DIRECTORY_SEPARATOR . HomepageSlide::IMAGE_DIR;
 
@@ -84,11 +86,11 @@ class SliderPresenter extends BackendPresenter
 		$form->addRadioList('type', 'Typ', ['image' => 'Obrázek', 'video' => 'Video'])->setDefaultValue('image');
 		
 		$imagePickerDesktop = $form->addImagePicker('image', 'Obrázek (desktop) *', [
-			HomepageSlide::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'desktop' => static function (Image $image): void {
-				$image->resize(self::DESKTOP_MIN_WIDTH, self::DESKTOP_MIN_HEIGHT, Image::FIT);
+			HomepageSlide::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'desktop' => static function (Image $image) use ($presenter): void {
+				$image->resize($presenter::DESKTOP_MIN_WIDTH, $presenter::DESKTOP_MIN_HEIGHT, Image::FIT);
 			},
-		])->setHtmlAttribute('data-info', 'Nahrávejte obrázky o minimální velikosti ' . self::DESKTOP_MIN_WIDTH . 'x' . self::DESKTOP_MIN_HEIGHT . ' px')
-			->addRule([$this, 'validateSliderImage'], 'Obrázek je příliš malý!', [$form]);
+		])->setHtmlAttribute('data-info', 'Nahrávejte obrázky o minimální velikosti ' . $this::DESKTOP_MIN_WIDTH . 'x' . $this::DESKTOP_MIN_HEIGHT . ' px')
+			->addRule([$this, 'validateSliderImage'], 'Obrázek je příliš malý!', [$form, $this::DESKTOP_MIN_WIDTH, $this::DESKTOP_MIN_HEIGHT]);
 
 		$imagePickerDesktop->onDelete[] = function (array $directories, $filename) use ($homepageSlide, $imageDir): void {
 			if ($homepageSlide->image) {
@@ -100,11 +102,11 @@ class SliderPresenter extends BackendPresenter
 		};
 
 		$imagePickerMobile = $form->addImagePicker('imageMobile', 'Obrázek (mobil) *', [
-			HomepageSlide::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'mobile' => static function (Image $image): void {
-				$image->resize(self::MOBILE_MIN_WIDTH, self::MOBILE_MIN_HEIGHT, Image::FIT);
+			HomepageSlide::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'mobile' => static function (Image $image) use ($presenter): void {
+				$image->resize($presenter::MOBILE_MIN_WIDTH, $presenter::MOBILE_MIN_HEIGHT, Image::FIT);
 			},
-		])->setHtmlAttribute('data-info', 'Nahrávejte obrázky o minimální velikosti ' . self::MOBILE_MIN_WIDTH . 'x' . self::MOBILE_MIN_HEIGHT . ' px')
-			->addRule([$this, 'validateSliderImageMobile'], 'Obrázek je příliš malý!', [$form]);
+		])->setHtmlAttribute('data-info', 'Nahrávejte obrázky o minimální velikosti ' . $this::MOBILE_MIN_WIDTH . 'x' . $this::MOBILE_MIN_HEIGHT . ' px')
+			->addRule([$this, 'validateSliderImageMobile'], 'Obrázek je příliš malý!', [$form, $this::MOBILE_MIN_WIDTH, $this::MOBILE_MIN_HEIGHT]);
 
 		$imagePickerMobile->onDelete[] = function (array $directories, $filename) use ($homepageSlide, $imageDir): void {
 			if ($homepageSlide->imageMobile) {
@@ -206,7 +208,7 @@ class SliderPresenter extends BackendPresenter
 
 	public static function validateSliderImage(Control $control, array $args): bool
 	{
-		[$form] = $args;
+		[$form, $minWidth, $minHeight] = $args;
 		
 		if ($form['type']->getValue() === 'image') {
 			/** @var \Nette\Http\FileUpload $uploaderDesktop */
@@ -215,7 +217,7 @@ class SliderPresenter extends BackendPresenter
 			if ($uploaderDesktop->isOk()) {
 				[$width, $height] = $uploaderDesktop->getImageSize();
 				
-				if ($width < self::DESKTOP_MIN_WIDTH || $height < self::DESKTOP_MIN_HEIGHT) {
+				if ($width < $minWidth || $height < $minHeight) {
 					return false;
 				}
 			}
@@ -226,7 +228,7 @@ class SliderPresenter extends BackendPresenter
 	
 	public static function validateSliderImageMobile(Control $control, array $args): bool
 	{
-		[$form] = $args;
+		[$form, $minWidth, $minHeight] = $args;
 		
 		if ($form['type']->getValue() === 'image') {
 			/** @var \Nette\Http\FileUpload $uploaderMobile */
@@ -235,7 +237,7 @@ class SliderPresenter extends BackendPresenter
 			if ($uploaderMobile->isOk()) {
 				[$width, $height] = $uploaderMobile->getImageSize();
 				
-				if ($width < self::MOBILE_MIN_WIDTH || $height < self::MOBILE_MIN_HEIGHT) {
+				if ($width < $minWidth || $height < $minHeight) {
 					return false;
 				}
 			}
