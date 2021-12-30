@@ -36,6 +36,7 @@
     "liquiddesign/migrator": "@dev",
     "phpstan/phpstan": "*"
   },
+  "minimum-stability": "dev",
   "scripts": {
     "phpstan": "phpstan analyse --memory-limit 1G -c phpstan.neon",
     "phpcs": "phpcs --standard=ruleset.xml --ignore=assets src",
