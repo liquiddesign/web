@@ -22,15 +22,10 @@
     "liquiddesign/storm": "~1.0",
     "liquiddesign/forms": "@dev",
     "liquiddesign/security": "@dev",
-    "liquiddesign/messages": "@dev",
     "liquiddesign/translator": "@dev",
     "liquiddesign/pages": "@dev",
     "liquiddesign/admin": "@dev",
     "liquiddesign/grid": "@dev",
-    "liquiddesign/common": "@dev",
-    "ext-pdo": "*",
-    "ext-intl": "*",
-    "ext-iconv": "*",
     "onnov/detect-encoding": "^2.0"
   },
   "require-dev": {
@@ -46,5 +41,10 @@
     "phpcs": "phpcs --standard=ruleset.xml --ignore=assets src",
     "phpcsfix": "phpcbf --standard=ruleset.xml --ignore=assets src",
     "tester": "tester tests/Cases/*.phpt  -c tests/php.ini --setup tests/setup.php"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   }
 }
