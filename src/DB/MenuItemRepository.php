@@ -181,7 +181,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	
 	/**
 	 * @param $menuItem
-	 * @return string[]|null
+	 * @return \Web\DB\MenuItem[]
 	 * @throws \StORM\Exception\NotFoundException
 	 */
 	public function getBreadcrumbStructure($menuItem): array
