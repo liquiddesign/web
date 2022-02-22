@@ -184,7 +184,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	 * @return string[]|null
 	 * @throws \StORM\Exception\NotFoundException
 	 */
-	public function getBreadcrumbStructure($menuItem): ?array
+	public function getBreadcrumbStructure($menuItem): array
 	{
 		if (!$menuItem) {
 			return [];
@@ -200,7 +200,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		
 		$menuAssign = $this->menuAssignRepository->many()->where('fk_menuitem', $menuItem->getPK())->first();
 
-		if (\strlen($menuAssign->path) / 4 === 1) {
+		if ($menuAssign === null || \strlen($menuAssign->path) / 4 === 1) {
 			return [];
 		}
 
