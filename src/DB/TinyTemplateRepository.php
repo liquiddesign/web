@@ -18,7 +18,7 @@ class TinyTemplateRepository extends Repository
 		$collection = $this->many()->setSelect([
 			'title' => "name$suffix",
 			'description' => "description$suffix",
-			'content' => "html",
+			'content' => 'html',
 		]);
 		
 		$collection->orderBy(['priority'])->setIndex(null)->setFetchClass(\StdClass::class);

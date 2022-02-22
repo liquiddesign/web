@@ -186,7 +186,7 @@ class MicrotextPresenter extends BackendPresenter
 			$tempFilename = \tempnam($dir, 'csv');
 
 			$this->application->onShutdown[] = function () use ($tempFilename): void {
-				\unlink($tempFilename);
+				FileSystem::delete($tempFilename);
 			};
 
 			try {
@@ -196,7 +196,7 @@ class MicrotextPresenter extends BackendPresenter
 				$this->redirect('this');
 			}
 
-			$response = new FileResponse($tempFilename, "texty.csv", 'text/csv');
+			$response = new FileResponse($tempFilename, 'texty.csv', 'text/csv');
 
 			$this->flashMessage('Export proběhl úspěšně.', 'success');
 			$this->sendResponse($response);

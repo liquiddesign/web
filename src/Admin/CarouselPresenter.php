@@ -185,7 +185,7 @@ class CarouselPresenter extends BackendPresenter
 		$grid->addColumnSelector();
 		$grid->addColumnText($this->_('carouselName', 'Název'), 'name', '%s', 'name');
 		$grid->addColumnText($this->_('.code', 'Kód'), 'id', '{control carousel-%s}', 'id');
-		$grid->addColumnLink('Items', '<i title="'. $tPictures .'" class="far fa-images"></i> '. $tPictures .'');
+		$grid->addColumnLink('Items', '<i title="' . $tPictures . '" class="far fa-images"></i> ' . $tPictures . '');
 		$grid->addColumnMutations('active', false);
 		$grid->addColumnLinkDetail();
 		$grid->addColumnActionDelete();

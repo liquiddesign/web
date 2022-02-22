@@ -75,7 +75,7 @@ class PagePresenter extends BackendPresenter
 		}
 		
 		$grid->addFilterSelectInput('search2', 'type = :s', null, null, null, [null => 'Typ stránky - Vše'] + $types, 's');
-		$grid->addFilterCheckboxInput('system', "systemic=1", 'Systémové');
+		$grid->addFilterCheckboxInput('system', 'systemic=1', 'Systémové');
 		
 		
 		$grid->addFilterButtons();
@@ -105,7 +105,7 @@ class PagePresenter extends BackendPresenter
 			
 			foreach ($this->pages->getPageTypes() as $typeId => $pageType) {
 				$form->addGroup('Parametry - ' . $pageType->getName())
-					->setOption("container", \Nette\Utils\Html::el("fieldset")->style('display:none;'))
+					->setOption('container', \Nette\Utils\Html::el('fieldset')->style('display:none;'))
 					->setOption('id', $typeId);
 				$container = $form->addContainer("_$typeId");
 

@@ -552,7 +552,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 				$list[$element->getPK()] = \str_repeat(
 					'—',
 					\strlen($element->path) / 4,
-				) . " " . $element->menuitem->name;
+				) . ' ' . $element->menuitem->name;
 				
 				if ($children = $this->buildTreeArrayForSelect($elements, $element->getPK(), $list)) {
 					$element->menuitem->children = $children;

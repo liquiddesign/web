@@ -22,7 +22,7 @@ class CoverPresenter extends BackendPresenter
 	
 	public function renderDefault(): void
 	{
-		$this->template->headerLabel = "Covers";
+		$this->template->headerLabel = 'Covers';
 		$this->template->headerTree = [
 			['Covers'],
 		];
@@ -143,7 +143,7 @@ class CoverPresenter extends BackendPresenter
 		$grid->addColumnText($this->_('heightDesktop', 'Výška desktop'), 'heightDesktop', '%s', 'heightDesktop');
 		$grid->addColumnText($this->_('bgColor', 'Barva pozadí'), 'bgColor', '%s', 'bgColor');
 		$grid->addColumnText('CSS class', 'cssClass', '%s', 'cssClass');
-		$grid->addColumnInputCheckbox('<i title="'. $this->_('.hidden', 'Skryto') .'" class="far fa-eye-slash"></i>', 'hidden', '', '', 'hidden');
+		$grid->addColumnInputCheckbox('<i title="' . $this->_('.hidden', 'Skryto') . '" class="far fa-eye-slash"></i>', 'hidden', '', '', 'hidden');
 		$grid->addColumnPriority();
 		$grid->addColumnMutations('active', false);
 		$grid->addColumnLinkDetail();

@@ -21,7 +21,7 @@
     "league/csv": "^9.0",
     "liquiddesign/storm": "~1.0",
     "liquiddesign/forms": "@dev",
-    "liquiddesign/security": "@dev",
+    "liquiddesign/security": "~1.0",
     "liquiddesign/translator": "@dev",
     "liquiddesign/pages": "@dev",
     "liquiddesign/admin": "@dev",
@@ -29,12 +29,12 @@
     "onnov/detect-encoding": "^2.0"
   },
   "require-dev": {
-    "nette/tester": "*",
-    "tracy/tracy": "*",
-    "composer/composer": "*",
-    "liquiddesign/codestyle": "@dev",
-    "liquiddesign/migrator": "@dev",
-    "phpstan/phpstan": "*"
+    "nette/tester": "^2.0",
+    "tracy/tracy": "^2.0",
+    "composer/composer": "^2.0",
+    "liquiddesign/codestyle": "^1.0",
+    "liquiddesign/migrator": "^1.0",
+    "phpstan/phpstan-nette": "^1.0"
   },
   "minimum-stability": "dev",
   "scripts": {

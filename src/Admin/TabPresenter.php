@@ -178,7 +178,7 @@ class TabPresenter extends BackendPresenter
 		$grid->setLogging('tab');
 		$grid->addColumnText($this->_('tabName', 'Název'), 'name', '%s', 'name');
 		$grid->addColumnText($this->_('.code', 'Kód'), 'id', '{control tab-%s}', 'id');
-		$grid->addColumnLink('Items', '<i title="'. $tItems .'" class="far fa-images"></i> '. $tItems .'');
+		$grid->addColumnLink('Items', '<i title="' . $tItems . '" class="far fa-images"></i> ' . $tItems . '');
 		$grid->addColumnMutations('active', false);
 		$grid->addColumnLinkDetail();
 		$grid->addColumnActionDelete();

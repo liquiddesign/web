@@ -151,7 +151,7 @@ class RedirectPresenter extends BackendPresenter
 	public function handleDownloadImportExampleFile(): void
 	{
 		if (isset(self::CONFIGURATION['importExampleFile']) && self::CONFIGURATION['importExampleFile']) {
-			$this->getPresenter()->sendResponse(new FileResponse($this->wwwDir . '/userfiles/' . self::CONFIGURATION['importExampleFile'], "example.csv", 'text/csv'));
+			$this->getPresenter()->sendResponse(new FileResponse($this->wwwDir . '/userfiles/' . self::CONFIGURATION['importExampleFile'], 'example.csv', 'text/csv'));
 		}
 	}
 
@@ -302,7 +302,7 @@ Povolené sloupce hlavičky (lze použít obě varianty kombinovaně):<br>
 
 			$items = $values['bulkType'] === 'selected' ? $this->redirectRepository->many()->where('this.uuid', $ids) : $grid->getFilteredSource();
 
-			$tempFilename = \tempnam($this->tempDir, "csv");
+			$tempFilename = \tempnam($this->tempDir, 'csv');
 
 			$this->csvExport(
 				$items,
@@ -311,7 +311,7 @@ Povolené sloupce hlavičky (lze použít obě varianty kombinovaně):<br>
 				self::CONFIGURATION['importColumns'],
 			);
 
-			$this->getPresenter()->sendResponse(new FileResponse($tempFilename, "products.csv", 'text/csv'));
+			$this->getPresenter()->sendResponse(new FileResponse($tempFilename, 'products.csv', 'text/csv'));
 		};
 
 		return $form;
@@ -319,8 +319,8 @@ Povolené sloupce hlavičky (lze použít obě varianty kombinovaně):<br>
 
 	protected function importCsv(string $filePath, string $delimiter = ';'): void
 	{
-		if (!\ini_get("auto_detect_line_endings")) {
-			\ini_set("auto_detect_line_endings", '1');
+		if (!\ini_get('auto_detect_line_endings')) {
+			\ini_set('auto_detect_line_endings', '1');
 		}
 
 		$csvData = FileSystem::read($filePath);

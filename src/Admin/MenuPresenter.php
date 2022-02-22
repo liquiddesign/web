@@ -646,7 +646,7 @@ class MenuPresenter extends BackendPresenter
 			$this->template->tabs[$type] = " $label";
 		}
 
-		$this->template->tabs['pages'] = "<i class=\"far fa-sticky-note\"></i> Nezařazené stránky";
+		$this->template->tabs['pages'] = '<i class="far fa-sticky-note"></i> Nezařazené stránky';
 	}
 
 	public function renderNew(): void

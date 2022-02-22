@@ -4,11 +4,14 @@ namespace Web\Controls;
 
 use Nette\Application\UI\Control;
 
+/**
+ * @property \Nette\Application\UI\Template $template
+ */
 class Breadcrumb extends Control
 {
 	/** @var array<callable(static): void> Occurs when component is attached to presenter */
 	public $onAnchor = [];
-
+	
 	/**
 	 * @var \stdClass[]
 	 */

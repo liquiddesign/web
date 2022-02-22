@@ -64,7 +64,7 @@ class GalleryPresenter extends BackendPresenter
 	public function renderDetail(Gallery $gallery): void
 	{
 		$tDetail = $this->_('detailGallery', 'Detail galerie');
-		$this->template->headerLabel = $tDetail. ": " . $gallery->name;
+		$this->template->headerLabel = $tDetail . ': ' . $gallery->name;
 		$this->template->headerTree = [
 			[$this->tGallery, 'default'],
 			[$tDetail],
@@ -76,7 +76,7 @@ class GalleryPresenter extends BackendPresenter
 	public function renderItems(Gallery $gallery): void
 	{
 		$tNewItems = $this->_('newMultiItems', 'Hromadné nahrávání');
-		$this->template->headerLabel = $this->tGalleryItems . ": " . $gallery->name;
+		$this->template->headerLabel = $this->tGalleryItems . ': ' . $gallery->name;
 		$this->template->headerTree = [
 			[$this->tGallery, 'default'],
 			[$this->tGalleryItems],
@@ -291,7 +291,7 @@ class GalleryPresenter extends BackendPresenter
 					$origin->sharpen();
 					$thumbnail->sharpen();
 					
-					$uploadedImage->save($path. '/upload/' . $galleryImage->image);
+					$uploadedImage->save($path . '/upload/' . $galleryImage->image);
 					$origin->save($path . '/origin/' . $galleryImage->image);
 					$thumbnail->save($path . '/thumb/' . $galleryImage->image);
 				}
@@ -321,7 +321,7 @@ class GalleryPresenter extends BackendPresenter
 		$grid->addColumnText($this->_('galleryThumbWidth', 'Náhled šířka (px)'), 'thumbWidth', '%s', 'thumbWidth');
 		$grid->addColumnText($this->_('galleryThumbHeight', 'Náhled výška (px)'), 'thumbHeight', '%s', 'thumbHeight');
 		$grid->addColumnHidden();
-		$grid->addColumnLink('Items', '<i title="'. $tPictures .'" class="far fa-images"></i> '. $tPictures .'');
+		$grid->addColumnLink('Items', '<i title="' . $tPictures . '" class="far fa-images"></i> ' . $tPictures . '');
 		$grid->addColumnMutations('active', false);
 		$grid->addColumnLinkDetail();
 		$grid->addColumnActionDelete([$this->galleryRepo, 'deleteImages']);

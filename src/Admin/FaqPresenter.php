@@ -37,7 +37,7 @@ class FaqPresenter extends BackendPresenter
 	
 	public function renderDefault(): void
 	{
-		$this->template->headerLabel = "Faq";
+		$this->template->headerLabel = 'Faq';
 		$this->template->headerTree = [
 			['Faq'],
 		];
@@ -176,7 +176,7 @@ class FaqPresenter extends BackendPresenter
 		$grid->addColumnSelector();
 		$grid->addColumnText($this->_('name', 'Název'), 'name', '%s', 'name');
 		$grid->addColumnText($this->_('.code', 'Kód'), 'id', '{control faq-%s}', 'id');
-		$grid->addColumnLink('Items', '<i title="'. $this->tItems .'" class="fas fa-list-ul"></i> '. $this->tItems .'');
+		$grid->addColumnLink('Items', '<i title="' . $this->tItems . '" class="fas fa-list-ul"></i> ' . $this->tItems . '');
 		$grid->addColumnMutations('active', false);
 		$grid->addColumnLinkDetail();
 		$grid->addColumnActionDelete();
