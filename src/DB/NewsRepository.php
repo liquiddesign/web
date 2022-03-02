@@ -31,6 +31,6 @@ class NewsRepository extends Repository implements IGeneralRepository
 			$collection->where('this.hidden', false);
 		}
 		
-		return $collection->orderBy(['this.published DESC', "this.name$suffix"]);
+		return $collection->orderBy(['this.published DESC', 'this.recommended DESC', "this.name$suffix"]);
 	}
 }
