@@ -18,6 +18,11 @@ class MenuItem extends Entity
 	 * @column{"mutations":true}
 	 */
 	public ?string $name = null;
+	
+	/**
+	 * @column{"mutations":true}
+	 */
+	public ?string $description = null;
 
 	/**
 	 * Typ
