@@ -36,4 +36,15 @@ class SettingRepository extends Repository implements IGeneralRepository
 	{
 		return $this->many()->setIndex('name')->toArrayOf('value');
 	}
+
+	public function getValueByName(string $name): ?string
+	{
+		$setting = $this->one(['name' => $name]);
+
+		if (!$setting || !$setting->value) {
+			return null;
+		}
+
+		return $setting->value;
+	}
 }
