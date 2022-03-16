@@ -27,6 +27,11 @@ class Page extends \Pages\DB\Page
 	public ?string $content = null;
 
 	/**
+	 * @column{"type":"longtext","mutations":true}
+	 */
+	public ?string $richSnippet = null;
+
+	/**
 	 * @column
 	 */
 	public ?string $opengraph;

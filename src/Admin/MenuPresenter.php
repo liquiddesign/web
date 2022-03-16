@@ -34,7 +34,7 @@ class MenuPresenter extends BackendPresenter
 			 'width' => null,
 			 'height' => null,
 		],
-		
+		'richSnippet' => false,
 	];
 	
 	/**
@@ -296,7 +296,7 @@ class MenuPresenter extends BackendPresenter
 		$params = $menu && $menu->page ? $menu->page->getParsedParameters() : [];
 		$type = $menu && $menu->page ? $menu->page->getType() : 'content';
 
-		$form->addPageContainer($type, $params, $nameInput, false, true, false, 'URL a SEO', true);
+		$form->addPageContainer($type, $params, $nameInput, false, true, false, 'URL a SEO', true, true, isset($this::CONFIGURATIONS['richSnippet']) && $this::CONFIGURATIONS['richSnippet']);
 
 		$form->addSubmits(!$menu);
 
@@ -500,6 +500,13 @@ class MenuPresenter extends BackendPresenter
 			$page ? $page->type : 'content',
 			$this->getParameter('page') ? ['page' => $this->getParameter('page')] : [],
 			$inputName,
+			false,
+			true,
+			false,
+			'URL a SEO',
+			false,
+			true,
+			isset($this::CONFIGURATIONS['richSnippet']) && $this::CONFIGURATIONS['richSnippet'],
 		);
 		$form->addSubmits(!$this->getParameter('page'));
 
