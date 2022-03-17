@@ -28,6 +28,10 @@ class NewsPresenter extends BackendPresenter
 		'news' => 'Články',
 	];
 
+	protected const CONFIGURATIONS = [
+		'richSnippet' => false,
+	];
+
 	/** @persistent */
 	public string $tab = 'news';
 
@@ -136,7 +140,18 @@ class NewsPresenter extends BackendPresenter
 		$form->addHidden('type', 'news');
 
 
-		$form->addPageContainer('news_detail', ['article' => $this->getParameter('news')], $nameInput, false, true, false, 'URL a SEO', false, true, true);
+		$form->addPageContainer(
+			'news_detail',
+			['article' => $this->getParameter('news')],
+			$nameInput,
+			false,
+			true,
+			false,
+			'URL a SEO',
+			false,
+			true,
+			isset($this::CONFIGURATIONS['richSnippet']) && $this::CONFIGURATIONS['richSnippet'],
+		);
 
 		$form->addSubmits(!$news);
 
