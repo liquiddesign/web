@@ -124,7 +124,7 @@ class PagePresenter extends BackendPresenter
 		$pageContainer->addLocaleText('canonicalUrl', 'Canonická URL');
 		
 		$form->addGroup('Sitemap');
-		$form->addDatetime('lastmod', 'Poslední změna');
+		$form->addDatetime('lastmod', 'Poslední změna')->setNullable();
 		$frequency = ['always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never'];
 		$form->addSelect('changefreq', 'Frekvence', \array_combine($frequency, $frequency))->setPrompt('Žádná');
 		$form->addText('priority', 'Priorita')->setHtmlType('number');
@@ -146,7 +146,6 @@ class PagePresenter extends BackendPresenter
 		}
 		
 		$form->onSuccess[] = function (AdminForm $form): void {
-			
 			$values = $form->getValues('array');
 			
 			if (isset($values['type'])) {
