@@ -66,7 +66,7 @@ class PagePresenter extends BackendPresenter
 		//$inputs = ['page' => ['title', 'description', 'robots'], 'lastmod', 'changefreq', 'priority'];
 		//$grid->addButtonBulkEdit('form', $inputs);
 		
-		$grid->addFilterTextInput('search', ['this.name_cs', 'this.url_cs', 'this.title_cs'], null, 'Název, url, titulek');
+		$grid->addFilterTextInput('search', ["this.name_$this->lang", "this.url_$this->lang", "this.title_$this->lang"], null, 'Název, url, titulek');
 		
 		$types = [];
 
