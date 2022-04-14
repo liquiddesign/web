@@ -97,7 +97,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	{
 		$collection = $this->menuAssignRepository->many()
 			->join(['item' => 'web_menuitem'], 'item.uuid = this.fk_menuitem')
-			->where('LENGTH(path) <= 40')
+			->where('LENGTH(this.path) <= 40')
 			->orderBy(['item.priority']);
 		
 		if ($useHidden) {
@@ -156,7 +156,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	{
 		$collection = $this->menuAssignRepository->many()
 			->join(['item' => 'web_menuitem'], 'item.uuid = this.fk_menuitem')
-			->where('LENGTH(path) <= 40')
+			->where('LENGTH(this.path) <= 40')
 			->where('menuitem.hidden', false)
 			->where('menuitem.active_' . $this->getConnection()->getMutation(), true)
 			->orderBy(['item.priority']);
@@ -291,8 +291,8 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		foreach ($menuTypes as $type) {
 			$collection = $this->menuAssignRepository->many()
 				->join(['type' => 'web_menutype'], 'this.fk_menutype = type.uuid')
-				->where('LENGTH(path) <= 40')
-				->where('(LENGTH(path)/4) < type.maxLevel')
+				->where('LENGTH(this.path) <= 40')
+				->where('(LENGTH(this.path)/4) < type.maxLevel')
 				->where('fk_menutype', $type->getPK());
 			
 			if ($menuItem) {
@@ -300,11 +300,11 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 				//$deep = $this->getDeepLevel($menuItem, $type);
 
 				if ($menuItemDeep = $this->getMaxDeepLevel($menuItem, $type) - $this->getDeepLevel($menuItem, $type)) {
-					$collection->where('(LENGTH(path)/4) + :deep < type.maxLevel', ['deep' => $menuItemDeep]);
+					$collection->where('(LENGTH(this.path)/4) + :deep < type.maxLevel', ['deep' => $menuItemDeep]);
 				}
 				
 				$collection->whereNot('fk_menuitem', $menuItem->getPK());
-				$collection->where('path NOT LIKE :path', ['path' => "$menuItem->path%"]);
+				$collection->where('this.path NOT LIKE :path', ['path' => "$menuItem->path%"]);
 			}
 			
 			$tempList = [];
