@@ -74,4 +74,16 @@ class News extends Entity
 	 * @relation
 	 */
 	public ?Author $author;
+	
+	/**
+	 * Počet hodnocení
+	 * @column
+	 */
+	public ?int $numberOfRatings;
+	
+	/**
+	 * Průmerné hodnocení
+	 * @column
+	 */
+	public ?float $ratingAverage;
 }
