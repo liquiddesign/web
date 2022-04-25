@@ -13,7 +13,7 @@ use StORM\RelationCollection;
 class News extends Entity
 {
 	public const IMAGE_DIR = 'news_images';
-
+	
 	/**
 	 * @column{"mutations":true}
 	 */
@@ -54,7 +54,7 @@ class News extends Entity
 	 * @column
 	 */
 	public bool $hidden = false;
-
+	
 	/**
 	 * Název obrázku
 	 * @column
@@ -67,4 +67,11 @@ class News extends Entity
 	 * @var \Web\DB\Tag[]|\StORM\RelationCollection<\Web\DB\Tag>
 	 */
 	public RelationCollection $tags;
+	
+	/**
+	 * Author
+	 * @constraint{"onUpdate":"CASCADE","onDelete":"SET NULL"}
+	 * @relation
+	 */
+	public ?Author $author;
 }

@@ -43,4 +43,11 @@ class FaqItem extends Entity
 	 * @relation
 	 */
 	public Faq $faq;
+	
+	/**
+	 * Author
+	 * @constraint{"onUpdate":"CASCADE","onDelete":"SET NULL"}
+	 * @relation
+	 */
+	public ?Author $author;
 }

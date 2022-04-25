@@ -8,6 +8,7 @@ use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
 use Nette\Utils\Random;
+use Web\DB\AuthorRepository;
 use Web\DB\Faq;
 use Web\DB\FaqItem;
 use Web\DB\FaqItemRepository;
@@ -25,6 +26,9 @@ class FaqPresenter extends BackendPresenter
 	 * @inject
 	 */
 	public FaqItemRepository $faqItemRepo;
+	
+	/** @inject */
+	public AuthorRepository $authorRepository;
 	
 	public string $tItems;
 	
@@ -148,6 +152,7 @@ class FaqPresenter extends BackendPresenter
 		$form->setLogging('faqItem');
 		$form->addLocaleText('question', $this->_('question', 'Dozat'));
 		$form->addLocaleRichEdit('answer', $this->_('answer', 'Odpověď'));
+		$form->addSelect('author', $this->_('author', 'Autor'))->setItems($this->authorRepository->getArrayForSelect())->setPrompt('- bez autora -');
 		$form->addInteger('priority', $this->_('.priority', 'Pořadí'))->setRequired()->setDefaultValue(10);
 		$form->addCheckbox('hidden', $this->_('.hidden', 'Skryto'));
 		$form->addHidden('faq', (string) ($this->getParameter('faqItem') ? $this->getParameter('faqItem')->faq : $this->getParameter('faq')));
@@ -158,9 +163,9 @@ class FaqPresenter extends BackendPresenter
 		$form->addSubmits(!$faqItem);
 		$form->onSuccess[] = function (AdminForm $form) use ($faqItem): void {
 			$values = $form->getValues('array');
-
+			
 			$values['answer'] = Helpers::sanitizeMutationsStrings($values['answer']);
-
+			
 			$faqItem = $this->faqItemRepo->syncOne($values, null, true);
 			$this->flashMessage($this->_('.saved', 'Uloženo'), 'success');
 			$form->processRedirect('detailItem', 'items', [$faqItem], [$faqItem->faq]);
