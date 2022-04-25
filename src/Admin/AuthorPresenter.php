@@ -46,6 +46,7 @@ class AuthorPresenter extends BackendPresenter
 		$nameInput = $form->addLocaleText('name', 'Jméno a příjmení / Název');
 		$form->addLocaleText('position', 'Pozice');
 		$form->addLocaleRichEdit('text', 'Bio');
+		$form->addText('linkedInUrl', 'LinkedIn profil');
 		
 		$imagePicker = $form->addImagePicker('image', $this->_('picture', 'Fotka osoby'), [
 			Author::IMAGE_DIR => static function (Image $image): void {
