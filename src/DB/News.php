@@ -45,7 +45,7 @@ class News extends Entity
 	
 	/**
 	 * Type
-	 * @column{"type":"enum","length":"'news','article'"}
+	 * @column
 	 */
 	public string $type = 'news';
 	

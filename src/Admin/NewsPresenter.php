@@ -50,7 +50,7 @@ class NewsPresenter extends BackendPresenter
 	
 	public function createComponentGrid(): AdminGrid
 	{
-		$grid = $this->gridFactory->create($this->newsRepository->many()->where('type', 'news'), 20, 'published', 'DESC');
+		$grid = $this->gridFactory->create($this->newsRepository->many()->where('type', $this->tab), 20, 'published', 'DESC');
 		$grid->addColumnSelector();
 		$grid->addColumnImage('imageFileName', News::IMAGE_DIR);
 		
@@ -142,7 +142,7 @@ class NewsPresenter extends BackendPresenter
 		
 		$form->addCheckbox('hidden', 'Skryto');
 		$form->addCheckbox('recommended', 'Doporučeno');
-		$form->addHidden('type', 'news');
+		$form->addHidden('type', $this->tab);
 		
 		
 		$form->addPageContainer(
@@ -237,15 +237,15 @@ class NewsPresenter extends BackendPresenter
 			['Články'],
 		];
 		
-		if ($this->tab === 'news') {
-			$this->template->displayButtons = [$this->createNewItemButton('new')];
-			$this->template->displayControls = [$this->getComponent('grid')];
-		} elseif ($this->tab === 'tags') {
+		if ($this->tab === 'tags') {
 			$this->template->displayButtons = [$this->createNewItemButton('newTag')];
 			$this->template->displayControls = [$this->getComponent('webTagGrid')];
+		} else {
+			$this->template->displayButtons = [$this->createNewItemButton('new')];
+			$this->template->displayControls = [$this->getComponent('grid')];
 		}
 		
-		$this->template->tabs = self::TABS;
+		$this->template->tabs = static::TABS;
 	}
 	
 	public function renderNew(): void
