@@ -245,6 +245,7 @@ class NewsPresenter extends BackendPresenter
 			$this->template->displayControls = [$this->getComponent('grid')];
 		}
 		
+		// phpcs:ignore
 		$this->template->tabs = static::TABS;
 	}
 	
