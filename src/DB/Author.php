@@ -39,6 +39,11 @@ class Author extends Entity
 	public ?string $position;
 	
 	/**
+	 * @column
+	 */
+	public ?string $linkedInUrl;
+	
+	/**
 	 * @column{"mutations":true}
 	 */
 	public bool $active = false;
