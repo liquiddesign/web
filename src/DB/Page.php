@@ -25,6 +25,11 @@ class Page extends \Pages\DB\Page
 	 * @column{"type":"longtext","mutations":true}
 	 */
 	public ?string $content = null;
+	
+	/**
+	 * @column
+	 */
+	public ?string $path = null;
 
 	/**
 	 * @column{"type":"longtext","mutations":true}
