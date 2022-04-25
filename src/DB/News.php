@@ -86,4 +86,11 @@ class News extends Entity
 	 * @column
 	 */
 	public ?float $ratingAverage;
+	
+	/**
+	 * Podobné články
+	 * @relationNxN{"sourceViaKey":"fk_news","targetViaKey":"fk_related"}
+	 * @var \StORM\RelationCollection<\Web\DB\News>|\Web\DB\News[]
+	 */
+	public RelationCollection $relatedNews;
 }

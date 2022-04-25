@@ -31,6 +31,7 @@ class NewsPresenter extends BackendPresenter
 	
 	protected const CONFIGURATIONS = [
 		'richSnippet' => false,
+		'relatedNews' => false,
 	];
 	
 	/** @persistent */
@@ -136,6 +137,10 @@ class NewsPresenter extends BackendPresenter
 		};
 		
 		$form->addDataMultiSelect('tags', 'Tagy', $this->tagRepository->getArrayForSelect());
+		
+		if (isset($this::CONFIGURATIONS['relatedNews']) && $this::CONFIGURATIONS['relatedNews']) {
+			$form->addDataMultiSelect('relatedNews', 'Podobné články', $this->newsRepository->getArrayForSelect());
+		}
 		
 		$form->addDate('published', 'Publikováno')->setRequired();
 		$form->addSelect('author', 'Autor')->setItems($this->authorRepository->getArrayForSelect())->setPrompt('- bez autora -');
@@ -284,7 +289,7 @@ class NewsPresenter extends BackendPresenter
 	{
 		/** @var \Forms\Form $form */
 		$form = $this->getComponent('newForm');
-		$form->setDefaults($news->toArray(['tags']));
+		$form->setDefaults($news->toArray(['tags', 'relatedNews']));
 	}
 	
 	public function renderNewTag(): void
