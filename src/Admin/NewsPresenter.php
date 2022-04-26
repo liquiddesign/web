@@ -55,7 +55,7 @@ class NewsPresenter extends BackendPresenter
 		$grid->addColumnSelector();
 		$grid->addColumnImage('imageFileName', News::IMAGE_DIR);
 		
-		$grid->addColumnText('Publikováno', "published|date:'d.m.Y'", '%s', null, ['class' => 'minimal']);
+		$grid->addColumnText('Publikováno', "published|date:'d.m.Y'", '%s', 'published', ['class' => 'minimal']);
 		
 		$grid->addColumn('Název', function (News $news, $grid) {
 			return [$grid->getPresenter()->link(':Web:Article:detail', ['article' => (string)$news]), $news->name];
