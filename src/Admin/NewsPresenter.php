@@ -102,9 +102,9 @@ class NewsPresenter extends BackendPresenter
 		$grid->addColumnActionDeleteSystemic();
 		
 		$grid->addButtonSaveAll();
-		$grid->addButtonDeleteSelected(null, false, function (\Web\DB\Tag $page) {
-			return $page->isSystemic();
-		});
+		$grid->addButtonDeleteSelected(null, false, function (\Web\DB\Tag $tag) {
+			return $tag->isSystemic();
+		}, 'this.uuid');
 		
 		$grid->addFilterTextInput('search', ['name_cs'], null, 'Název');
 		$grid->addFilterButtons();

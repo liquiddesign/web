@@ -101,11 +101,11 @@ class MenuPresenter extends BackendPresenter
 
 		$grid->setNestingCallback(static function ($source, $parent) {
 			if (!$parent) {
-				return $source->where('LENGTH(path)=4');
+				return $source->where('LENGTH(nxn.path)=4');
 			}
 
 			return $source->where(
-				'path!=:parent AND path LIKE :path',
+				'nxn.path!=:parent AND nxn.path LIKE :path',
 				['path' => $parent->path . '%', 'parent' => $parent->path],
 			);
 		});
