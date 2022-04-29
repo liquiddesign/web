@@ -130,30 +130,46 @@ class MenuPresenter extends BackendPresenter
 		$grid->addColumnLinkDetail('Detail');
 
 		$btnSecondary = 'btn btn-sm btn-outline-danger';
-		$removeIco = "<a href='%s' class='$btnSecondary' title='Odebrat z menu'><i class='far fa-minus-square'\"'></i></a>";
+		$confirmJS = 'return confirm("' . $this->translator->translate('admin.really', 'Opravdu?') . '")';
+		$title = $this->_('remove', 'Odebrat z menu');
+		$removeIco = "<a href='%s' class='$btnSecondary' title='" . $title . "' onclick='" . $confirmJS . "'><i class='far fa-minus-square mr-1'\"'></i> " . $title . '</a>';
 		$grid->addColumnAction('', $removeIco, function (MenuItem $menuItem): void {
+			if ($this->menuItemRepository->hasChildren($menuItem)) {
+				$this->getPresenter()->flashMessage('Položku nelze odebrat protože má pod sebou položky.', 'warning');
+				
+				$this->getPresenter()->redirect('this');
+			}
+			
 			$this->onRemove($menuItem);
 			$menuItem->delete();
 		}, [], null, ['class' => 'minimal']);
-
+		
 		$deleteCb = function (?MenuItem $menuItem): void {
 			if (!$menuItem) {
 				return;
 			}
-
+			
+			if ($this->menuItemRepository->hasChildren($menuItem)) {
+				$this->getPresenter()->flashMessage('Položku nelze odebrat protože má pod sebou položky.', 'warning');
+				
+				return;
+			}
+			
 			$this->onRemove($menuItem);
-
+			
 			$page = $menuItem->page;
 			$menuItem->update(['page' => null]);
-
+			
 			if ($page && !$menuItem->isSystemic()) {
 				$page->delete();
 			}
-
+			
+			$menuItem->delete();
+			
 			$this->menuItemRepository->clearMenuCache();
 		};
-
-		$grid->addColumnActionDelete($deleteCb);
+		
+		$grid->addColumnActionDelete($deleteCb, true);
 		$grid->addButtonSaveAll([], [], null, false, null, null, true, null, function (): void {
 			$this->menuItemRepository->clearMenuCache();
 		});
@@ -187,7 +203,7 @@ class MenuPresenter extends BackendPresenter
 
 		$grid->addColumn('', function ($object, $datagrid) {
 			return $datagrid->getPresenter()->link('linkMenuItemToPage', $object);
-		}, "<a class='$btnSecondary' title='Zařadit do menu' href='%s'><i class='fa fa-plus-square'></i></a>", null,
+		}, "<a class='$btnSecondary' title='Zařadit do menu' href='%s'><i class='fa fa-plus-square mr-1'></i>Zařadit do menu</a>", null,
 			['class' => 'minimal']);
 
 		$grid->addColumnLinkDetail('PageDetail');
