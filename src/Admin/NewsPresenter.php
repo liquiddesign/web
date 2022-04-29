@@ -182,6 +182,8 @@ class NewsPresenter extends BackendPresenter
 				$values['imageFileName'] = $uploader->upload($values['uuid'] . '.%2$s');
 			}
 			
+			$values['content'] = \Web\Helpers::sanitizeMutationsStrings($values['content']);
+			
 			/** @var \Web\DB\News $news */
 			$news = $this->newsRepository->syncOne($values, null, true);
 			
