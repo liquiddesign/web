@@ -19,10 +19,10 @@ class TagRepository extends Repository implements IGeneralRepository
 		$collection = $this->many();
 		
 		if (!$includeHidden) {
-			$collection->where('hidden', false);
+			$collection->where('this.hidden', false);
 		}
 		
-		return $collection->orderBy(['priority', "name$suffix"]);
+		return $collection->orderBy(['this.priority', "name$suffix"]);
 	}
 	
 	/**
