@@ -12,6 +12,8 @@ use Web\DB\AuthorRepository;
 use Web\DB\Faq;
 use Web\DB\FaqItem;
 use Web\DB\FaqItemRepository;
+use Web\DB\FaqItemTag;
+use Web\DB\FaqItemTagRepository;
 use Web\DB\FaqRepository;
 use Web\Helpers;
 
@@ -26,27 +28,52 @@ class FaqPresenter extends BackendPresenter
 	 * @inject
 	 */
 	public FaqItemRepository $faqItemRepo;
+
+	/**
+	 * @inject
+	 */
+	public FaqItemTagRepository $faqItemTagRepo;
 	
 	/** @inject */
 	public AuthorRepository $authorRepository;
 	
 	public string $tItems;
+
+	public string $tTags;
+
+	/** @persistent */
+	public string $tab = 'items';
 	
 	public function beforeRender(): void
 	{
 		parent::beforeRender();
-		
+
 		$this->tItems = $this->_('faqItems', 'Položky');
+		$this->tTags = $this->_('faqItemTags', 'Tagy');
 	}
 	
 	public function renderDefault(): void
 	{
-		$this->template->headerLabel = 'Faq';
-		$this->template->headerTree = [
-			['Faq'],
+		$this->template->tabs = [
+			'items' => $this->_('faqs', 'Faq'),
+			'tags' => $this->_('faqItemTags', 'Tagy'),
 		];
-		$this->template->displayButtons = [$this->createNewItemButton('new')];
-		$this->template->displayControls = [$this->getComponent('grid')];
+
+		if ($this->tab === 'items') {
+			$this->template->headerLabel = 'Faq';
+			$this->template->headerTree = [
+				['Faq'],
+			];
+			$this->template->displayButtons = [$this->createNewItemButton('new')];
+			$this->template->displayControls = [$this->getComponent('grid')];
+		} elseif ($this->tab === 'tags') {
+			$this->template->headerLabel = 'Faq';
+			$this->template->headerTree = [
+				['Faq'],
+			];
+			$this->template->displayButtons = [$this->createNewItemButton('newTag')];
+			$this->template->displayControls = [$this->getComponent('gridTags')];
+		}
 	}
 	
 	public function renderNew(): void
@@ -60,6 +87,18 @@ class FaqPresenter extends BackendPresenter
 		$this->template->displayButtons = [$this->createBackButton('default')];
 		$this->template->displayControls = [$this->getComponent('form')];
 	}
+
+	public function renderNewTag(): void
+	{
+		$tNew = $this->_('newFaqTag', 'Nový tag');
+		$this->template->headerLabel = $tNew;
+		$this->template->headerTree = [
+			['Faq', 'default'],
+			[$tNew],
+		];
+		$this->template->displayButtons = [$this->createBackButton('default')];
+		$this->template->displayControls = [$this->getComponent('formTag')];
+	}
 	
 	public function renderDetail(): void
 	{
@@ -71,6 +110,18 @@ class FaqPresenter extends BackendPresenter
 		];
 		$this->template->displayButtons = [$this->createBackButton('default')];
 		$this->template->displayControls = [$this->getComponent('form')];
+	}
+
+	public function renderDetailTag(): void
+	{
+		$tDetail = $this->_('newFaqItemTag', 'Detail tag');
+		$this->template->headerLabel = $tDetail;
+		$this->template->headerTree = [
+			['Faq', 'default'],
+			[$tDetail],
+		];
+		$this->template->displayButtons = [$this->createBackButton('default')];
+		$this->template->displayControls = [$this->getComponent('formTag')];
 	}
 	
 	public function renderItems(Faq $faq): void
@@ -116,12 +167,19 @@ class FaqPresenter extends BackendPresenter
 		$form = $this->getComponent('form');
 		$form->setDefaults($faq->toArray());
 	}
+
+	public function actionDetailTag(FaqItemTag $faqItemTag): void
+	{
+		/** @var \Admin\Controls\AdminForm $form */
+		$form = $this->getComponent('formTag');
+		$form->setDefaults($faqItemTag->toArray());
+	}
 	
 	public function actionDetailItem(FaqItem $faqItem): void
 	{
 		/** @var \Admin\Controls\AdminForm $form */
 		$form = $this->getComponent('itemForm');
-		$form->setDefaults($faqItem->toArray());
+		$form->setDefaults($faqItem->toArray(['tags']));
 	}
 	
 	public function createComponentForm(): AdminForm
@@ -145,6 +203,29 @@ class FaqPresenter extends BackendPresenter
 		
 		return $form;
 	}
+
+	public function createComponentFormTag(): AdminForm
+	{
+		$form = $this->formFactory->create(true, true, true);
+		$form->addLocaleText('name', $this->_('name', 'Název'));
+		$form->addInteger('priority', $this->_('.priority', 'Pořadí'))->setRequired()->setDefaultValue(10);
+		$form->addCheckbox('hidden', $this->_('.hidden', 'Skryto'));
+
+		/** @var \Web\DB\FaqItemTag $faqItemTag */
+		$faqItemTag = $this->getParameter('faqItemTag');
+
+		$form->addSubmits(!$faqItemTag);
+		$form->onSuccess[] = function (AdminForm $form) use ($faqItemTag): void {
+			$values = $form->getValues('array');
+
+			$faqItemTag = $this->faqItemTagRepo->syncOne($values, null, true);
+
+			$this->flashMessage($this->_('.saved', 'Uloženo'), 'success');
+			$form->processRedirect('detailTag', 'default', [$faqItemTag]);
+		};
+
+		return $form;
+	}
 	
 	public function createComponentItemForm(): AdminForm
 	{
@@ -152,8 +233,10 @@ class FaqPresenter extends BackendPresenter
 		$form->setLogging('faqItem');
 		$form->addLocaleText('question', $this->_('question', 'Dozat'));
 		$form->addLocaleRichEdit('answer', $this->_('answer', 'Odpověď'));
+		$form->addMultiSelect2('tags', $this->_('tags', 'Tagy'), $this->faqItemTagRepo->getArrayForSelect());
 		$form->addSelect('author', $this->_('author', 'Autor'))->setItems($this->authorRepository->getArrayForSelect())->setPrompt('- bez autora -');
 		$form->addInteger('priority', $this->_('.priority', 'Pořadí'))->setRequired()->setDefaultValue(10);
+		$form->addLocaleText('extendedLink', $this->_('extendedLink', 'Rozšířený odkaz'));
 		$form->addCheckbox('hidden', $this->_('.hidden', 'Skryto'));
 		$form->addHidden('faq', (string) ($this->getParameter('faqItem') ? $this->getParameter('faqItem')->faq : $this->getParameter('faq')));
 		
@@ -193,10 +276,22 @@ class FaqPresenter extends BackendPresenter
 	
 	public function createComponentItemsGrid(): AdminGrid
 	{
-		$grid = $this->gridFactory->create($this->faqItemRepo->many()->where('fk_faq', $this->getParameter('faq')->getPK()), 200, 'priority', 'ASC');
+		$mutationSuffix = $this->faqItemRepo->getConnection()->getMutationSuffix();
+
+		$grid = $this->gridFactory->create(
+			$this->faqItemRepo->many()->where('fk_faq', $this->getParameter('faq')->getPK())
+			->join(['tagsNxN' => 'web_faqitem_nxn_web_faqitemtag'], 'this.uuid = tagsNxN.fk_item')
+			->join(['tag' => 'web_faqitemtag'], 'tagsNxN.fk_tag = tag.uuid')
+			->setGroupBy(['this.uuid'])
+			->select(['itemTags' => "GROUP_CONCAT(tag.name$mutationSuffix SEPARATOR ', ')"]),
+			200,
+			'priority',
+			'ASC',
+		);
 		$grid->addColumnSelector();
 		$grid->setLogging('faqItem');
 		$grid->addColumnText($this->_('question', 'Dotaz'), 'question', '%s', 'question');
+		$grid->addColumnText($this->_('tags', 'Tagy'), 'itemTags', '%s');
 		$grid->addColumnHidden();
 		$grid->addColumnPriority();
 		$grid->addColumnMutations('active', false);
@@ -205,6 +300,22 @@ class FaqPresenter extends BackendPresenter
 		$grid->addButtonSaveAll();
 		$grid->addButtonDeleteSelected();
 		
+		return $grid;
+	}
+
+	public function createComponentGridTags(): AdminGrid
+	{
+		$this->tTags = $this->_('faqItemTags', 'Tagy');
+		$grid = $this->gridFactory->create($this->faqItemTagRepo->many(), 200, 'name', 'ASC', true);
+		$grid->addColumnSelector();
+		$grid->addColumnText($this->_('name', 'Název'), 'name', '%s', 'name');
+		$grid->addColumnHidden();
+		$grid->addColumnPriority();
+		$grid->addColumnLinkDetail('detailTag');
+		$grid->addColumnActionDelete();
+		$grid->addButtonSaveAll();
+		$grid->addButtonDeleteSelected();
+
 		return $grid;
 	}
 }

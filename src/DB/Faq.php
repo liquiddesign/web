@@ -35,8 +35,16 @@ class Faq extends Entity
 	 */
 	public RelationCollection $items;
 	
-	public function getItems(): Collection
+	public function getItems(?FaqItemTag $faqItemTag = null): Collection
 	{
-		return $this->items->where('hidden', false)->orderBy(['priority']);
+		$collection = $this->items->where('this.hidden', false)->orderBy(['this.priority']);
+
+		if ($faqItemTag) {
+			$collection->setGroupBy(['this.uuid'])
+				->join(['tagsNxN' => 'web_faqitem_nxn_web_faqitemtag'], 'this.uuid = tagsNxN.fk_item')
+				->where('tagsNxN.fk_tag', $faqItemTag->getPK());
+		}
+
+		return $collection;
 	}
 }
