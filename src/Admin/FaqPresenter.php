@@ -306,11 +306,11 @@ class FaqPresenter extends BackendPresenter
 	public function createComponentGridTags(): AdminGrid
 	{
 		$this->tTags = $this->_('faqItemTags', 'Tagy');
-		$grid = $this->gridFactory->create($this->faqItemTagRepo->many(), 200, 'name', 'ASC', true);
+		$grid = $this->gridFactory->create($this->faqItemTagRepo->many(), 200, 'priority', 'ASC', true);
 		$grid->addColumnSelector();
 		$grid->addColumnText($this->_('name', 'Název'), 'name', '%s', 'name');
+		$grid->addColumnInputInteger($this->translator->translate('admin.Priority', 'Priorita'), 'priority', '', '', 'priority', [], true);
 		$grid->addColumnHidden();
-		$grid->addColumnPriority();
 		$grid->addColumnLinkDetail('detailTag');
 		$grid->addColumnActionDelete();
 		$grid->addButtonSaveAll();
