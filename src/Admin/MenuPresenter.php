@@ -169,11 +169,13 @@ class MenuPresenter extends BackendPresenter
 			$this->menuItemRepository->clearMenuCache();
 		};
 		
-		$grid->addColumnActionDelete($deleteCb, true);
+		$grid->addColumnActionDeleteSystemic($deleteCb, true);
 		$grid->addButtonSaveAll([], [], null, false, null, null, true, null, function (): void {
 			$this->menuItemRepository->clearMenuCache();
 		});
-		$grid->addButtonDeleteSelected($deleteCb, false, null, 'this.uuid', function (): void {
+		$grid->addButtonDeleteSelected($deleteCb, false, function (MenuItem $object) {
+			return !$object->isSystemic();
+		}, 'this.uuid', function (): void {
 			$this->menuItemRepository->clearMenuCache();
 		});
 
