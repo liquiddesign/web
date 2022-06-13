@@ -123,6 +123,8 @@ class SliderPresenter extends BackendPresenter
 		if ($homepageSlide && $homepageSlide->type === 'video' && $homepageSlide->image) {
 			$videoUploader->setHtmlAttribute('data-info', 'Nahráním se přepíše aktuálně nahrané video!');
 		}
+
+		$form->addLocaleText('url', 'URL');
 		
 		$form->addText('priority', 'Priorita')->addRule($form::INTEGER)->setRequired()->setDefaultValue(10);
 		$form->addCheckbox('hidden', 'Skryto');

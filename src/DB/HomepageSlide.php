@@ -38,6 +38,12 @@ class HomepageSlide extends Entity
 	public ?string $imageMobile = null;
 
 	/**
+	 * URL
+	 * @column{"mutations":true}
+	 */
+	public ?string $url = null;
+
+	/**
 	 * Priorita
 	 * @column
 	 */
