@@ -10,6 +10,11 @@ use Web\DB\DocumentRepository;
 
 class DocumentPresenter extends BackendPresenter
 {
+	/** @var array<string,array<string>> */
+	public array $configuration = [
+		'allowedMimeTypes' => ['application/pdf'],
+	];
+	
 	public string $tDocuments;
 	
 	/**
@@ -69,7 +74,9 @@ class DocumentPresenter extends BackendPresenter
 	{
 		$form = $this->formFactory->create(true, true, true);
 		$form->addLocaleText('name', $this->_('name', 'Název'))->setRequired();
-		$form->addLocaleUpload('filename', $this->_('document', 'Dokument'));
+		$form->addLocaleUpload('filename', $this->_('document', 'Dokument'))->forAll(function ($input) use ($form): void {
+			$input->addRule($form::MIME_TYPE, 'Nepovolený formát dokumentu.', $this->configuration['allowedMimeTypes']);
+		});
 		$form->addInteger('priority', $this->_('.priority', 'Pořadí'))->setRequired()->setDefaultValue(10);
 		$form->addCheckbox('hidden', $this->_('.hidden', 'Skryto'));
 		

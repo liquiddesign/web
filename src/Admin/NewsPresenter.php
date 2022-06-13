@@ -13,6 +13,7 @@ use Nette\Utils\Image;
 use Pages\DB\PageRepository;
 use Pages\Helpers;
 use StORM\DIConnection;
+use StORM\Entity;
 use Web\DB\AuthorRepository;
 use Web\DB\News;
 use Web\DB\NewsRepository;
@@ -108,6 +109,8 @@ class NewsPresenter extends BackendPresenter
 		
 		$grid->addFilterTextInput('search', ['name_cs'], null, 'Název');
 		$grid->addFilterButtons();
+		
+		$grid->onDelete[] = [$this, 'onDeleteTag'];
 		
 		return $grid;
 	}
@@ -323,5 +326,31 @@ class NewsPresenter extends BackendPresenter
 		/** @var \Forms\Form $form */
 		$form = $this->getComponent('tagForm');
 		$form->setDefaults($tag->toArray());
+	}
+	
+	public function onDelete(Entity $object): void
+	{
+		$this->onDeleteImage($object);
+		
+		/** @var \Web\DB\Page|null $page */
+		$page = $this->pageRepository->getPageByTypeAndParams('news_detail', null, ['article' => $object->getPK()]);
+		
+		if (!$page) {
+			return;
+		}
+		
+		$page->delete();
+	}
+	
+	public function onDeleteTag(Entity $object): void
+	{
+		/** @var \Web\DB\Page|null $page */
+		$page = $this->pageRepository->getPageByTypeAndParams('news', null, ['tag' => $object->getPK()]);
+		
+		if (!$page) {
+			return;
+		}
+		
+		$page->delete();
 	}
 }
