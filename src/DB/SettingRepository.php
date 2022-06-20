@@ -47,4 +47,19 @@ class SettingRepository extends Repository implements IGeneralRepository
 
 		return $setting->value;
 	}
+
+	/**
+	 * @param string $name
+	 * @return array<string>|null
+	 */
+	public function getValuesByName(string $name): ?array
+	{
+		$value = $this->getValueByName($name);
+
+		if (!$value) {
+			return null;
+		}
+
+		return \explode(';', $value);
+	}
 }
