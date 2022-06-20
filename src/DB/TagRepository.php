@@ -13,6 +13,10 @@ use StORM\Repository;
  */
 class TagRepository extends Repository implements IGeneralRepository
 {
+	/**
+	 * @param bool $includeHidden
+	 * @return \StORM\Collection<\Web\DB\Tag>
+	 */
 	public function getCollection(bool $includeHidden = false): Collection
 	{
 		$suffix = $this->getConnection()->getMutationSuffix();
