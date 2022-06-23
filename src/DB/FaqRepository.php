@@ -23,4 +23,24 @@ class FaqRepository extends Repository
 
 		return $collection->orderBy(["this.name$suffix",]);
 	}
+
+	/**
+	 * @param bool $includeHidden
+	 * @param \Web\DB\FaqItemTag|null $faqItemTag
+	 * @return array<\Web\DB\Faq>
+	 */
+	public function getFaqsWithItems(bool $includeHidden = false, ?FaqItemTag $faqItemTag = null): array
+	{
+		$faqs = $this->getCollection($includeHidden);
+		$result = [];
+
+		/** @var \Web\DB\Faq $faq */
+		foreach ($faqs as $faq) {
+			$faq->itemsArray = $faq->getItems($faqItemTag)->toArray();
+
+			$result[$faq->getPK()] = $faq;
+		}
+
+		return $result;
+	}
 }

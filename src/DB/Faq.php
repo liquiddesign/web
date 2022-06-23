@@ -37,7 +37,7 @@ class Faq extends Entity
 	
 	public function getItems(?FaqItemTag $faqItemTag = null): Collection
 	{
-		$collection = $this->items->where('this.hidden', false)->orderBy(['this.priority']);
+		$collection = (clone $this->items)->where('this.hidden', false)->orderBy(['this.priority']);
 
 		if ($faqItemTag) {
 			$collection->setGroupBy(['this.uuid'])
