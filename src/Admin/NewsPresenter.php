@@ -77,6 +77,7 @@ class NewsPresenter extends BackendPresenter
 		
 		$grid->addButtonSaveAll();
 		$grid->addButtonDeleteSelected();
+		$grid->addButtonBulkEdit('newForm', ['tags']);
 		
 		$grid->addFilterTextInput('search', ['name_cs'], null, 'Název');
 		
@@ -91,8 +92,7 @@ class NewsPresenter extends BackendPresenter
 	{
 		$grid = $this->gridFactory->create($this->tagRepository->many(), 20, 'priority', 'ASC', true);
 		$grid->addColumnSelector();
-		
-		
+
 		$grid->addColumnText('Název', 'name', '%s', 'name');
 		
 		$grid->addColumnInputInteger('Priorita', 'priority', '', '', 'priority', [], true);
