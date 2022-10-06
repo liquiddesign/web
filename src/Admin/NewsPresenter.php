@@ -215,7 +215,7 @@ class NewsPresenter extends BackendPresenter
 		$form->addCheckbox('hidden', 'Skryto');
 		$form->addCheckbox('recommended', 'Doporučeno');
 		
-		$form->addPageContainer('news', ['tag' => $this->getParameter('tag')], $nameInput);
+		$form->addPageContainer('news', ['tag' => $this->getParameter('tag')], $nameInput, true);
 		
 		$form->addSubmits(!$tag);
 		
