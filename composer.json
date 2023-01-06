@@ -15,17 +15,18 @@
   },
   "require": {
     "php": ">=7.4",
-    "nette/application": "^3.0",
-    "nette/http": "^3.0",
-    "nette/utils": "^3.0",
+    "nette/application": "~3.0",
+    "nette/http": "~3.0",
+    "nette/utils": "~3.0",
+    "latte/latte": "~2.0 || ~3.0",
     "league/csv": "^9.0",
     "liquiddesign/storm": "~1.0",
-    "liquiddesign/forms": "@dev",
+    "liquiddesign/forms": "~0.1.0",
     "liquiddesign/security": "~1.0",
-    "liquiddesign/translator": "@dev",
-    "liquiddesign/pages": "@dev",
-    "liquiddesign/admin": "@dev",
-    "liquiddesign/grid": "@dev",
+    "liquiddesign/translator": "^0.1.0",
+    "liquiddesign/pages": "^1.0.8",
+    "liquiddesign/admin": "^0.4.3",
+    "liquiddesign/grid": "^0.1.6",
     "onnov/detect-encoding": "^2.0"
   },
   "require-dev": {
@@ -43,6 +44,7 @@
     "phpstan": "phpstan analyse --memory-limit 1G -c phpstan.neon",
     "phpcs": "phpcs --standard=ruleset.xml --ignore=assets src",
     "phpcsfix": "phpcbf --standard=ruleset.xml --ignore=assets src",
+    "lattelint": "php lattelint.php",
     "tester": "tester tests/Cases/*.phpt  -c tests/php.ini --setup tests/setup.php"
   },
   "config": {

@@ -5,19 +5,19 @@
 		{var $desktopWidth = 100/$gallery->getRatios()['desktop']}
 
 		#gallery-{$gallery->id} .gallery-image {
-			width: {$mobileWidth|number:2:'.':''|noescape}%;
+			width: {$mobileWidth|number:2,'.',''|noescape}%;
 			flex-shrink: 0;
 		}
 
 		@media (min-width: 768px) {
 			#gallery-{$gallery->id} .gallery-image {
-				width: {$tabletWidth|number:2:'.':''|noescape}%;
+				width: {$tabletWidth|number:2,'.',''|noescape}%;
 			}
 		}
 
 		@media (min-width: 992px) {
 			#gallery-{$gallery->id} .gallery-image {
-				width: {$desktopWidth|number:2:'.':''|noescape}%;
+				width: {$desktopWidth|number:2,'.',''|noescape}%;
 			}
 		}
 	</style>

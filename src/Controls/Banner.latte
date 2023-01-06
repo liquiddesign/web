@@ -2,7 +2,7 @@
 	<a href="#" class="flex items-center flex-1 bg-no-repeat bg-cover px-6 py-8 text-white hover:shadow-md no-underline mb-2 lg:mb-0"
 	   style="background-image: url('{$userUrl}/banner/background/{$banner->background}'); background-position: right bottom;">
 		<div class="relative w-10 h-10 mr-6 flex-shrink-0">
-			{image src='{$userUrl}/banner/image/{$banner->image}', alt=''}
+			<img loading="lazy" data-src="{$userUrl}/banner/image/{$banner->image}" alt="">
 		</div>
 		<div class="leading-tight">
 			<div class="uppercase font-bold">{$banner->headline}</div>
