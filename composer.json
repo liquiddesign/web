@@ -14,7 +14,7 @@
     }
   },
   "require": {
-    "php": ">=7.4",
+    "php": ">=8.0",
     "nette/application": "~3.0",
     "nette/http": "~3.0",
     "nette/utils": "~3.0",
@@ -24,9 +24,9 @@
     "liquiddesign/forms": "~0.1.0",
     "liquiddesign/security": "~1.0",
     "liquiddesign/translator": "^0.1.0",
-    "liquiddesign/pages": "^1.0.8",
-    "liquiddesign/admin": "^0.4.3",
-    "liquiddesign/grid": "^0.1.6",
+    "liquiddesign/pages": "~1.0.0",
+    "liquiddesign/admin": "~0.5.0",
+    "liquiddesign/grid": "~0.1.0",
     "onnov/detect-encoding": "^2.0"
   },
   "require-dev": {
