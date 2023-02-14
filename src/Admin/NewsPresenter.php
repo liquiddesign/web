@@ -21,6 +21,9 @@ use Web\DB\TagRepository;
 
 class NewsPresenter extends BackendPresenter
 {
+	public const DETAIL_IMAGE_RESIZE = 1920;
+	public const THUMB_IMAGE_RESIZE = 400;
+	
 	public const TABS = [
 		'news' => 'Články',
 		'tags' => 'Tagy',
@@ -119,16 +122,18 @@ class NewsPresenter extends BackendPresenter
 	{
 		$form = $this->formFactory->create(true);
 		
+		$presenter = $this;
+		
 		$nameInput = $form->addLocaleText('name', 'Název');
 		$form->addLocaleTextArea('perex', 'Perex');
 		$form->addLocaleRichEdit('content', 'Obsah');
 		$imagePicker = $form->addImagePicker('imageFileName', 'Obrázek', [
 			News::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'origin' => null,
-			News::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'detail' => static function (Image $image): void {
-				$image->resize(1920, null);
+			News::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'detail' => static function (Image $image) use ($presenter): void {
+				$image->resize($presenter::DETAIL_IMAGE_RESIZE, null);
 			},
-			News::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'thumb' => static function (Image $image): void {
-				$image->resize(400, null);
+			News::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'thumb' => static function (Image $image) use ($presenter): void {
+				$image->resize($presenter::THUMB_IMAGE_RESIZE, null);
 			},
 		]);
 		
@@ -136,7 +141,7 @@ class NewsPresenter extends BackendPresenter
 		$news = $this->getParameter('news');
 		
 		$imagePicker->onDelete[] = function () use ($news): void {
-			$this->onDelete($news);
+			$this->onDeleteImage($news);
 		};
 		
 		$form->addDataMultiSelect('tags', 'Tagy', $this->tagRepository->getArrayForSelect());
