@@ -46,7 +46,7 @@ class FaqItem extends Entity
 	/**
 	 * Tagy
 	 * @relationNxN{"sourceViaKey":"fk_item","targetViaKey":"fk_tag","via":"web_faqitem_nxn_web_faqitemtag"}
-	 * @var \StORM\RelationCollection<\Web\DB\FaqItemTag>|\Web\DB\FaqItemTag[]
+	 * @var \StORM\RelationCollection<\Web\DB\FaqItemTag>|array<\Web\DB\FaqItemTag>
 	 */
 	public RelationCollection $tags;
 	

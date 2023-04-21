@@ -65,7 +65,7 @@ class PageRepository extends \Pages\DB\PageRepository implements IGeneralReposit
 	
 	/**
 	 * @param bool $includeHidden
-	 * @return string[]
+	 * @return array<string>
 	 */
 	public function getArrayForSelect(bool $includeHidden = true): array
 	{

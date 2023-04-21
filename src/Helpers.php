@@ -6,8 +6,8 @@ class Helpers
 {
 	/**
 	 * Replace { and } with HTML code unless {control ...}
-	 * @param mixed[] $content Array with mutations as keys
-	 * @return mixed[] Sanitized strings
+	 * @param array<mixed> $content Array with mutations as keys
+	 * @return array<mixed> Sanitized strings
 	 */
 	public static function sanitizeMutationsStrings(array $content): array
 	{

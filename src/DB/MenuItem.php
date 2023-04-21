@@ -72,14 +72,14 @@ class MenuItem extends Entity
 
 	/**
 	 * Pomocí repositářové metody getTree($type)
-	 * @var \Web\DB\MenuItem[]
+	 * @var array<\Web\DB\MenuItem>
 	 */
 	public $children = [];
 
 	/**
 	 * Zařazení do menu
 	 * @relationNxN{"via":"web_menuassign"}
-	 * @var \Web\DB\MenuType[]|\StORM\RelationCollection<\Web\DB\MenuType>
+	 * @var array<\Web\DB\MenuType>|\StORM\RelationCollection<\Web\DB\MenuType>
 	 */
 	public RelationCollection $types;
 	

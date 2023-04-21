@@ -27,7 +27,7 @@ class FaqItemTagRepository extends Repository implements IGeneralRepository
 
 	/**
 	 * @param bool $includeHidden
-	 * @return string[]
+	 * @return array<string>
 	 */
 	public function getArrayForSelect(bool $includeHidden = true): array
 	{

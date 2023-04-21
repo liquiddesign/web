@@ -80,12 +80,12 @@ class Gallery extends Entity
 	/**
 	 * Fotky galerie
 	 * @relation
-	 * @var \StORM\RelationCollection<\Web\DB\GalleryImage>|\Web\DB\GalleryImage[]
+	 * @var \StORM\RelationCollection<\Web\DB\GalleryImage>|array<\Web\DB\GalleryImage>
 	 */
 	public RelationCollection $images;
 	
 	/**
-	 * @return mixed[]
+	 * @return array<mixed>
 	 */
 	public function getRatios(): array
 	{

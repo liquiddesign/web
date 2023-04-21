@@ -15,7 +15,7 @@ class SettingRepository extends Repository implements IGeneralRepository
 {
 	/**
 	 * @param bool $includeHidden
-	 * @return string[]
+	 * @return array<string>
 	 */
 	public function getArrayForSelect(bool $includeHidden = true): array
 	{
@@ -30,7 +30,7 @@ class SettingRepository extends Repository implements IGeneralRepository
 	}
 	
 	/**
-	 * @return string[]
+	 * @return array<string>
 	 */
 	public function getValues(): array
 	{

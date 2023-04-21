@@ -34,7 +34,7 @@ class Widget extends Nette\Application\UI\Component
 	private IHubspotFactory $hubspotFactory;
 
 	/**
-	 * @var string[]|null[]
+	 * @var array<string>|array<null>
 	 */
 	private array $defaultTemplates = [];
 

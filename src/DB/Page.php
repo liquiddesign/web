@@ -99,7 +99,7 @@ class Page extends \Pages\DB\Page
 	/**
 	 * Dokumenty stránky
 	 * @relationNxN
-	 * @var \Web\DB\Document[]|\StORM\RelationCollection<\Web\DB\Document>
+	 * @var array<\Web\DB\Document>|\StORM\RelationCollection<\Web\DB\Document>
 	 */
 	public RelationCollection $documents;
 	

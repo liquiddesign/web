@@ -31,7 +31,7 @@ class Faq extends Entity
 	/**
 	 * Položky faq
 	 * @relation
-	 * @var \StORM\RelationCollection<\Web\DB\FaqItem>|\Web\DB\FaqItem[]
+	 * @var \StORM\RelationCollection<\Web\DB\FaqItem>|array<\Web\DB\FaqItem>
 	 */
 	public RelationCollection $items;
 	

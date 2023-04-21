@@ -13,7 +13,7 @@ class Breadcrumb extends Control
 	public $onAnchor = [];
 	
 	/**
-	 * @var \stdClass[]
+	 * @var array<\stdClass>
 	 */
 	private array $items = [];
 	
@@ -23,7 +23,7 @@ class Breadcrumb extends Control
 	}
 	
 	/**
-	 * @return \stdClass[]
+	 * @return array<\stdClass>
 	 */
 	public function getItems(): array
 	{

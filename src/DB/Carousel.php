@@ -38,7 +38,7 @@ class Carousel extends Entity
 	/**
 	 * Fotky carouselu
 	 * @relation
-	 * @var \StORM\RelationCollection<\Web\DB\CarouselSlide>|\Web\DB\CarouselSlide[]
+	 * @var \StORM\RelationCollection<\Web\DB\CarouselSlide>|array<\Web\DB\CarouselSlide>
 	 */
 	public RelationCollection $slides;
 

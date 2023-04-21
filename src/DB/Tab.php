@@ -31,7 +31,7 @@ class Tab extends Entity
 	/**
 	 * Položky tab
 	 * @relation
-	 * @var \StORM\RelationCollection<\Web\DB\TabItem>|\Web\DB\TabItem[]
+	 * @var \StORM\RelationCollection<\Web\DB\TabItem>|array<\Web\DB\TabItem>
 	 */
 	public RelationCollection $items;
 	

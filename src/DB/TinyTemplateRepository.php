@@ -9,7 +9,7 @@ use StORM\Repository;
 class TinyTemplateRepository extends Repository
 {
 	/**
-	 * @return \Web\DB\TinyTemplate[]
+	 * @return array<\Web\DB\TinyTemplate>
 	 */
 	public function getTemplates(): array
 	{

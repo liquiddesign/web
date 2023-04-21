@@ -51,7 +51,7 @@ class Author extends Entity
 	/**
 	 * Články
 	 * @relation
-	 * @var \StORM\RelationCollection<\Web\DB\News>|\Web\DB\News[]
+	 * @var \StORM\RelationCollection<\Web\DB\News>|array<\Web\DB\News>
 	 */
 	public RelationCollection $articles;
 }

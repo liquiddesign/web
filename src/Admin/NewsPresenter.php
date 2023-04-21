@@ -7,7 +7,6 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
-use DateTime;
 use Forms\Form;
 use Nette\Utils\Image;
 use Pages\DB\PageRepository;
@@ -62,7 +61,7 @@ class NewsPresenter extends BackendPresenter
 		$grid->addColumnText('Publikováno', "published|date:'d.m.Y'", '%s', 'published', ['class' => 'minimal']);
 		
 		$grid->addColumn('Název', function (News $news, $grid) {
-			return [$grid->getPresenter()->link(':Web:Article:detail', ['article' => (string)$news]), $news->name];
+			return [$grid->getPresenter()->link(':Web:Article:detail', ['article' => (string) $news]), $news->name];
 		}, '<a href="%s" target="_blank"> %s</a>', 'name');
 		
 		$grid->addColumn('Tagy', function (News $news) {
@@ -291,7 +290,7 @@ class NewsPresenter extends BackendPresenter
 		/** @var \Forms\Form $form */
 		$form = $this->getComponent('newForm');
 		$form->setDefaults([
-			'published' => (new DateTime())->format('Y-m-d\TH:i'),
+			'published' => (new \Carbon\Carbon())->format('Y-m-d\TH:i'),
 		]);
 	}
 	

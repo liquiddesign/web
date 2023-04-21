@@ -38,7 +38,7 @@ class MenuPresenter extends BackendPresenter
 	];
 	
 	/**
-	 * @var mixed[]
+	 * @var array<mixed>
 	 */
 	public array $menuTypes = [];
 
@@ -80,12 +80,12 @@ class MenuPresenter extends BackendPresenter
 	protected Cache $cache;
 	
 	/**
-	 * @var mixed[]
+	 * @var array<mixed>
 	 */
 	protected array $pageTypes = ['index' => '', 'content' => null, 'contact' => null, 'news' => '', 'pickup_points' => null];
 	
 	/**
-	 * @var mixed[]
+	 * @var array<mixed>
 	 */
 	private array $selectedAncestors = [];
 
@@ -237,7 +237,7 @@ class MenuPresenter extends BackendPresenter
 		if (\count($form->getMutations()) === 1) {
 			$form->addLocaleHidden('active')->forAll(function (HiddenField $hidden): void {
 				$hidden->setDefaultValue(true)->addFilter(function ($value) {
-					return (bool)$value;
+					return (bool) $value;
 				});
 			});
 		}
@@ -373,7 +373,7 @@ class MenuPresenter extends BackendPresenter
 			$values['page']['name'] = $values['name'];
 			$values['page']['params'] = $values['page']['params'] ?: '';
 			$type = $values['page']['type'];
-			$values['page'] = (string)$this->pageRepository->syncOne($values['page']);
+			$values['page'] = (string) $this->pageRepository->syncOne($values['page']);
 
 			$menuItem = $this->menuItemRepository->syncOne($values, null, true);
 
@@ -570,7 +570,7 @@ class MenuPresenter extends BackendPresenter
 		if (\count($form->getMutations()) === 1) {
 			$form->addLocaleHidden('active')->forAll(function (HiddenField $hidden): void {
 				$hidden->setDefaultValue(true)->addFilter(function ($value) {
-					return (bool)$value;
+					return (bool) $value;
 				});
 			});
 		}
@@ -765,8 +765,8 @@ class MenuPresenter extends BackendPresenter
 	}
 
 	/**
-	 * @param mixed[] $content Array with mutations as keys
-	 * @return mixed[]
+	 * @param array<mixed> $content Array with mutations as keys
+	 * @return array<mixed>
 	 * @deprecated user function from Helpers
 	 */
 	public static function sanitizePageContent(array $content): array

@@ -52,7 +52,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	
 	/**
 	 * @param bool $includeHidden
-	 * @return string[]
+	 * @return array<string>
 	 */
 	public function getArrayForSelect(bool $includeHidden = true): array
 	{
@@ -73,7 +73,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	
 	/**
 	 * @param mixed $type
-	 * @return \Web\DB\MenuItem[]
+	 * @return array<\Web\DB\MenuItem>
 	 * @deprecated use getTree($type)
 	 */
 	public function getMenuItemsByType($type): array
@@ -90,7 +90,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	/**
 	 * @param mixed $menuType
 	 * @param bool $useHidden
-	 * @return \Web\DB\MenuItem[]
+	 * @return array<\Web\DB\MenuItem>
 	 * @throws \StORM\Exception\NotFoundException
 	 */
 	public function getTree($menuType = null, bool $useHidden = false): array
@@ -118,7 +118,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	}
 	
 	/**
-	 * @return \Web\DB\MenuItem[]
+	 * @return array<\Web\DB\MenuItem>
 	 * @throws \Throwable
 	 */
 	public function getFullTree(): array
@@ -149,7 +149,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	/**
 	 * @param mixed $menuType
 	 * @param bool $usePageOffline
-	 * @return \Web\DB\MenuItem[]
+	 * @return array<\Web\DB\MenuItem>
 	 * @throws \StORM\Exception\NotFoundException
 	 */
 	public function getFrontendTree($menuType = null, bool $usePageOffline = true): array
@@ -181,7 +181,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	
 	/**
 	 * @param $menuItem
-	 * @return \Web\DB\MenuItem[]
+	 * @return array<\Web\DB\MenuItem>
 	 * @throws \StORM\Exception\NotFoundException
 	 */
 	public function getBreadcrumbStructure($menuItem): array
@@ -259,7 +259,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	 * @param bool $includeHidden
 	 * @param null $menuType
 	 * @param \Web\DB\MenuItem|null $menuItem
-	 * @return string[]
+	 * @return array<string>
 	 * @throws \StORM\Exception\NotFoundException
 	 */
 	public function getTreeArrayForSelect(bool $includeHidden = true, $menuType = null, ?MenuItem $menuItem = null): array
@@ -318,7 +318,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	
 	/**
 	 * @param \Web\DB\MenuItem $menuItem
-	 * @return string[]
+	 * @return array<string>
 	 */
 	public function getMenuItemPositions(MenuItem $menuItem): array
 	{
@@ -495,9 +495,9 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	}
 
 	/**
-	 * @param \Web\DB\MenuAssign[] $elements
+	 * @param array<\Web\DB\MenuAssign> $elements
 	 * @param string|null $ancestorId
-	 * @return \Web\DB\MenuItem[]
+	 * @return array<\Web\DB\MenuItem>
 	 */
 	private function buildTree(array $elements, ?string $ancestorId = null): array
 	{
@@ -538,10 +538,10 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	}
 	
 	/**
-	 * @param \Web\DB\MenuAssign[] $elements
+	 * @param array<\Web\DB\MenuAssign> $elements
 	 * @param string|null $ancestorId
 	 * @param array $list
-	 * @return \Web\DB\MenuItem[]
+	 * @return array<\Web\DB\MenuItem>
 	 */
 	private function buildTreeArrayForSelect(array $elements, ?string $ancestorId = null, array &$list = []): array
 	{
