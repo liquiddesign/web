@@ -105,7 +105,7 @@ class CoverPresenter extends BackendPresenter
 		$form->addText('cssClass', $this->_('cssClass', 'CSS třída'));
 		$form->addLocaleText('showOnPage', $this->_('showOnPage', 'Zobrazit na URL'))->forAll(function (TextInput $input): void {
 			$input->setRequired(false)->addFilter(function ($value) {
-				return \strpos($value, '/') !== false ? $value : '/' . $value;
+				return \str_contains($value, '/') ? $value : '/' . $value;
 			});
 		});
 

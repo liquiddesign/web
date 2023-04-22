@@ -8,6 +8,7 @@ use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
 use Forms\Form;
+use Nette\Utils\Strings;
 use Pages\Pages;
 use Web\DB\Page;
 use Web\DB\PageRepository;
@@ -110,11 +111,11 @@ class PagePresenter extends BackendPresenter
 				$container = $form->addContainer("_$typeId");
 
 				foreach (\array_keys($pageType->getRequiredParameters()) as $name) {
-					$container->addText($name, \ucfirst($name))->addConditionOn($select, $form::EQUAL, $typeId)->setRequired();
+					$container->addText($name, Strings::firstUpper($name))->addConditionOn($select, $form::EQUAL, $typeId)->setRequired();
 				}
 				
 				foreach (\array_keys($pageType->getOptionalParameters()) as $name) {
-					$container->addText($name, \ucfirst($name))->setNullable();
+					$container->addText($name, Strings::firstUpper($name))->setNullable();
 				}
 			}
 		}

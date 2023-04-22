@@ -27,13 +27,14 @@
     "liquiddesign/pages": "~1.0.0",
     "liquiddesign/admin": "v1.x-dev",
     "liquiddesign/grid": "~0.1.0",
-    "onnov/detect-encoding": "^2.0"
+    "onnov/detect-encoding": "^2.0",
+    "nesbot/carbon": "~2.66"
   },
   "require-dev": {
     "nette/tester": "^2.0",
     "tracy/tracy": "^2.0",
     "composer/composer": "^2.0",
-    "liquiddesign/codestyle": "^2.0",
+    "liquiddesign/codestyle": "^3.0",
     "liquiddesign/migrator": "^1.0",
     "phpstan/phpstan-nette": "^1.0"
   },

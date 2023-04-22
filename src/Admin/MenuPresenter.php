@@ -13,6 +13,7 @@ use Nette\Caching\Storage;
 use Nette\Forms\Controls\HiddenField;
 use Nette\Utils\Image;
 use Nette\Utils\Random;
+use Nette\Utils\Strings;
 use StORM\Connection;
 use StORM\DIConnection;
 use Web\DB\DocumentRepository;
@@ -113,7 +114,7 @@ class MenuPresenter extends BackendPresenter
 		$grid->addColumnSelector();
 
 		$grid->addColumnText('Název', 'name', '%s', 'name')->onRenderCell[] = function (\Nette\Utils\Html $td, $object): void {
-			$level = \strlen($object->path) / 4 - 1;
+			$level = Strings::length($object->path) / 4 - 1;
 			$td->setHtml(\str_repeat('- - ', $level) . $td->getHtml());
 		};
 
@@ -449,7 +450,7 @@ class MenuPresenter extends BackendPresenter
 			//                  ->select(['path' => 'nxn.path'])
 			//                  ->first();
 			//
-			//              if ((\strlen($path) / 4) + ($this->menuItemRepository->getMaxDeepLevel($menuItem) - (\strlen($menuItem->path) / 4)) > $type['type']->maxLevel) {
+			//              if ((Strings::length($path) / 4) + ($this->menuItemRepository->getMaxDeepLevel($menuItem) - (Strings::length($menuItem->path) / 4)) > $type['type']->maxLevel) {
 			//                  $this->flashMessage('Chyba! Položku "' . (isset($selectedTypeItem) ? $selectedTypeItem->name : $type['type']->name) . '" nelze více zanořit!',
 			//                      'error');
 			//                  $this->redirect('this');

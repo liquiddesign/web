@@ -2,6 +2,8 @@
 
 namespace Web;
 
+use Nette\Utils\Strings;
+
 class Helpers
 {
 	/**
@@ -28,7 +30,7 @@ class Helpers
 			$substr = '';
 			$pos = -1;
 			$offset = 0;
-			$length = \strlen($string);
+			$length = Strings::length($string);
 
 			for ($i = 0; $i < $length; $i++) {
 				$char = $string[$i];
@@ -44,7 +46,7 @@ class Helpers
 						continue;
 					}
 
-					if (\strlen($substr) > 7 || (\strlen($substr) > 0 && \stripos('control', $substr) === false)) {
+					if (Strings::length($substr) > 7 || (Strings::length($substr) > 0 && \stripos('control', $substr) === false)) {
 						$content[$mutation] = \substr_replace($content[$mutation], '', $pos + $offset, 1);
 						$content[$mutation] = \substr_replace($content[$mutation], '&#123;', $pos + $offset, 0);
 						$offset += 5;

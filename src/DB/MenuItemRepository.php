@@ -200,7 +200,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		
 		$menuAssign = $this->menuAssignRepository->many()->where('fk_menuitem', $menuItem->getPK())->first();
 
-		if ($menuAssign === null || \strlen($menuAssign->path) / 4 === 1) {
+		if ($menuAssign === null || Strings::length($menuAssign->path) / 4 === 1) {
 			return [];
 		}
 
@@ -386,7 +386,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 			->setOrderBy(['LENGTH(path)' => 'DESC'])
 			->first();
 		
-		return $item ? \strlen($item->path) / 4 : \strlen($menuItem->path) / 4;
+		return $item ? Strings::length($item->path) / 4 : Strings::length($menuItem->path) / 4;
 	}
 	
 	public function hasChildren($menuItem): bool
@@ -408,7 +408,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		return $this->getCollection()
 				->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
 				->where('path LIKE :path', ['path' => "$menuItem->path%"])
-				->where('LENGTH(path) > :pathLength', ['pathLength' => \strlen($menuItem->path)])
+				->where('LENGTH(path) > :pathLength', ['pathLength' => Strings::length($menuItem->path)])
 				->count() > 0;
 	}
 	
@@ -437,7 +437,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 			->select(['path' => 'nxn.path'])
 			->first();
 		
-		return $menuItem ? \strlen($menuItem->path) / 4 : null;
+		return $menuItem ? Strings::length($menuItem->path) / 4 : null;
 	}
 	
 	public function checkAncestors(Form $form, array &$selectedAncestors): void
@@ -526,7 +526,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 			$this->menuAssignRepository->syncOne([
 				'menutype' => $menuType->getPK(),
 				'menuitem' => $child->getPK(),
-				'path' => $item->path . \substr($child->path, -4),
+				'path' => $item->path . Strings::substring($child->path, -4),
 			]);
 			
 			if (\count($child->children) <= 0) {
@@ -551,7 +551,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 			if ($element->getValue('ancestor') === $ancestorId) {
 				$list[$element->getPK()] = \str_repeat(
 					'—',
-					\strlen($element->path) / 4,
+					Strings::length($element->path) / 4,
 				) . ' ' . $element->menuitem->name;
 				
 				if ($children = $this->buildTreeArrayForSelect($elements, $element->getPK(), $list)) {

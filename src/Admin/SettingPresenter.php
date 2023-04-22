@@ -8,6 +8,7 @@ use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
 use Nette\Forms\Form;
+use Nette\Utils\Arrays;
 use Web\DB\ContactItem;
 use Web\DB\ContactItemRepository;
 use Web\DB\SettingRepository;
@@ -93,20 +94,20 @@ class SettingPresenter extends BackendPresenter
 	{
 		$form = $this->formFactory->create();
 
-		if (\in_array('company', self::CONFIGURATION['groups'])) {
+		if (Arrays::contains(self::CONFIGURATION['groups'], 'company')) {
 			$form->addGroup('Společnost');
 			$form->addText('companyName', 'Název společnosti')->setNullable();
 			$form->addTextArea('legalInfo', 'Informace o zápisu')->setHtmlAttribute('cols', 70)->setNullable();
 		}
 
-		if (\in_array('support', self::CONFIGURATION['groups'])) {
+		if (Arrays::contains(self::CONFIGURATION['groups'], 'support')) {
 			$form->addGroup('Podpora');
 			$form->addText('supportEmail', 'E-mail')->setNullable()->addCondition(Form::FILLED)->addRule($form::EMAIL);
 			$form->addText('supportPhone', 'Telefon')->setNullable();
 			$form->addText('supportPhoneTime', 'Dostupnost telefonu')->setNullable()->setHtmlAttribute('data-info', 'Zvolte libovolný formát');
 		}
 
-		if (\in_array('map', self::CONFIGURATION['groups'])) {
+		if (Arrays::contains(self::CONFIGURATION['groups'], 'map')) {
 			$form->addGroup('Mapa');
 			$form->addText('contactStreet', 'Ulice')->setHtmlAttribute('data-info', 'Např.: Josefská 15')->setNullable();
 			$form->addText('contactCity', 'Město')->setHtmlAttribute('data-info', 'Např.: 602 00 Brno')->setNullable();
@@ -266,7 +267,7 @@ class SettingPresenter extends BackendPresenter
 	{
 		$form = $this->formFactory->create(true);
 
-		if (isset($this::CONFIGURATION['allowedSettings']) && \in_array('headCode', $this::CONFIGURATION['allowedSettings'])) {
+		if (isset($this::CONFIGURATION['allowedSettings']) && Arrays::contains($this::CONFIGURATION['allowedSettings'], 'headCode')) {
 			$form->addTextArea('headCode', 'HTML kód hlavičky')->setNullable()->setHtmlAttribute('data-info', 'Tento kód bude vložen jako poslední prvek hlavičky.');
 		}
 

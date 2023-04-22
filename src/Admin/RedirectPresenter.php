@@ -7,6 +7,7 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
+use Carbon\Carbon;
 use Forms\Form;
 use League\Csv\EncloseField;
 use League\Csv\Reader;
@@ -168,7 +169,7 @@ class RedirectPresenter extends BackendPresenter
 			$lastUpdate = \filemtime($path);
 		}
 
-		$form->addText('lastProductFileUpload', 'Poslední aktualizace souboru')->setDisabled()->setDefaultValue($lastUpdate ? \date('d.m.Y G:i', $lastUpdate) : null);
+		$form->addText('lastProductFileUpload', 'Poslední aktualizace souboru')->setDisabled()->setDefaultValue($lastUpdate ? Carbon::parse($lastUpdate)->format('d.m.Y G:i') : null);
 
 		$allowedColumns = '';
 
