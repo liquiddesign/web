@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Web\DB;
 
+use Base\Entity\ShopEntityTrait;
 use StORM\RelationCollection;
 
 /**
@@ -12,6 +13,8 @@ use StORM\RelationCollection;
  */
 class Page extends \Pages\DB\Page
 {
+	use ShopEntityTrait;
+
 	public const IMAGE_DIR = 'page';
 
 	public const SUBDIRS = ['background', 'opengraph'];

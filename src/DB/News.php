@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Web\DB;
 
-use StORM\Entity;
+use Base\Entity\ShopEntity;
 use StORM\RelationCollection;
 
 /**
  * @table{"name":"web_news"}
  */
-class News extends Entity
+class News extends ShopEntity
 {
 	public const IMAGE_DIR = 'news_images';
 	
