@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.0-beta.1]
 
+Note to versioning: version 1 is skipped to match version 2 with other packages.
+
 ### Added
 
 - Page and News now supports Shop
