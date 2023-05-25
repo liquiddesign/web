@@ -27,6 +27,7 @@
     "liquiddesign/pages": "~1.0.0",
     "liquiddesign/admin": "v2.x-dev",
     "liquiddesign/grid": "~0.1.0",
+    "liquiddesign/base": "v2.x-dev",
     "onnov/detect-encoding": "^2.0",
     "nesbot/carbon": "~2.66"
   },

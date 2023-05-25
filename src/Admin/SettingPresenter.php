@@ -7,8 +7,11 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
+use Base\ShopsConfig;
+use Nette\DI\Attributes\Inject;
 use Nette\Forms\Form;
 use Nette\Utils\Arrays;
+use Nette\Utils\Html;
 use Web\DB\ContactItem;
 use Web\DB\ContactItemRepository;
 use Web\DB\SettingRepository;
@@ -29,15 +32,14 @@ class SettingPresenter extends BackendPresenter
 		'allowedSettings' => [],
 	];
 
-	/**
-	 * @inject
-	 */
+	#[Inject]
 	public SettingRepository $settingsRepo;
 
-	/**
-	 * @inject
-	 */
+	#[Inject]
 	public ContactItemRepository $contactItemRepo;
+
+	#[Inject]
+	public ShopsConfig $shopsConfig;
 
 	public function beforeRender(): void
 	{
@@ -51,7 +53,12 @@ class SettingPresenter extends BackendPresenter
 		/** @var \Admin\Controls\AdminForm $form */
 		$form = $this->getComponent('form');
 
-		$form->setDefaults($this->settingsRepo->many()->setIndex('name')->toArrayOf('value'));
+		$form->setDefaults(
+			$this->shopsConfig->filterShopsInShopEntityCollection(
+				$this->settingsRepo->many()->setIndex('name'),
+				showOnlyEntitiesWithSelectedShops: true
+			)->toArrayOf('value')
+		);
 	}
 
 	public function actionSocial(): void
@@ -59,7 +66,12 @@ class SettingPresenter extends BackendPresenter
 		/** @var \Admin\Controls\AdminForm $form */
 		$form = $this->getComponent('socialForm');
 
-		$form->setDefaults($this->settingsRepo->many()->setIndex('name')->toArrayOf('value'));
+		$form->setDefaults(
+			$this->shopsConfig->filterShopsInShopEntityCollection(
+				$this->settingsRepo->many()->setIndex('name'),
+				showOnlyEntitiesWithSelectedShops: true
+			)->toArrayOf('value')
+		);
 	}
 
 	public function actionOthers(): void
@@ -67,7 +79,12 @@ class SettingPresenter extends BackendPresenter
 		/** @var \Admin\Controls\AdminForm $form */
 		$form = $this->getComponent('othersForm');
 
-		$form->setDefaults($this->settingsRepo->many()->setIndex('name')->toArrayOf('value'));
+		$form->setDefaults(
+			$this->shopsConfig->filterShopsInShopEntityCollection(
+				$this->settingsRepo->many()->setIndex('name'),
+				showOnlyEntitiesWithSelectedShops: true
+			)->toArrayOf('value')
+		);
 	}
 
 	public function renderDefault(): void
@@ -94,25 +111,27 @@ class SettingPresenter extends BackendPresenter
 	{
 		$form = $this->formFactory->create();
 
+		$shopIcon = $this->shopsConfig->getAvailableShops() ? '<i class="fas fa-store-alt fa-sm mr-1" title="Specifické nastavení pro zvolený obchod"></i>' : null;
+
 		if (Arrays::contains(self::CONFIGURATION['groups'], 'company')) {
 			$form->addGroup('Společnost');
-			$form->addText('companyName', 'Název společnosti')->setNullable();
-			$form->addTextArea('legalInfo', 'Informace o zápisu')->setHtmlAttribute('cols', 70)->setNullable();
+			$form->addText('companyName', Html::fromHtml("$shopIcon Název společnosti"))->setNullable();
+			$form->addTextArea('legalInfo', Html::fromHtml("$shopIcon Informace o zápisu"))->setHtmlAttribute('cols', 70)->setNullable();
 		}
 
 		if (Arrays::contains(self::CONFIGURATION['groups'], 'support')) {
 			$form->addGroup('Podpora');
-			$form->addText('supportEmail', 'E-mail')->setNullable()->addCondition(Form::FILLED)->addRule($form::EMAIL);
-			$form->addText('supportPhone', 'Telefon')->setNullable();
-			$form->addText('supportPhoneTime', 'Dostupnost telefonu')->setNullable()->setHtmlAttribute('data-info', 'Zvolte libovolný formát');
+			$form->addText('supportEmail', Html::fromHtml("$shopIcon E-mail"))->setNullable()->addCondition(Form::FILLED)->addRule($form::EMAIL);
+			$form->addText('supportPhone', Html::fromHtml("$shopIcon Telefon"))->setNullable();
+			$form->addText('supportPhoneTime', Html::fromHtml("$shopIcon Dostupnost telefonu"))->setNullable()->setHtmlAttribute('data-info', 'Zvolte libovolný formát');
 		}
 
 		if (Arrays::contains(self::CONFIGURATION['groups'], 'map')) {
 			$form->addGroup('Mapa');
-			$form->addText('contactStreet', 'Ulice')->setHtmlAttribute('data-info', 'Např.: Josefská 15')->setNullable();
-			$form->addText('contactCity', 'Město')->setHtmlAttribute('data-info', 'Např.: 602 00 Brno')->setNullable();
-			$form->addText('contactGPSx', 'GPS souřadnice X')->setHtmlAttribute('data-info', 'GPS souřadnice pro zobrazení bodu na mapě. Např.: 16.6125203')->setNullable();
-			$form->addText('contactGPSy', 'GPS souřadnice Y')->setHtmlAttribute('data-info', 'GPS souřadnice pro zobrazení bodu na mapě. Např.: 49.1920700')->setNullable();
+			$form->addText('contactStreet', Html::fromHtml("$shopIcon Ulice"))->setHtmlAttribute('data-info', 'Např.: Josefská 15')->setNullable();
+			$form->addText('contactCity', Html::fromHtml("$shopIcon Město"))->setHtmlAttribute('data-info', 'Např.: 602 00 Brno')->setNullable();
+			$form->addText('contactGPSx', Html::fromHtml("$shopIcon GPS souřadnice X"))->setHtmlAttribute('data-info', 'GPS souřadnice pro zobrazení bodu na mapě. Např.: 16.6125203')->setNullable();
+			$form->addText('contactGPSy', Html::fromHtml("$shopIcon GPS souřadnice Y"))->setHtmlAttribute('data-info', 'GPS souřadnice pro zobrazení bodu na mapě. Např.: 49.1920700')->setNullable();
 		}
 
 		$form->addSubmit('submit', 'Uložit');
@@ -121,7 +140,11 @@ class SettingPresenter extends BackendPresenter
 			$values = $form->getValues('array');
 
 			foreach ($values as $key => $value) {
-				$this->settingsRepo->syncOne(['name' => $key, 'value' => $value]);
+				$this->settingsRepo->syncOne([
+					'name' => $key,
+					'value' => $value,
+					'shop' => $this->shopsConfig->getSelectedShop()?->getPK(),
+				]);
 			}
 
 			$this->flashMessage('Nastavení uloženo', 'success');
@@ -137,9 +160,11 @@ class SettingPresenter extends BackendPresenter
 
 		$form->addGroup('Sítě');
 
-		$form->addText('socialFacebook', 'Facebook')->setNullable();
-		$form->addText('socialInstagram', 'Instagram')->setNullable();
-		$form->addText('socialTwitter', 'Twitter')->setNullable();
+		$shopIcon = $this->shopsConfig->getAvailableShops() ? '<i class="fas fa-store-alt fa-sm mr-1" title="Specifické nastavení pro zvolený obchod"></i>' : null;
+
+		$form->addText('socialFacebook', Html::fromHtml("$shopIcon Facebook"))->setNullable();
+		$form->addText('socialInstagram', Html::fromHtml("$shopIcon Instagram"))->setNullable();
+		$form->addText('socialTwitter', Html::fromHtml("$shopIcon Twitter"))->setNullable();
 
 		$form->addSubmit('submit', 'Uložit');
 
@@ -147,7 +172,11 @@ class SettingPresenter extends BackendPresenter
 			$values = $form->getValues('array');
 
 			foreach ($values as $key => $value) {
-				$this->settingsRepo->syncOne(['name' => $key, 'value' => $value]);
+				$this->settingsRepo->syncOne([
+					'name' => $key,
+					'value' => $value,
+					'shop' => $this->shopsConfig->getSelectedShop()?->getPK(),
+				]);
 			}
 
 			$this->flashMessage('Nastavení uloženo', 'success');
@@ -214,6 +243,8 @@ class SettingPresenter extends BackendPresenter
 		$form->addInteger('priority', 'Priorita')->setDefaultValue(10)->setRequired();
 		$form->addCheckbox('hidden', 'Skryto');
 
+		$this->formFactory->addShopsContainerToAdminForm($form);
+
 		$form->addSubmits(!$this->getParameter('contactItem'));
 
 		$form->onSuccess[] = function (AdminForm $form): void {
@@ -267,8 +298,10 @@ class SettingPresenter extends BackendPresenter
 	{
 		$form = $this->formFactory->create(true);
 
+		$shopIcon = $this->shopsConfig->getAvailableShops() ? '<i class="fas fa-store-alt fa-sm mr-1" title="Specifické nastavení pro zvolený obchod"></i>' : null;
+
 		if (isset($this::CONFIGURATION['allowedSettings']) && Arrays::contains($this::CONFIGURATION['allowedSettings'], 'headCode')) {
-			$form->addTextArea('headCode', 'HTML kód hlavičky')->setNullable()->setHtmlAttribute('data-info', 'Tento kód bude vložen jako poslední prvek hlavičky.');
+			$form->addTextArea('headCode', Html::fromHtml("$shopIcon HTML kód hlavičky"))->setNullable()->setHtmlAttribute('data-info', 'Tento kód bude vložen jako poslední prvek hlavičky.');
 		}
 
 		$form->addSubmit('submit', 'Uložit');
@@ -277,7 +310,11 @@ class SettingPresenter extends BackendPresenter
 			$values = $form->getValues('array');
 
 			foreach ($values as $key => $value) {
-				$this->settingsRepo->syncOne(['name' => $key, 'value' => $value]);
+				$this->settingsRepo->syncOne([
+					'name' => $key,
+					'value' => $value,
+					'shop' => $this->shopsConfig->getSelectedShop()?->getPK(),
+				]);
 			}
 
 			$this->flashMessage('Uloženo', 'success');

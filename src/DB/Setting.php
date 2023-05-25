@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Web\DB;
 
+use Base\Entity\ShopEntity;
+
 /**
  * @table
- * @index{"name":"setting_name","unique":true,"columns":["name"]}
+ * @index{"name":"setting_name","unique":true,"columns":["name", "fk_shop"]}
  */
-class Setting extends \StORM\Entity
+class Setting extends ShopEntity
 {
 	/**
 	 * Jméno

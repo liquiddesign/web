@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Web\DB;
 
-use StORM\Entity;
+use Base\Entity\ShopEntity;
 
 /**
  * @table
  */
-class ContactItem extends Entity
+class ContactItem extends ShopEntity
 {
 	/**
 	 * Název
