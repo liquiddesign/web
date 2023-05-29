@@ -12,6 +12,9 @@ Note to versioning: version 1 is skipped to match version 2 with other packages.
 ### Added
 
 - Page and News now supports Shop
+- `TemplateFactory` to create templates
+  - Extends original `TemplateFactory` from `liquiddesign/base` package
+  - Adds Pages functions
 
 ### Changed
 

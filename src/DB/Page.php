@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace Web\DB;
 
-use Base\Entity\ShopEntityTrait;
 use StORM\RelationCollection;
 
 /**
  * @table
- * @index{"name":"pages_page_type_params","unique":true,"columns":["type","params"]}
+ * @index{"name":"pages_page_type_params","unique":true,"columns":["type","params","fk_shop"]}
+ * @index{"name":"page_url_shop","unique":true,"columns":["url_cs","fk_shop"]}
  */
 class Page extends \Pages\DB\Page
 {
-	use ShopEntityTrait;
 	public const IMAGE_DIR = 'page';
 
 	public const SUBDIRS = ['background', 'opengraph'];
