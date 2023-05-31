@@ -12,7 +12,6 @@ use Nette\Application\UI\Component;
 use Nette\Application\UI\Template;
 use Nette\Bridges\ApplicationLatte\LatteFactory;
 use Nette\Bridges\ApplicationLatte\UIExtension;
-use Nette\Bridges\ApplicationLatte\UIMacros;
 
 abstract class WidgetTemplateFactory extends TemplateFactory
 {
@@ -53,24 +52,10 @@ abstract class WidgetTemplateFactory extends TemplateFactory
 		}
 		
 		$policy = SecurityPolicy::createSafePolicy();
-
-		/** @phpstan-ignore-next-line @TODO LATTEV3 */
-		if (\version_compare(\Latte\Engine::VERSION, '3', '<')) {
-			/** @phpstan-ignore-next-line @TODO LATTEV3 */
-			$policy->allowMacros(['control']);
-		} else {
-			$policy->allowTags(['control']);
-		}
+		$policy->allowTags(['control']);
 		
 		$latte = $this->latteFactory->create();
-
-		/** @phpstan-ignore-next-line @TODO LATTEV3 */
-		if (\version_compare(\Latte\Engine::VERSION, '3', '<')) {
-			/** @phpstan-ignore-next-line @TODO LATTEV3 */
-			UIMacros::install($latte->getCompiler());
-		} else {
-			$latte->addExtension(new UIExtension(null));
-		}
+		$latte->addExtension(new UIExtension(null));
 
 		$latte->addProvider('uiControl', $rootControl);
 
