@@ -19,6 +19,7 @@ Note to versioning: version 1 is skipped to match version 2 with other packages.
 ### Changed
 
 - **BREAKING:** PHP version 8.2 or higher is required
+- **BREAKING:** `Page` unique index on URL is removed. Due to limitations of migrator, create indexes manually.
 
 ### Removed
 
