@@ -45,14 +45,14 @@ class MetaPresenter extends BackendPresenter
 		$imagePicker = $form->addImagePicker(self::SETTING_META_OG_IMAGE, 'Výchozí OG Image', [
 			self::META_IMAGE_DIR . \DIRECTORY_SEPARATOR . 'origin' => null,
 			self::META_IMAGE_DIR . \DIRECTORY_SEPARATOR . 'detail' => function (Image $image): void {
-				$image->resize(1200, null);
+				$image->resize(600, 315);
 			},
 			self::META_IMAGE_DIR . \DIRECTORY_SEPARATOR . 'thumb' => function (Image $image): void {
-				$image->resize(600, null);
+				$image->resize(300, 158);
 			},
 		]);
 
-		$imagePicker->setHtmlAttribute('data-info', 'Vkládejte obrázky o minimální šířce ' . 600 . 'px.');
+		$imagePicker->setHtmlAttribute('data-info', 'Vkládejte obrázky o minimálních rozměrech 600 x 315 px.');
 
 		$imagePicker->onDelete[] = function (array $directories, $filename) use ($form): void {
 			$this->settingsRepository->many()->where('name', self::SETTING_META_OG_IMAGE)->delete();
