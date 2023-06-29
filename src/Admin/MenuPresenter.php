@@ -374,9 +374,9 @@ class MenuPresenter extends BackendPresenter
 			$values['page']['name'] = $values['name'];
 			$values['page']['params'] = $values['page']['params'] ?: '';
 			$type = $values['page']['type'];
-			$values['page'] = (string) $this->pageRepository->syncOne($values['page']);
+			$values['page'] = (string) $this->pageRepository->syncOne($values['page'], ignore: false);
 
-			$menuItem = $this->menuItemRepository->syncOne($values, null, true);
+			$menuItem = $this->menuItemRepository->syncOne($values, null, true, false);
 
 			$selectedMenuTypes = [];
 

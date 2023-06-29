@@ -106,7 +106,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		
 		if ($menuType) {
 			if (!$menuType instanceof MenuType) {
-				if (!$menuType = $this->one($menuType)) {
+				if (!$menuType = $this->menuTypeRepository->one($menuType)) {
 					return [];
 				}
 			}
@@ -168,7 +168,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		
 		if ($menuType) {
 			if (!$menuType instanceof MenuType) {
-				if (!$menuType = $this->one($menuType)) {
+				if (!$menuType = $this->menuTypeRepository->one($menuType)) {
 					return [];
 				}
 			}
