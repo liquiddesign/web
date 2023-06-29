@@ -370,7 +370,7 @@ class MenuPresenter extends BackendPresenter
 				unset($values['mobileImage']);
 			}
 
-			$values['page']['content'] = static::sanitizePageContent($values['content']);
+			$values['page']['content'] = Helpers::sanitizeMutationsStrings($values['content']);
 			$values['page']['name'] = $values['name'];
 			$values['page']['params'] = $values['page']['params'] ?: '';
 			$type = $values['page']['type'];
@@ -552,7 +552,7 @@ class MenuPresenter extends BackendPresenter
 			}
 
 			$values['page']['name'] = $values['name'];
-			$values['page']['content'] = static::sanitizePageContent($values['content']);
+			$values['page']['content'] = Helpers::sanitizeMutationsStrings($values['content']);
 			$page = $this->pageRepository->syncOne($values['page']);
 
 			$this->menuItemRepository->clearMenuCache();
