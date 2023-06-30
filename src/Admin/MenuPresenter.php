@@ -11,6 +11,7 @@ use Forms\Form;
 use Nette\Caching\Cache;
 use Nette\Caching\Storage;
 use Nette\Forms\Controls\HiddenField;
+use Nette\Utils\Arrays;
 use Nette\Utils\Image;
 use Nette\Utils\Random;
 use Nette\Utils\Strings;
@@ -42,6 +43,16 @@ class MenuPresenter extends BackendPresenter
 	 * @var array<mixed>
 	 */
 	public array $menuTypes = [];
+
+	/**
+	 * @var array<callable(\Admin\Controls\AdminForm $form): void>
+	 */
+	public array $onBeforeSubmitMenuItemForm = [];
+
+	/**
+	 * @var array<callable(\Admin\Controls\AdminForm $form, array& $values): void>
+	 */
+	public array $onBeforeSuccessRedirectMenuItemForm = [];
 
 	/**
 	 * @inject
@@ -180,6 +191,10 @@ class MenuPresenter extends BackendPresenter
 			$this->menuItemRepository->clearMenuCache();
 		});
 
+		$grid->onDelete[] = function (MenuItem $object): void {
+			$this->onDelete($object);
+		};
+
 		$grid->addFilterTextInput('search', ['this.name_cs'], null, 'Název');
 		$grid->addFilterButtons();
 
@@ -210,6 +225,10 @@ class MenuPresenter extends BackendPresenter
 			['class' => 'minimal']);
 
 		$grid->addColumnLinkDetail('PageDetail');
+
+		$grid->onDelete[] = function (Page $object): void {
+			$this->onDelete($object);
+		};
 
 		$grid->addColumnActionDeleteSystemic();
 
@@ -317,6 +336,8 @@ class MenuPresenter extends BackendPresenter
 
 		$form->addPageContainer($type, $params, $nameInput, false, true, false, 'URL a SEO', true, true, isset($this::CONFIGURATIONS['richSnippet']) && $this::CONFIGURATIONS['richSnippet']);
 
+		Arrays::invoke($this->onBeforeSubmitMenuItemForm, $form);
+
 		$form->addSubmits(!$menu);
 
 		$form->onValidate[] = function (AdminForm $form): void {
@@ -374,6 +395,11 @@ class MenuPresenter extends BackendPresenter
 			$values['page']['name'] = $values['name'];
 			$values['page']['params'] = $values['page']['params'] ?: '';
 			$type = $values['page']['type'];
+
+			foreach ($this->onBeforeSuccessRedirectMenuItemForm as $callback) {
+				$callback($form, $values);
+			}
+
 			$values['page'] = (string) $this->pageRepository->syncOne($values['page'], ignore: false);
 
 			$menuItem = $this->menuItemRepository->syncOne($values, null, true, false);
@@ -527,6 +553,9 @@ class MenuPresenter extends BackendPresenter
 			true,
 			isset($this::CONFIGURATIONS['richSnippet']) && $this::CONFIGURATIONS['richSnippet'],
 		);
+
+		Arrays::invoke($this->onBeforeSubmitMenuItemForm, $form);
+
 		$form->addSubmits(!$this->getParameter('page'));
 
 		$form->onSuccess[] = function (AdminForm $form): void {
@@ -553,6 +582,11 @@ class MenuPresenter extends BackendPresenter
 
 			$values['page']['name'] = $values['name'];
 			$values['page']['content'] = Helpers::sanitizeMutationsStrings($values['content']);
+
+			foreach ($this->onBeforeSuccessRedirectMenuItemForm as $callback) {
+				$callback($form, $values);
+			}
+
 			$page = $this->pageRepository->syncOne($values['page']);
 
 			$this->menuItemRepository->clearMenuCache();
