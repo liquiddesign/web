@@ -169,6 +169,8 @@ class NewsPresenter extends BackendPresenter
 			true,
 			isset($this::CONFIGURATIONS['richSnippet']) && $this::CONFIGURATIONS['richSnippet'],
 		);
+
+		$this->formFactory->addShopsContainerToAdminForm($form, false);
 		
 		$form->addSubmits(!$news);
 		

@@ -130,8 +130,9 @@ class SliderPresenter extends BackendPresenter
 		$form->addCheckbox('hidden', 'Skryto');
 		$form->addCheckbox('animate', 'Animovat')->setHtmlAttribute('data-info', 'Slider bude mít efekt přibližování.');
 
+		$this->formFactory->addShopsContainerToAdminForm($form, false);
+
 		$form->addSubmits(!$this->getParameter('slide'));
-		
 		
 		$form->onSuccess[] = function (AdminForm $form) use ($homepageSlide): void {
 			$values = $form->getValues('array');

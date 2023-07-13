@@ -94,6 +94,8 @@ class BannerPresenter extends BackendPresenter
 				$this->redirect('this');
 			};
 		}
+
+		$this->formFactory->addShopsContainerToAdminForm($form, false);
 		
 		$form->addHidden('id')->setDefaultValue(Random::generate(4));
 		$form->addSubmits(!$banner);

@@ -60,6 +60,9 @@ class MessagePresenter extends BackendPresenter
 		$form->addLocaleRichEdit('html', 'HTML');
 		$form->addLocaleTextArea('text', 'Text');
 		$form->addCheckbox('active', 'Aktivní');
+
+		$this->formFactory->addShopsContainerToAdminForm($form, false);
+
 		$form->addSubmits(!$this->getParameter('template'));
 		$form->bind($this->templateRepository->getStructure());
 
