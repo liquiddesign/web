@@ -55,6 +55,8 @@ class MessagePresenter extends BackendPresenter
 		$form->addText('email', $this->tab === 'outgoing' ? 'Odesílatel' : 'E-mail')->setRequired();
 		$form->addText('cc', 'Posílat kopie')
 		->setHtmlAttribute('data-info', 'Zadejte e-mailové adresy oddělené středníkem ";".');
+		$form->addText('bcc', 'Posílat skryté kopie')
+			->setHtmlAttribute('data-info', 'Zadejte e-mailové adresy oddělené středníkem ";".');
 		$form->addText('replyTo', 'Adresa pro odpověď');
 		$form->addText('alias', 'Alias');
 		$form->addLocaleRichEdit('html', 'HTML');
