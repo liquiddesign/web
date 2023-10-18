@@ -50,6 +50,7 @@ class MessagePresenter extends BackendPresenter
 	{
 		$form = $this->formFactory->create(true);
 
+		$form->addText('code', 'Interní kód')->setDisabled();
 		$form->addText('name', 'Název e-mailu')->setHtmlAttribute('readonly', 'readonly');
 		$form->addLocaleText('subject', 'Předmět');
 		$form->addText('email', $this->tab === 'outgoing' ? 'Odesílatel' : 'E-mail')->setRequired();
