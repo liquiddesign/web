@@ -543,7 +543,7 @@ class MenuPresenter extends BackendPresenter
 
 		$form->addPageContainer(
 			$page ? $page->type : 'content',
-			$this->getParameter('page') ? ['page' => $this->getParameter('page')] : [],
+			$this->getPageParamsInPageFormForPageContainer($this->getParameter('page')),
 			$inputName,
 			false,
 			true,
@@ -814,5 +814,22 @@ class MenuPresenter extends BackendPresenter
 		parent::startup();
 
 		$this->cache = new Cache($this->storage);
+	}
+
+	/**
+	 * @param \Web\DB\Page|null $page
+	 * @return array<mixed>
+	 */
+	protected function getPageParamsInPageFormForPageContainer(?Page $page = null): array
+	{
+		if (!$page) {
+			return [];
+		}
+
+		if ($page->getType() === 'faq' && isset($page->getParsedParameters()['tag'])) {
+			return ['tag' => $page->getParsedParameters()['tag']];
+		}
+
+		return ['page' => $page->getPK()];
 	}
 }
