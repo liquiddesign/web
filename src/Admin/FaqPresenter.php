@@ -215,7 +215,11 @@ class FaqPresenter extends BackendPresenter
 		$form->addInteger('priority', $this->_('.priority', 'Pořadí'))->setRequired()->setDefaultValue(10);
 		$form->addCheckbox('hidden', $this->_('.hidden', 'Skryto'));
 		
-		$form->addPageContainer('faq', ['tag' => $this->getParameter('faqItemTag')], $nameInput);
+		$form->addPageContainer(
+			'faq',
+			['tag' => $this->getParameter('faqItemTag')],
+			$nameInput,
+		);
 		
 		/** @var \Web\DB\FaqItemTag $faqItemTag */
 		$faqItemTag = $this->getParameter('faqItemTag');
