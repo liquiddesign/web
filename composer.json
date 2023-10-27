@@ -20,7 +20,7 @@
     "nette/utils": "~3.0",
     "latte/latte": "~3.0",
     "league/csv": "^9.0",
-    "liquiddesign/admin": "~2.0.0",
+    "liquiddesign/admin": "~2.1",
     "onnov/detect-encoding": "^2.0",
     "nesbot/carbon": "~2.66"
   },
