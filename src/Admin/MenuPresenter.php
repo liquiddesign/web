@@ -702,7 +702,11 @@ class MenuPresenter extends BackendPresenter
 
 		$this->template->tabs = [];
 
-		foreach ($this->menuTypeRepository->getCollection()->toArrayOf('name') as $type => $label) {
+		$menuTypes = $this->menuTypeRepository->getCollection();
+
+		$this->shopsConfig->filterShopsInShopEntityCollection($menuTypes);
+
+		foreach ($menuTypes->toArrayOf('name') as $type => $label) {
 			$this->template->tabs[$type] = " $label";
 		}
 

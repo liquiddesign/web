@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Web\DB;
 
-use StORM\Entity;
+use Base\Entity\ShopSystemicEntity;
 
 /**
  * @table
  */
-class MenuType extends Entity
+class MenuType extends ShopSystemicEntity
 {
 	/**
 	 * @column{"mutations":true}
