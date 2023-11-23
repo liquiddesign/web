@@ -134,7 +134,7 @@ class NewsPresenter extends BackendPresenter
 			News::IMAGE_DIR . \DIRECTORY_SEPARATOR . 'thumb' => static function (Image $image) use ($presenter): void {
 				$image->resize($presenter::THUMB_IMAGE_RESIZE, null);
 			},
-		]);
+		], 'Nahrávejte obrázek o minimální šířce ' . $presenter::DETAIL_IMAGE_RESIZE . 'px');
 		
 		/** @var \Web\DB\News $news */
 		$news = $this->getParameter('news');
