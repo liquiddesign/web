@@ -4,15 +4,23 @@ declare(strict_types=1);
 
 namespace Web\DB;
 
+use Base\ShopsConfig;
 use Common\DB\IGeneralRepository;
 use StORM\Collection;
+use StORM\DIConnection;
 use StORM\Repository;
+use StORM\SchemaManager;
 
 /**
  * @extends \StORM\Repository<\Web\DB\Setting>
  */
 class SettingRepository extends Repository implements IGeneralRepository
 {
+	public function __construct(DIConnection $connection, SchemaManager $schemaManager, protected readonly ShopsConfig $shopsConfig)
+	{
+		parent::__construct($connection, $schemaManager);
+	}
+
 	/**
 	 * @param bool $includeHidden
 	 * @return array<string>
@@ -30,16 +38,35 @@ class SettingRepository extends Repository implements IGeneralRepository
 	}
 	
 	/**
+	 * @param array<int|string, \Base\DB\Shop>|null $shops
 	 * @return array<string>
 	 */
-	public function getValues(): array
+	public function getValues(bool $checkShops = true, array|null $shops = null): array
 	{
-		return $this->many()->setIndex('name')->toArrayOf('value');
+		$query = $this->many()->setIndex('name');
+
+		if ($checkShops) {
+			$this->shopsConfig->filterShopsInShopEntityCollection($query, $shops);
+		}
+
+		return $query->toArrayOf('value');
 	}
 
-	public function getValueByName(string $name): ?string
+	/**
+	 * @param string $name
+	 * @param bool $checkShops
+	 * @param array<int|string, \Base\DB\Shop>|null $shops
+	 * @throws \StORM\Exception\NotFoundException
+	 */
+	public function getValueByName(string $name, bool $checkShops = true, array|null $shops = null): ?string
 	{
-		$setting = $this->one(['name' => $name]);
+		$settingQuery = $this->many()->where('name', $name);
+
+		if ($checkShops) {
+			$this->shopsConfig->filterShopsInShopEntityCollection($settingQuery, $shops);
+		}
+
+		$setting = $settingQuery->first();
 
 		if (!$setting || !$setting->value) {
 			return null;
@@ -50,11 +77,14 @@ class SettingRepository extends Repository implements IGeneralRepository
 
 	/**
 	 * @param string $name
+	 * @param bool $checkShops
+	 * @param array<int|string, \Base\DB\Shop>|null $shops
 	 * @return array<string>|null
+	 * @throws \StORM\Exception\NotFoundException
 	 */
-	public function getValuesByName(string $name): ?array
+	public function getValuesByName(string $name, bool $checkShops = true, array|null $shops = null): ?array
 	{
-		$value = $this->getValueByName($name);
+		$value = $this->getValueByName($name, $checkShops, $shops);
 
 		if (!$value) {
 			return null;
