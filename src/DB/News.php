@@ -60,6 +60,12 @@ class News extends ShopEntity
 	 * @column
 	 */
 	public ?string $imageFileName = null;
+
+	/**
+	 * Dodatečné informace
+	 * @column{"mutations":true}
+	 */
+	public string $metaInfo;
 	
 	/**
 	 * Podobné tagy

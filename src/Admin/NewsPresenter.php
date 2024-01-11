@@ -124,6 +124,7 @@ class NewsPresenter extends BackendPresenter
 		$presenter = $this;
 		
 		$nameInput = $form->addLocaleText('name', 'Název');
+		$form->addLocaleText('metaInfo', 'Dodatečné informace');
 		$form->addLocaleTextArea('perex', 'Perex');
 		$form->addLocaleRichEdit('content', 'Obsah');
 		$imagePicker = $form->addImagePicker('imageFileName', 'Obrázek', [
