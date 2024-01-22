@@ -92,4 +92,27 @@ class SettingRepository extends Repository implements IGeneralRepository
 
 		return \explode(';', $value);
 	}
+
+	/**
+	 * @param string $name
+	 * @param string|null $shop
+	 * @throws \StORM\Exception\NotFoundException
+	 */
+	public function getValueByNameWithShop(string $name, string|null $shop = null): string|null
+	{
+		$shop ??= $this->shopsConfig->getSelectedShop()?->getPK();
+
+		if (!$shop) {
+			return $this->getValueByName($name);
+		}
+
+		$settingQuery = $this->many()->where('name', "{$name}_$shop");
+		$setting = $settingQuery->first();
+
+		if (!$setting || !$setting->value) {
+			return null;
+		}
+
+		return $setting->value;
+	}
 }
