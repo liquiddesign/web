@@ -41,7 +41,8 @@
     "phpcs": "phpcs --standard=ruleset.xml --ignore=assets src",
     "phpcsfix": "phpcbf --standard=ruleset.xml --ignore=assets src",
     "lattelint": "php lattelint.php",
-    "tester": "tester tests/Cases/*.phpt  -c tests/php.ini --setup tests/setup.php"
+    "tester": "tester tests/Cases/*.phpt  -c tests/php.ini --setup tests/setup.php",
+    "check-commit": "@php ./vendor/liquiddesign/codestyle/src/scripts/check-last-commit.php"
   },
   "config": {
     "allow-plugins": {
