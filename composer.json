@@ -1,52 +1,63 @@
 {
-  "name": "liquiddesign/web",
-  "description": "Ⓦ Služby, entity, administrace a kontroly pro CMS",
-  "license": "MIT",
-  "autoload": {
-    "psr-4": {
-      "Web\\": "src/"
+    "name": "liquiddesign/web",
+    "description": "Ⓦ Služby, entity, administrace a kontroly pro CMS",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Web\\": "src/"
+        },
+        "classmap": []
     },
-    "classmap": []
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Web\\Tests\\": "tests/"
-    }
-  },
-  "require": {
-    "php": ">=8.2",
-    "nette/application": "~3.0",
-    "nette/http": "~3.0",
-    "nette/utils": "~3.0",
-    "latte/latte": "~3.0",
-    "league/csv": "^9.0",
-    "liquiddesign/admin": "~2.1",
-    "onnov/detect-encoding": "^2.0",
-    "nesbot/carbon": "~2.66"
-  },
-  "require-dev": {
-    "nette/tester": "^2.0",
-    "tracy/tracy": "^2.0",
-    "composer/composer": "^2.0",
-    "liquiddesign/codestyle": "^3.0",
-    "liquiddesign/migrator": "^1.0",
-    "phpstan/phpstan-nette": "^1.0"
-  },
-  "minimum-stability": "dev",
-  "prefer-stable" : true,
-  "scripts": {
-    "fix-code": ["@phpcsfix"],
-    "check-code": ["@phpcs", "@phpstan"],
-    "phpstan": "phpstan analyse --memory-limit 1G -c phpstan.neon",
-    "phpcs": "phpcs --standard=ruleset.xml --ignore=assets src",
-    "phpcsfix": "phpcbf --standard=ruleset.xml --ignore=assets src",
-    "lattelint": "php lattelint.php",
-    "tester": "tester tests/Cases/*.phpt  -c tests/php.ini --setup tests/setup.php",
-    "check-commit": "@php ./vendor/liquiddesign/codestyle/src/scripts/check-last-commit.php"
-  },
-  "config": {
-    "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": true
-    }
-  }
+    "autoload-dev": {
+        "psr-4": {
+            "Web\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=8.2",
+        "nette/application": "~3.0",
+        "nette/http": "~3.0",
+        "nette/utils": "~4.0",
+        "latte/latte": "~3.0",
+        "league/csv": "^9.0",
+        "liquiddesign/admin": "~2.1",
+        "onnov/detect-encoding": "^2.0",
+        "nesbot/carbon": "~2.66 || ^3.0"
+    },
+    "require-dev": {
+        "nette/tester": "^2.0",
+        "tracy/tracy": "^2.0",
+        "composer/composer": "^2.0",
+        "liquiddesign/codestyle": "^3.0",
+        "liquiddesign/migrator": "^1.0",
+        "phpstan/phpstan-nette": "^1.0"
+    },
+    "scripts": {
+        "fix-code": [
+            "@phpcsfix"
+        ],
+        "check-code": [
+            "@phpcs",
+            "@phpstan"
+        ],
+        "phpstan": "phpstan analyse --memory-limit 1G -c phpstan.neon",
+        "phpcs": "phpcs --standard=ruleset.xml --ignore=assets src",
+        "phpcsfix": "phpcbf --standard=ruleset.xml --ignore=assets src",
+        "lattelint": "php lattelint.php",
+        "tester": "tester tests/Cases/*.phpt  -c tests/php.ini --setup tests/setup.php",
+        "check-commit": "@php ./vendor/liquiddesign/codestyle/src/scripts/check-last-commit.php",
+        "changelog": "conventional-changelog",
+        "release": "@changelog --commit",
+        "release:patch": "@changelog --patch --commit",
+        "release:minor": "@changelog --minor --commit",
+        "release:major": "@changelog --major --commit"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "version": "2.1.5"
 }
