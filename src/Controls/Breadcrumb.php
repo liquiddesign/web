@@ -10,7 +10,7 @@ use Nette\Application\UI\Control;
 class Breadcrumb extends Control
 {
 	/** @var array<callable(static): void> Occurs when component is attached to presenter */
-	public $onAnchor = [];
+	public array $onAnchor = [];
 	
 	/**
 	 * @var array<\stdClass>

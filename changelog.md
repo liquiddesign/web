@@ -1,3 +1,14 @@
+<!--- BEGIN HEADER -->
+# Changelog
+
+All notable changes to this project will be documented in this file.
+<!--- END HEADER -->
+
+## [2.1.5](https://github.com/liquiddesign/web/compare/v2.1.4...v2.1.5) (2024-03-07)
+
+
+---
+
 # Ⓦ LiquidDesign/Web - CHANGELOG
 
 All notable changes to this project will be documented in this file.
