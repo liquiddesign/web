@@ -150,7 +150,7 @@ class NewsPresenter extends BackendPresenter
 			$form->addDataMultiSelect('relatedNews', 'Podobné články', $this->newsRepository->getArrayForSelect());
 		}
 		
-		$form->addDate('published', 'Publikováno')->setRequired();
+		$form->addPolyfillDate('published', 'Publikováno')->setRequired();
 		$form->addSelect('author', 'Autor')->setItems($this->authorRepository->getArrayForSelect())->setPrompt('- bez autora -');
 		
 		$form->addCheckbox('hidden', 'Skryto');
