@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.11](https://github.com/liquiddesign/web/compare/v2.1.10...v2.1.11) (2024-04-03)
+
+### Features
+
+
+##### Template Factory
+
+* Add getUtmCanonicalUrl ([474694](https://github.com/liquiddesign/web/commit/4746941288764c4d5f354bc214d52d3161fbad79))
+
+
+---
+
 ## [2.1.9](https://github.com/liquiddesign/web/compare/v2.1.8...v2.1.9) (2024-03-18)
 
 ### Bug Fixes
