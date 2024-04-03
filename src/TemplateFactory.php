@@ -7,14 +7,20 @@ namespace Web;
 use Nette\Application\UI\Presenter;
 use Nette\Application\UI\Template;
 use Nette\Caching\Cache;
+use Nette\DI\Attributes\Inject;
+use Nette\Http\Request;
+use Nette\Utils\Arrays;
 use Nette\Utils\Strings;
 use Pages\DB\Page;
 use Pages\Pages;
 
 abstract class TemplateFactory extends \Base\TemplateFactory
 {
-	/** @inject */
+	#[Inject]
 	public Pages $pages;
+
+	#[Inject]
+	public Request $request;
 	
 	public function setTemplateParameters(Template $template): void
 	{
@@ -31,6 +37,34 @@ abstract class TemplateFactory extends \Base\TemplateFactory
 		[$module] = \Nette\Application\Helpers::splitName($template->control->getName());
 
 		Strings::substring($module, -5) !== 'Admin' ? $this->setFrontendPresenterParameters($template) : $this->setBackendPresenterParameters($template);
+	}
+
+	/**
+	 * @param array<string> $additionalParameters
+	 */
+	public function getUtmCanonicalUrl(array $additionalParameters = []): ?string
+	{
+		if ($this->request->isAjax() || (!$this->request->isMethod('GET') && !$this->request->isMethod('HEAD'))) {
+			return null;
+		}
+
+		$utm = [];
+
+		foreach ($params = $this->request->getQuery() as $name => $value) {
+			if (\str_starts_with($name, 'utm_') ||
+				\str_starts_with('a_box', $name) ||
+				\str_starts_with('fbclid', $name) ||
+				\str_starts_with('ehub', $name) ||
+				Arrays::contains($additionalParameters, $name)
+			) {
+				unset($params[$name]);
+				$utm[$name] = $value;
+			}
+		}
+
+		$url = clone $this->request->getUrl();
+
+		return $utm ? $url->withQuery($params)->getAbsoluteUrl() : $url->getAbsoluteUrl();
 	}
 
 	protected function setFrontendPresenterParameters(Template $template): void
