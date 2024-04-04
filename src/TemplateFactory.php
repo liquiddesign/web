@@ -34,7 +34,7 @@ abstract class TemplateFactory extends \Base\TemplateFactory
 			return;
 		}
 
-		[$module] = \Nette\Application\Helpers::splitName($template->control->getName());
+		[$module] = \Nette\Application\Helpers::splitName((string) $template->control->getName());
 
 		Strings::substring($module, -5) !== 'Admin' ? $this->setFrontendPresenterParameters($template) : $this->setBackendPresenterParameters($template);
 	}
@@ -51,15 +51,19 @@ abstract class TemplateFactory extends \Base\TemplateFactory
 		$utm = [];
 
 		foreach ($params = $this->request->getQuery() as $name => $value) {
-			if (\str_starts_with($name, 'utm_') ||
-				\str_starts_with('a_box', $name) ||
-				\str_starts_with('fbclid', $name) ||
-				\str_starts_with('ehub', $name) ||
-				Arrays::contains($additionalParameters, $name)
+			$name = Strings::lower($name);
+
+			if (!\str_starts_with($name, 'utm_') &&
+				!\str_starts_with('a_box', $name) &&
+				!\str_starts_with('fbclid', $name) &&
+				!\str_starts_with('ehub', $name) &&
+				!Arrays::contains($additionalParameters, $name)
 			) {
-				unset($params[$name]);
-				$utm[$name] = $value;
+				continue;
 			}
+
+			unset($params[$name]);
+			$utm[$name] = $value;
 		}
 
 		$url = clone $this->request->getUrl();
