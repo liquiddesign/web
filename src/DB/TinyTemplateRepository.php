@@ -24,7 +24,7 @@ class TinyTemplateRepository extends Repository
 			'content' => 'html',
 		]);
 		
-		$collection->orderBy(['priority'])->setIndex(null)->setFetchClass(\StdClass::class);
+		$collection->orderBy(['priority'])->setIndex(null);
 		
 		return $collection->toArray();
 	}

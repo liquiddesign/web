@@ -148,6 +148,7 @@ class GalleryPresenter extends BackendPresenter
 			->setHtmlAttribute('size', 4)
 			->setOption('description', $this->_('galleryDescriptionMaxWidth', 'Velké foto zachováva poměr stran'))
 			->setRequired(false)
+			/* @phpstan-ignore-next-line */
 			->addConditionOn($form['originWidth'], $form::EQUAL, '')
 			->setRequired($this->_('galleryRequiredMaxWidth', 'Šířka nebo výška velkého náhledu musí být větší než 0px'))
 			->endCondition();
@@ -155,21 +156,26 @@ class GalleryPresenter extends BackendPresenter
 		$form->addInteger('thumbWidth', $this->_('galleryThumbWidth', 'Náhled šířka (px)'))
 			->setHtmlAttribute('size', 4)
 			->setRequired(false)
+			/* @phpstan-ignore-next-line */
 			->addConditionOn($form['resizeMethod'], $form::EQUAL, 'EXACT')
 			->setRequired(true)
 			->elseCondition()
+			/* @phpstan-ignore-next-line */
 			->addConditionOn($form['resizeMethod'], $form::EQUAL, 'STRETCH')
 			->setRequired(true)
 			->endCondition();
 		$form->addInteger('thumbHeight', $this->_('galleryThumbHeight', 'Náhled výška (px)'))
 			->setHtmlAttribute('size', 4)
 			->setRequired(false)
+			/* @phpstan-ignore-next-line */
 			->addConditionOn($form['thumbWidth'], $form::EQUAL, '')
 			->setRequired($this->_('galleryThumbConditionSize', 'Šířka nebo výška malého náhledu musí být větší než 0px'))
 			->elseCondition()
+			/* @phpstan-ignore-next-line */
 			->addConditionOn($form['resizeMethod'], $form::EQUAL, 'EXACT')
 			->setRequired(true)
 			->elseCondition()
+			/* @phpstan-ignore-next-line */
 			->addConditionOn($form['resizeMethod'], $form::EQUAL, 'STRETCH')
 			->setRequired(true)
 			->endCondition();

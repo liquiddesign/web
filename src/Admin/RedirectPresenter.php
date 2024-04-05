@@ -169,7 +169,7 @@ class RedirectPresenter extends BackendPresenter
 			$lastUpdate = \filemtime($path);
 		}
 
-		$form->addText('lastProductFileUpload', 'Poslední aktualizace souboru')->setDisabled()->setDefaultValue($lastUpdate ? Carbon::parse($lastUpdate)->format('d.m.Y G:i') : null);
+		$form->addText('lastProductFileUpload', 'Poslední aktualizace souboru')->setDisabled()->setDefaultValue($lastUpdate ? Carbon::createFromTimestamp($lastUpdate)->format('d.m.Y G:i') : null);
 
 		$allowedColumns = '';
 
