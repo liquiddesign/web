@@ -151,7 +151,7 @@ class MicrotextPresenter extends BackendPresenter
 
 		$files = \scandir($backupDir, \SCANDIR_SORT_DESCENDING);
 
-		if (!$files || \count($files) === 0) {
+		if (!$files) {
 			$this->flashMessage('Obnova poslední zálohy se nezdařila! ', 'error');
 			$this->redirect('this');
 		}

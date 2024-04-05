@@ -151,7 +151,7 @@ class RedirectPresenter extends BackendPresenter
 
 	public function handleDownloadImportExampleFile(): void
 	{
-		if (isset(self::CONFIGURATION['importExampleFile']) && self::CONFIGURATION['importExampleFile']) {
+		if (isset($this::CONFIGURATION['importExampleFile']) && $this::CONFIGURATION['importExampleFile']) {
 			$this->getPresenter()->sendResponse(new FileResponse($this->wwwDir . '/userfiles/' . self::CONFIGURATION['importExampleFile'], 'example.csv', 'text/csv'));
 		}
 	}
@@ -183,7 +183,7 @@ class RedirectPresenter extends BackendPresenter
 
 		$info = '';
 
-		if (isset(self::CONFIGURATION['importExampleFile']) && self::CONFIGURATION['importExampleFile']) {
+		if (isset($this::CONFIGURATION['importExampleFile']) && $this::CONFIGURATION['importExampleFile']) {
 			$info .= 'Vzorový soubor: <a href="' . $this->link('downloadImportExampleFile!') . '">' . self::CONFIGURATION['importExampleFile'] . '</a><br>';
 		}
 
@@ -215,6 +215,7 @@ Povolené sloupce hlavičky (lze použít obě varianty kombinovaně):<br>
 				return;
 			}
 
+			/** @phpstan-ignore-next-line */
 			$form['file']->addError('Neplatný soubor!');
 		};
 

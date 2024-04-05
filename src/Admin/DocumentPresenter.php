@@ -80,7 +80,7 @@ class DocumentPresenter extends BackendPresenter
 		$form->addInteger('priority', $this->_('.priority', 'Pořadí'))->setRequired()->setDefaultValue(10);
 		$form->addCheckbox('hidden', $this->_('.hidden', 'Skryto'));
 		
-		/** @var \Web\DB\Document $document */
+		/** @var \Web\DB\Document|null $document */
 		$document = $this->getParameter('document');
 		
 		$form->addSubmits(!$document);
@@ -88,10 +88,9 @@ class DocumentPresenter extends BackendPresenter
 		$form->onSuccess[] = function (AdminForm $form) use ($document): void {
 			$values = $form->getValues('array');
 			$this->generateDirectories([Document::FILE_DIR], $this->langs);
-			/** @var \Nette\Http\FileUpload $files[] */
+			/** @var array<\Nette\Http\FileUpload> $files */
 			$files = $form->getValues()->filename;
-			
-			/** @var \Nette\Http\FileUpload $file */
+
 			foreach ($files as $lang => $file) {
 				if ($file->isOk()) {
 					$values['fileSize'][$lang] = $file->getSize();

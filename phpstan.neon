@@ -3,7 +3,10 @@ includes:
     - vendor/liquiddesign/storm/phpstan-extension.neon
 
 parameters:
-	level: 1
+	universalObjectCratesClasses:
+		- Nette\Http\SessionSection
+		- Nette\Application\UI\Template
+	level: 4
 	paths:
 		- src
 	excludePaths:

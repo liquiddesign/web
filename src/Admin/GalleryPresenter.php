@@ -180,7 +180,7 @@ class GalleryPresenter extends BackendPresenter
 		$form->addText('classes', $this->_('galleryCssClass', 'CSS třídy'));
 		$form->addHidden('id')->setDefaultValue(Random::generate(4));
 		
-		/** @var \Web\DB\Gallery $gallery */
+		/** @var \Web\DB\Gallery|null $gallery */
 		$gallery = $this->getParameter('gallery');
 		
 		$form->addSubmits(!$gallery);
@@ -224,7 +224,7 @@ class GalleryPresenter extends BackendPresenter
 		$form->addInteger('priority', $this->_('.priority', 'Pořadí'))->setRequired()->setDefaultValue(10);
 		$form->addCheckbox('hidden', $this->_('.hidden', 'Skryto'));
 		
-		/** @var \Web\DB\GalleryImage $galleryImage */
+		/** @var \Web\DB\GalleryImage|null $galleryImage */
 		$galleryImage = $this->getParameter('galleryImage');
 		
 		$imagePicker->onDelete[] = function () use ($galleryImage): void {
@@ -239,7 +239,8 @@ class GalleryPresenter extends BackendPresenter
 		$form->onSuccess[] = function (AdminForm $form) use ($galleryImage): void {
 			$values = $form->getValues('array');
 			$this->generateDirectories([Gallery::IMAGE_DIR], Gallery::SUBDIRS);
-			
+
+			/** @phpstan-ignore-next-line */
 			$values['image'] = $form['image']->upload($values['uuid'] . '.%2$s');
 			$galleryImage = $this->galleryImageRepo->syncOne($values, null, true);
 			
@@ -273,6 +274,8 @@ class GalleryPresenter extends BackendPresenter
 				if ($image->isImage() && $image->isOk()) {
 					$uuid = DIConnection::generateUuid();
 					$ext = \pathinfo($image->getSanitizedName(), \PATHINFO_EXTENSION);
+
+					/** @var \Web\DB\GalleryImage $galleryImage */
 					$galleryImage = $this->galleryImageRepo->createOne([
 						'uuid' => $uuid,
 						'gallery' => $values['gallery'],

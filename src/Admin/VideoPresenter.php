@@ -76,7 +76,7 @@ class VideoPresenter extends BackendPresenter
 		$form->addInteger('priority', $this->_('.priority', 'Pořadí'))->setRequired()->setDefaultValue(10);
 		$form->addHidden('id')->setDefaultValue(Random::generate(4));
 		
-		/** @var \Web\DB\Video $video */
+		/** @var \Web\DB\Video|null $video */
 		$video = $this->getParameter('video');
 		
 		$form->addSubmits(!$video);

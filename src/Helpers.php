@@ -15,16 +15,16 @@ class Helpers
 	{
 		//@TODO konfigurace, univerzální mazání
 		// $states = ['normal', 'check-control', 'control'];
-		$toDeleteStrings = [];
+//		$toDeleteStrings = [];
 
 		foreach ($content as $mutation => $string) {
 			if ($string === null) {
 				continue;
 			}
 
-			foreach ($toDeleteStrings as $toDeleteString => $toReplaceString) {
-				$content[$mutation] = $string = \str_replace($toDeleteString, $toReplaceString, $string);
-			}
+//			foreach ($toDeleteStrings as $toDeleteString => $toReplaceString) {
+//				$content[$mutation] = $string = \str_replace($toDeleteString, $toReplaceString, $string);
+//			}
 
 			$state = 'normal';
 			$substr = '';

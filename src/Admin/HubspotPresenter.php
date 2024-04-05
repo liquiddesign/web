@@ -77,7 +77,7 @@ class HubspotPresenter extends BackendPresenter
 		$form->addCheckbox('hidden', $this->_('.hidden', 'Skryto'));
 		$form->addHidden('id')->setDefaultValue(Random::generate(4));
 		
-		/** @var \Web\DB\Hubspot $hubspot */
+		/** @var \Web\DB\Hubspot|null $hubspot */
 		$hubspot = $this->getParameter('hubspot');
 		
 		$form->addSubmits(!$hubspot);

@@ -6,6 +6,9 @@ namespace Web\DB;
 
 use StORM\Repository;
 
+/**
+ * @extends \StORM\Repository<\Web\DB\TinyTemplate>
+ */
 class TinyTemplateRepository extends Repository
 {
 	/**

@@ -178,26 +178,24 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		
 		return $this->buildTree($collection->toArray());
 	}
-	
+
 	/**
-	 * @param $menuItem
+	 * @param \Web\DB\MenuItem|string|null $menuItem
 	 * @return array<\Web\DB\MenuItem>
 	 * @throws \StORM\Exception\NotFoundException
 	 */
-	public function getBreadcrumbStructure($menuItem): array
+	public function getBreadcrumbStructure(MenuItem|string|null $menuItem): array
 	{
 		if (!$menuItem) {
 			return [];
 		}
-		
-		if ($menuItem) {
-			if (!$menuItem instanceof MenuItem) {
-				if (!$menuItem = $this->one($menuItem)) {
-					return [];
-				}
+
+		if (!$menuItem instanceof MenuItem) {
+			if (!$menuItem = $this->one($menuItem)) {
+				return [];
 			}
 		}
-		
+
 		$menuAssign = $this->menuAssignRepository->many()->where('fk_menuitem', $menuItem->getPK())->first();
 
 		if ($menuAssign === null || Strings::length($menuAssign->path) / 4 === 1) {
@@ -217,7 +215,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	
 	/**
 	 * Updates all items paths of menu type.
-	 * @param \Web\DB\MenuType $element
+	 * @param \Web\DB\MenuType $menuType
 	 * @throws \Throwable
 	 */
 	public function recalculatePaths(MenuType $menuType): void
@@ -254,15 +252,15 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		
 		return null;
 	}
-	
+
 	/**
 	 * @param bool $includeHidden
-	 * @param null $menuType
+	 * @param \Web\DB\MenuType|string|null $menuType
 	 * @param \Web\DB\MenuItem|null $menuItem
 	 * @return array<string>
 	 * @throws \StORM\Exception\NotFoundException
 	 */
-	public function getTreeArrayForSelect(bool $includeHidden = true, $menuType = null, ?MenuItem $menuItem = null): array
+	public function getTreeArrayForSelect(bool $includeHidden = true, null|MenuType|string $menuType = null, ?MenuItem $menuItem = null): array
 	{
 		$menuTypes = $this->menuTypeRepository->getCollection($includeHidden)->toArray();
 		
@@ -287,7 +285,8 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		}
 		
 		$list = [];
-		
+
+		/** @var \Web\DB\MenuType $type */
 		foreach ($menuTypes as $type) {
 			$collection = $this->menuAssignRepository->many()
 				->join(['type' => 'web_menutype'], 'this.fk_menutype = type.uuid')
@@ -304,6 +303,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 				}
 				
 				$collection->whereNot('fk_menuitem', $menuItem->getPK());
+				/** @phpstan-ignore-next-line */
 				$collection->where('this.path NOT LIKE :path', ['path' => "$menuItem->path%"]);
 			}
 			
@@ -381,11 +381,13 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		$item = $this->getCollection()
 			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
 			->where('nxn.fk_menutype', $menuType->getPK())
+			/** @phpstan-ignore-next-line */
 			->where('nxn.path LIKE :path', ['path' => "$menuItem->path%"])
 			->select(['path' => 'nxn.path'])
 			->setOrderBy(['LENGTH(path)' => 'DESC'])
 			->first();
-		
+
+		/** @phpstan-ignore-next-line */
 		return $item ? Strings::length($item->path) / 4 : Strings::length($menuItem->path) / 4;
 	}
 	
@@ -407,7 +409,9 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		
 		return $this->getCollection()
 				->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
+				/** @phpstan-ignore-next-line */
 				->where('path LIKE :path', ['path' => "$menuItem->path%"])
+				/** @phpstan-ignore-next-line */
 				->where('LENGTH(path) > :pathLength', ['pathLength' => Strings::length($menuItem->path)])
 				->count() > 0;
 	}
@@ -436,7 +440,8 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 			->where('nxn.fk_menutype', $menuType->getPK())
 			->select(['path' => 'nxn.path'])
 			->first();
-		
+
+		/** @phpstan-ignore-next-line */
 		return $menuItem ? Strings::length($menuItem->path) / 4 : null;
 	}
 	
@@ -453,7 +458,9 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 				$type = $this->menuTypeRepository->one($typePK);
 				
 				if (isset($selectedAncestors[$type->getPK()])) {
-					$form['types']->addError('Nelze vybrat více umístění stejného typu!');
+					/** @var \Nette\Forms\Controls\MultiSelectBox $input */
+					$input = $form['types'];
+					$input->addError('Nelze vybrat více umístění stejného typu!');
 				}
 				
 				$selectedAncestors[$type->getPK()] = [
@@ -470,11 +477,16 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 					->where('nxn.uuid', $typeItem)
 					->first();
 				
-				/** @var \Web\DB\MenuType $type */
+				/**
+				 * @var \Web\DB\MenuType $type
+				 * @phpstan-ignore-next-line
+				 */
 				$type = $this->menuTypeRepository->one($selectedAncestor->menutype);
 				
 				if (isset($selectedAncestors[$type->getPK()])) {
-					$form['types']->addError('Nelze vybrat více umístění stejného typu!');
+					/** @var \Nette\Forms\Controls\SelectBox $input */
+					$input = $form['types'];
+					$input->addError('Nelze vybrat více umístění stejného typu!');
 				}
 				
 				$selectedAncestors[$type->getPK()] = [
@@ -508,10 +520,13 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 				if ($children = $this->buildTree($elements, $element->getPK())) {
 					$element->menuitem->children = $children;
 				}
-				
+
+				/** @phpstan-ignore-next-line */
 				$element->menuitem->ancestor = $element->ancestor ? $element->ancestor->menuitem : null;
 				// preload page for cache
+				/** @phpstan-ignore-next-line */
 				$element->menuitem->page;
+				/** @phpstan-ignore-next-line */
 				$element->menuitem->path = $element->path;
 				$branch[] = $element->menuitem;
 			}

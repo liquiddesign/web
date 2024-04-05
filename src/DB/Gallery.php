@@ -80,7 +80,7 @@ class Gallery extends Entity
 	/**
 	 * Fotky galerie
 	 * @relation
-	 * @var \StORM\RelationCollection<\Web\DB\GalleryImage>|array<\Web\DB\GalleryImage>
+	 * @var \StORM\RelationCollection<\Web\DB\GalleryImage>
 	 */
 	public RelationCollection $images;
 	

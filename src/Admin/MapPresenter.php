@@ -79,7 +79,7 @@ class MapPresenter extends BackendPresenter
 		$form->addText('height', $this->_('height', 'Výška'))->setRequired(true)->setDefaultValue('400px')->setHtmlAttribute('size', 5);
 		$form->addText('address', $this->_('address', 'Adresa'));
 		
-		/** @var \Web\DB\Map $map */
+		/** @var \Web\DB\Map|null $map */
 		$map = $this->getParameter('map');
 		
 		$form->addHidden('id')->setDefaultValue(Random::generate(4));

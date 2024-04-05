@@ -70,7 +70,7 @@ class News extends ShopEntity
 	/**
 	 * Podobné tagy
 	 * @relationNxN
-	 * @var array<\Web\DB\Tag>|\StORM\RelationCollection<\Web\DB\Tag>
+	 * @var \StORM\RelationCollection<\Web\DB\Tag>
 	 */
 	public RelationCollection $tags;
 	
@@ -96,7 +96,7 @@ class News extends ShopEntity
 	/**
 	 * Podobné články
 	 * @relationNxN{"sourceViaKey":"fk_news","targetViaKey":"fk_related"}
-	 * @var \StORM\RelationCollection<\Web\DB\News>|array<\Web\DB\News>
+	 * @var \StORM\RelationCollection<\Web\DB\News>
 	 */
 	public RelationCollection $relatedNews;
 }

@@ -142,6 +142,7 @@ class PagePresenter extends BackendPresenter
 					return;
 				}
 
+				/** @phpstan-ignore-next-line */
 				$form['type']->addError($values["_$values[type]"] ? 'Stránka s těmito parametry již exituje' : 'Tento typ stránky již existuje');
 			};
 		}
@@ -203,6 +204,7 @@ class PagePresenter extends BackendPresenter
 		$form = $this->getComponent('form');
 		
 		$form->setDefaults($page->toArray());
+		/** @phpstan-ignore-next-line */
 		$form['page']->setDefaults($page->toArray());
 	}
 }

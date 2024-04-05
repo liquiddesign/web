@@ -76,7 +76,7 @@ class TinyTemplatePresenter extends BackendPresenter
 		$form->addInteger('priority', $this->_('admin.priority', 'Pořadí'))->setRequired()->setDefaultValue(10);
 		$form->addCheckbox('hidden', $this->_('admin.hidden', 'Skryto'));
 
-		/** @var \Web\DB\TinyTemplate $template */
+		/** @var \Web\DB\TinyTemplate|null $template */
 		$template = $this->getParameter('template');
 
 		$form->addSubmits(!$template);

@@ -81,13 +81,13 @@ class TestimonialPresenter extends BackendPresenter
 		$imagePicker = $form->addImagePicker('image', $this->_('picture', 'Fotka osoby'), [
 			Testimonial::IMAGE_DIR . '/person' => static function (Image $image): void {
 				$image->resize(Testimonial::MIN_WIDTH, Testimonial::MIN_HEIGHT, Image::EXACT);
-			}], 'Obrázky vkládejte o velikosti %dx%d px', [Testimonial::MIN_WIDTH, Testimonial::MIN_HEIGHT]);
+			}], 'Obrázky vkládejte o velikosti %dx%d px');
 		
 		$logoPicker = $form->addImagePicker('logo', $this->_('logo', 'Logo společnosti'), [
 			Testimonial::IMAGE_DIR . '/logo' => null,
 		]);
 		
-		/** @var \Web\DB\Testimonial $testimonial */
+		/** @var \Web\DB\Testimonial|null $testimonial */
 		$testimonial = $this->getParameter('testimonial');
 		
 		if ($testimonial) {
@@ -107,9 +107,16 @@ class TestimonialPresenter extends BackendPresenter
 		$form->onSuccess[] = function (AdminForm $form) use ($testimonial): void {
 			$values = $form->getValues('array');
 			$this->generateDirectories([Testimonial::IMAGE_DIR], ['person', 'logo']);
-			
-			$values['image'] = $form['image']->upload($values['uuid'] . '.%2$s');
-			$values['logo'] = $form['logo']->upload($values['uuid'] . '.%2$s');
+
+			/** @var \Forms\Controls\UploadImage $imageControl */
+			$imageControl = $form['image'];
+
+			$values['image'] = $imageControl->upload($values['uuid'] . '.%2$s');
+
+			/** @var \Forms\Controls\UploadImage $logoControl */
+			$logoControl = $form['logo'];
+
+			$values['logo'] = $logoControl->upload($values['uuid'] . '.%2$s');
 			$values['text'] = Helpers::sanitizeMutationsStrings($values['text']);
 			
 			$testimonial = $this->testimonialRepo->syncOne($values, null, true);

@@ -78,7 +78,7 @@ class CoverPresenter extends BackendPresenter
 			Cover::IMAGE_DIR . '/mobile' => null,
 		]);
 		
-		/** @var \Web\DB\Cover $cover */
+		/** @var \Web\DB\Cover|null $cover */
 		$cover = $this->getParameter('cover');
 		
 		if ($cover) {
@@ -117,9 +117,12 @@ class CoverPresenter extends BackendPresenter
 		$form->onSuccess[] = function (AdminForm $form) use ($cover): void {
 			$values = $form->getValues('array');
 			$this->generateDirectories([Cover::IMAGE_DIR], ['desktop', 'tablet', 'mobile']);
-			
+
+			/** @phpstan-ignore-next-line */
 			$values['imageDesktop'] = $form['imageDesktop']->upload($values['uuid'] . '.%2$s');
+			/** @phpstan-ignore-next-line */
 			$values['imageTablet'] = $form['imageTablet']->upload($values['uuid'] . '.%2$s');
+			/** @phpstan-ignore-next-line */
 			$values['imageMobile'] = $form['imageMobile']->upload($values['uuid'] . '.%2$s');
 			$values['text'] = Helpers::sanitizeMutationsStrings($values['text']);
 			

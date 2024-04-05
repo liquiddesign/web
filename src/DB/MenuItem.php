@@ -79,13 +79,16 @@ class MenuItem extends Entity
 	/**
 	 * Zařazení do menu
 	 * @relationNxN{"via":"web_menuassign"}
-	 * @var array<\Web\DB\MenuType>|\StORM\RelationCollection<\Web\DB\MenuType>
+	 * @var \StORM\RelationCollection<\Web\DB\MenuType>
 	 */
 	public RelationCollection $types;
 	
 	public function getUrl(?string $langPrefix = null): ?string
 	{
-		return $this->page ? $this->getRepository()->getBaseUrl() . ($langPrefix ? "$langPrefix/" : '') . $this->page->url : $this->absoluteUrl;
+		/** @var \Web\DB\MenuItemRepository $repository */
+		$repository = $this->getRepository();
+
+		return $this->page ? $repository->getBaseUrl() . ($langPrefix ? "$langPrefix/" : '') . $this->page->url : $this->absoluteUrl;
 	}
 	
 	public function isSystemic(): bool

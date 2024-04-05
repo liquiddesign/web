@@ -9,6 +9,9 @@ use StORM\DIConnection;
 use StORM\Repository;
 use StORM\SchemaManager;
 
+/**
+ * @extends \StORM\Repository<\Web\DB\Gallery>
+ */
 class GalleryRepository extends Repository
 {
 	public string $wwwDir;
@@ -25,7 +28,8 @@ class GalleryRepository extends Repository
 	public function resizeImagesFromUploaded(Gallery $gallery): void
 	{
 		$path = $this->wwwDir . '/userfiles/' . Gallery::IMAGE_DIR;
-		
+
+		/** @var \Web\DB\GalleryImage $image */
 		foreach ($gallery->images as $image) {
 			$linkUploaded = $path . '/upload/' . $image->image;
 			

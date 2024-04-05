@@ -80,7 +80,7 @@ class BannerPresenter extends BackendPresenter
 			Banner::IMAGE_DIR . '/background' => null,
 		]);
 		
-		/** @var \Web\DB\Banner $banner */
+		/** @var \Web\DB\Banner|null $banner */
 		$banner = $this->getParameter('banner');
 		
 		if ($banner) {
@@ -102,8 +102,10 @@ class BannerPresenter extends BackendPresenter
 		$form->onSuccess[] = function (AdminForm $form) use ($banner): void {
 			$values = $form->getValues('array');
 			$this->generateDirectories([Banner::IMAGE_DIR], ['image', 'background']);
-			
+
+			/** @phpstan-ignore-next-line */
 			$values['image'] = $form['image']->upload($values['uuid'] . '.%2$s');
+			/** @phpstan-ignore-next-line */
 			$values['background'] = $form['background']->upload($values['uuid'] . '.%2$s');
 			
 			$banner = $this->bannerRepo->syncOne($values, null, true);

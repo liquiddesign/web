@@ -32,7 +32,10 @@ class Breadcrumb extends Control
 	
 	public function render(): void
 	{
+		/** @var \Nette\Bridges\ApplicationLatte\Template $template */
+		$template = $this->template;
+
 		$this->template->items = $this->items;
-		$this->template->render($this->template->getFile() ?: __DIR__ . '/Breadcrumb.latte');
+		$template->render($this->template->getFile() ?: __DIR__ . '/Breadcrumb.latte');
 	}
 }

@@ -21,8 +21,9 @@ class Video extends Control
 	public function render(): void
 	{
 		try {
+			/** @var \Web\DB\Video $video */
 			$video = $this->videoRepository->one(['id' => $this->id], true);
-			$this->template->videoCode = $video ? $video->getYoutubeCode() : null;
+			$this->template->videoCode = $video->getYoutubeCode();
 			$this->template->setFile($this->template->getFile() ?: __DIR__ . '/Video.latte');
 			$this->template->render();
 		} catch (NotFoundException $x) {

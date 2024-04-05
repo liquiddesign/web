@@ -9,6 +9,9 @@ use StORM\DIConnection;
 use StORM\Repository;
 use StORM\SchemaManager;
 
+/**
+ * @extends \StORM\Repository<\Web\DB\Banner>
+ */
 class BannerRepository extends Repository
 {
 	public function __construct(DIConnection $connection, SchemaManager $schemaManager, protected readonly ShopsConfig $shopsConfig)

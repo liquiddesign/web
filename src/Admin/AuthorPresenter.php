@@ -51,7 +51,7 @@ class AuthorPresenter extends BackendPresenter
 		$imagePicker = $form->addImagePicker('image', $this->_('picture', 'Fotka osoby'), [
 			Author::IMAGE_DIR => static function (Image $image): void {
 				$image->resize(Author::MIN_WIDTH, Author::MIN_HEIGHT, Image::EXACT);
-			}], 'Obrázky vkládejte o velikosti %dx%d px', [Author::MIN_WIDTH, Author::MIN_HEIGHT]);
+			}], 'Obrázky vkládejte o velikosti %dx%d px');
 		
 		if ($author) {
 			$imagePicker->onDelete[] = function () use ($author): void {
@@ -72,7 +72,8 @@ class AuthorPresenter extends BackendPresenter
 			}
 			
 			$this->generateDirectories([Author::IMAGE_DIR]);
-			
+
+			/** @phpstan-ignore-next-line */
 			$values['image'] = $form['image']->upload($values['uuid'] . '.%2$s');
 			
 			$author = $this->authorRepository->syncOne($values, null, true);

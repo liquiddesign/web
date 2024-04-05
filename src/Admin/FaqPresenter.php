@@ -192,7 +192,7 @@ class FaqPresenter extends BackendPresenter
 		$form->addLocaleText('name', $this->_('name', 'Název'));
 		$form->addHidden('id')->setDefaultValue(Random::generate(4));
 		
-		/** @var \Web\DB\Faq $faq */
+		/** @var \Web\DB\Faq|null $faq */
 		$faq = $this->getParameter('faq');
 		
 		$form->addSubmits(!$faq);
@@ -221,7 +221,7 @@ class FaqPresenter extends BackendPresenter
 			$nameInput,
 		);
 		
-		/** @var \Web\DB\FaqItemTag $faqItemTag */
+		/** @var \Web\DB\FaqItemTag|null $faqItemTag */
 		$faqItemTag = $this->getParameter('faqItemTag');
 		
 		$form->addSubmits(!$faqItemTag);
@@ -255,7 +255,7 @@ class FaqPresenter extends BackendPresenter
 		$form->addCheckbox('hidden', $this->_('.hidden', 'Skryto'));
 		$form->addHidden('faq', (string) ($this->getParameter('faqItem') ? $this->getParameter('faqItem')->faq : $this->getParameter('faq')));
 		
-		/** @var \Web\DB\FaqItem $faqItem */
+		/** @var \Web\DB\FaqItem|null $faqItem */
 		$faqItem = $this->getParameter('faqItem');
 		
 		$form->addSubmits(!$faqItem);

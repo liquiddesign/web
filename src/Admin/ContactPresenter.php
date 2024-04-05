@@ -80,7 +80,7 @@ class ContactPresenter extends BackendPresenter
 			Contact::IMAGE_DIR . '/' => null,
 		]);
 		
-		/** @var \Web\DB\Contact $contact */
+		/** @var \Web\DB\Contact|null $contact */
 		$contact = $this->getParameter('contact');
 		
 		$imagePicker->onDelete[] = function () use ($contact): void {
@@ -95,7 +95,8 @@ class ContactPresenter extends BackendPresenter
 		$form->onSuccess[] = function (AdminForm $form) use ($contact): void {
 			$values = $form->getValues('array');
 			$this->generateDirectories([Contact::IMAGE_DIR]);
-			
+
+			/** @phpstan-ignore-next-line */
 			$values['image'] = $form['image']->upload($values['uuid'] . '.%2$s');
 			$contact = $this->contactRepo->syncOne($values, $form->getChangedProperties(), true, true);
 			

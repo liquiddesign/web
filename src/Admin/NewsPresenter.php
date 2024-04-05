@@ -137,7 +137,7 @@ class NewsPresenter extends BackendPresenter
 			},
 		], 'Nahrávejte obrázek o minimální šířce ' . $presenter::DETAIL_IMAGE_RESIZE . 'px');
 		
-		/** @var \Web\DB\News $news */
+		/** @var \Web\DB\News|null $news */
 		$news = $this->getParameter('news');
 		
 		$imagePicker->onDelete[] = function () use ($news): void {

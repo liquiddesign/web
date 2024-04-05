@@ -27,14 +27,23 @@ class Faq extends Entity
 	 * @column{"mutations":true}
 	 */
 	public bool $active = false;
+
+	/**
+	 * @var array<\Web\DB\FaqItem>
+	 */
+	public $itemsArray;
 	
 	/**
 	 * Položky faq
 	 * @relation
-	 * @var \StORM\RelationCollection<\Web\DB\FaqItem>|array<\Web\DB\FaqItem>
+	 * @var \StORM\RelationCollection<\Web\DB\FaqItem>
 	 */
 	public RelationCollection $items;
-	
+
+	/**
+	 * @param \Web\DB\FaqItemTag|null $faqItemTag
+	 * @return \StORM\Collection<\Web\DB\FaqItem>
+	 */
 	public function getItems(?FaqItemTag $faqItemTag = null): Collection
 	{
 		$collection = (clone $this->items)->where('this.hidden', false)->orderBy(['this.priority']);

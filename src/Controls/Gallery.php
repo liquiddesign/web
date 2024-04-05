@@ -23,7 +23,9 @@ class Gallery extends Control
 	public function render(): void
 	{
 		try {
-			$this->template->gallery = $gallery = $this->galleryRepository->one(['id' => $this->id], true);
+			/** @var \Web\DB\Gallery $gallery */
+			$gallery = $this->galleryRepository->one(['id' => $this->id], true);
+			$this->template->gallery = $gallery;
 			$this->template->setFile($this->template->getFile() ?: __DIR__ . '/Gallery.latte');
 			$this->template->images = $gallery->images->where('hidden', false)->orderBy(['priority' => 'ASC']);
 			$this->template->render();

@@ -129,7 +129,7 @@ class TabPresenter extends BackendPresenter
 		$form->addCheckbox('firstMobile', $this->_('firstMobile', 'První položka bude na mobilu rozbalena'));
 		$form->addHidden('id')->setDefaultValue(Random::generate(4));
 		
-		/** @var \Web\DB\Tab $tab */
+		/** @var \Web\DB\Tab|null $tab */
 		$tab = $this->getParameter('tab');
 		
 		$form->addSubmits(!$tab);
@@ -154,13 +154,14 @@ class TabPresenter extends BackendPresenter
 		$form->addCheckbox('hidden', $this->_('.hidden', 'Skryto'));
 		$form->addHidden('tab', (string) ($this->getParameter('tabItem') ? $this->getParameter('tabItem')->tab : $this->getParameter('tab')));
 		
-		/** @var \Web\DB\TabItem $tabItem */
+		/** @var \Web\DB\TabItem|null $tabItem */
 		$tabItem = $this->getParameter('tabItem');
 		
 		$form->addSubmits(!$tabItem);
 		$form->onSuccess[] = function (AdminForm $form) use ($tabItem): void {
 			$values = $form->getValues('array');
-			
+
+			/** @var \Web\DB\TabItem $tabItem */
 			$tabItem = $this->tabItemRepo->syncOne($values, null, true);
 			
 			$this->flashMessage($this->_('.saved', 'Uloženo'), 'success');

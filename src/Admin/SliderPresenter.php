@@ -79,7 +79,7 @@ class SliderPresenter extends BackendPresenter
 		$form = $this->formFactory->create(true);
 		$imageDir = $this->wwwDir . \DIRECTORY_SEPARATOR . 'userfiles' . \DIRECTORY_SEPARATOR . HomepageSlide::IMAGE_DIR;
 
-		/** @var \Web\DB\HomepageSlide $homepageSlide */
+		/** @var \Web\DB\HomepageSlide|null $homepageSlide */
 		$homepageSlide = $this->getParameter('slide');
 
 		$form->addLocaleRichEdit('text', 'Popisek');
@@ -147,11 +147,21 @@ class SliderPresenter extends BackendPresenter
 			}
 			
 			if ($values['type'] === 'video') {
-				$values['image'] = $form['video']->upload($values['uuid'] . '.%2$s');
+				/** @var \Forms\Controls\UploadImage $uploadControl */
+				$uploadControl = $form['video'];
+
+				$values['image'] = $uploadControl->upload($values['uuid'] . '.%2$s');
 				unset($values['imageMobile'], $values['video']);
 			} else {
-				$values['image'] = $form['image']->upload($values['uuid'] . '.%2$s');
-				$values['imageMobile'] = $form['imageMobile']->upload($values['uuid'] . '.%2$s');
+				/** @var \Forms\Controls\UploadImage $uploadControl */
+				$uploadControl = $form['image'];
+
+				$values['image'] = $uploadControl->upload($values['uuid'] . '.%2$s');
+
+				/** @var \Forms\Controls\UploadImage $uploadControl */
+				$uploadControl = $form['imageMobile'];
+
+				$values['imageMobile'] = $uploadControl->upload($values['uuid'] . '.%2$s');
 				unset($values['video']);
 			}
 

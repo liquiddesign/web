@@ -23,7 +23,10 @@ class Textbox extends Control
 	public function render(): void
 	{
 		try {
-			echo $this->textboxRepository->one(['id' => $this->id], true)->text;
+			/** @var \Web\DB\Textbox $textBox */
+			$textBox = $this->textboxRepository->one(['id' => $this->id], true);
+
+			echo $textBox->text;
 		} catch (NotFoundException $x) {
 			echo "*** widget #'$this->id' was deleted ***";
 		}

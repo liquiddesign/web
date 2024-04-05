@@ -77,7 +77,7 @@ class TextboxPresenter extends BackendPresenter
 		$form->addLocaleRichEdit('text', $this->_('content', 'Obsah'));
 		$form->addInteger('priority', $this->_('.priority', 'Pořadí'))->setRequired()->setDefaultValue(10);
 		$form->addHidden('id')->setDefaultValue(Random::generate(4));
-		/** @var \Web\DB\Textbox $textbox */
+		/** @var \Web\DB\Textbox|null $textbox */
 		$textbox = $this->getParameter('textbox');
 		
 		$form->addSubmits(!$textbox);

@@ -126,7 +126,7 @@ class CarouselPresenter extends BackendPresenter
 		$form = $this->formFactory->create(true, true, true);
 		$form->addLocaleText('name', $this->_('carouselName', 'Název'));
 		
-		/** @var \Web\DB\Carousel $carousel */
+		/** @var \Web\DB\Carousel|null $carousel */
 		$carousel = $this->getParameter('carousel');
 		$form->addHidden('id')->setDefaultValue(Random::generate(4));
 		$form->addSubmits(!$carousel);
@@ -150,7 +150,7 @@ class CarouselPresenter extends BackendPresenter
 			Carousel::IMAGE_DIR . '/' => null,
 		]);
 		
-		/** @var \Web\DB\CarouselSlide $carouselSlide */
+		/** @var \Web\DB\CarouselSlide|null $carouselSlide */
 		$carouselSlide = $this->getParameter('carouselSlide');
 		
 		$imagePicker->onDelete[] = function () use ($carouselSlide): void {
@@ -167,7 +167,8 @@ class CarouselPresenter extends BackendPresenter
 		$form->onSuccess[] = function (AdminForm $form) use ($carouselSlide): void {
 			$values = $form->getValues('array');
 			$this->generateDirectories([Carousel::IMAGE_DIR]);
-			
+
+			/** @phpstan-ignore-next-line */
 			$values['image'] = $form['image']->upload($values['uuid'] . '.%2$s');
 			$carouselSlide = $this->carouselSlideRepo->syncOne($values, null, true);
 			

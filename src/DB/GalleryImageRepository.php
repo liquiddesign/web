@@ -7,6 +7,9 @@ namespace Web\DB;
 use Nette\Utils\FileSystem;
 use StORM\Repository;
 
+/**
+ * @extends \StORM\Repository<\Web\DB\GalleryImage>
+ */
 class GalleryImageRepository extends Repository
 {
 	public string $wwwDir;

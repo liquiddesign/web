@@ -264,12 +264,12 @@ class MenuPresenter extends BackendPresenter
 
 		$form->setPrettyPages(true);
 
-		/** @var \Web\DB\MenuItem $menu */
+		/** @var \Web\DB\MenuItem|null $menu */
 		$menu = $this->getParameter('menuItem');
 
 		$nameInput = $form->addLocaleText('name', 'Název');
 
-		if (self::CONFIGURATIONS['background']) {
+		if ($this::CONFIGURATIONS['background']) {
 			$imagePicker = $form->addImagePicker('image', 'Pozadí (desktop)', [
 					Page::IMAGE_DIR => null,
 				]);
@@ -303,16 +303,16 @@ class MenuPresenter extends BackendPresenter
 		)->setRequired();
 		$form->addInteger('priority', 'Priorita')->setRequired()->setDefaultValue(10);
 
-		if (isset(self::CONFIGURATIONS['icon']) && self::CONFIGURATIONS['icon']) {
+		if (isset($this::CONFIGURATIONS['icon']) && $this::CONFIGURATIONS['icon']) {
 			$form->addText('icon', $this->_('icon', 'Ikona v menu'))
 				->setOption('description', $this->_('iconDescription', 'Vkládejte kód v tomto formátu') . ' <i class="far fa-address-card"></i>')->setNullable();
 		}
 
-		if (isset(self::CONFIGURATIONS['iconImage'])) {
+		if (isset($this::CONFIGURATIONS['iconImage'])) {
 			$iconPicker = $form->addImagePicker('iconImage', $this->_('icon', 'Ikona v menu'), [
-				MenuItem::IMAGE_DIR => static function (Image $image): void {
-					$width = self::CONFIGURATIONS['iconImage']['width'] ?? 32;
-					$height = self::CONFIGURATIONS['iconImage']['height'] ?? 32;
+				MenuItem::IMAGE_DIR => function (Image $image): void {
+					$width = $this::CONFIGURATIONS['iconImage']['width'] ?? 32;
+					$height = $this::CONFIGURATIONS['iconImage']['height'] ?? 32;
 					$image->resize($width, $height);
 				},
 			]);
@@ -325,7 +325,8 @@ class MenuPresenter extends BackendPresenter
 			};
 		}
 
-		if (isset(self::CONFIGURATIONS['documents']) && self::CONFIGURATIONS['documents']) {
+		if (isset($this::CONFIGURATIONS['documents']) && $this::CONFIGURATIONS['documents']) {
+			/** @phpstan-ignore-next-line */
 			$form['page']->addMultiSelect2('documents', $this->_('documents', 'Dokumenty'), $this->documentRepository->many()->toArray());
 		}
 
@@ -356,12 +357,13 @@ class MenuPresenter extends BackendPresenter
 				$values['uuid'] = DIConnection::generateUuid();
 			}
 
-			if (isset(self::CONFIGURATIONS['iconImage'])) {
+			if (isset($this::CONFIGURATIONS['iconImage'])) {
 				$this->generateDirectories([MenuItem::IMAGE_DIR]);
+				/** @phpstan-ignore-next-line */
 				$values['iconImage'] = $form['iconImage']->upload($values['uuid'] . '.%2$s');
 			}
 
-			if (isset(self::CONFIGURATIONS['documents']) && self::CONFIGURATIONS['documents']) {
+			if (isset($this::CONFIGURATIONS['documents']) && $this::CONFIGURATIONS['documents']) {
 				$values['page']['documents'] = $values['documents'];
 				unset($values['documents']);
 			}
@@ -377,14 +379,16 @@ class MenuPresenter extends BackendPresenter
 				$values['page']['opengraph'] = $form['page']['opengraph']->upload($values['page']['uuid'] . '.%2$s');
 			}
 
-			if (self::CONFIGURATIONS['background']) {
+			if ($this::CONFIGURATIONS['background']) {
 				if ($values['image']->isOK()) {
+					/** @phpstan-ignore-next-line */
 					$values['page']['image'] = $form['image']->upload($values['image']->getSanitizedName());
 				}
 
 				unset($values['image']);
 
 				if ($values['mobileImage']->isOK()) {
+					/** @phpstan-ignore-next-line */
 					$values['page']['mobileImage'] = $form['mobileImage']->upload($values['mobileImage']->getSanitizedName());
 				}
 
@@ -515,7 +519,7 @@ class MenuPresenter extends BackendPresenter
 			$input->setRequired();
 		});
 
-		if (self::CONFIGURATIONS['background']) {
+		if ($this::CONFIGURATIONS['background']) {
 			$imagePicker = $form->addImagePicker('image', 'Pozadí (desktop)', [
 					Page::IMAGE_DIR => null,
 				]);
@@ -535,7 +539,8 @@ class MenuPresenter extends BackendPresenter
 			};
 		}
 
-		if (isset(self::CONFIGURATIONS['documents']) && self::CONFIGURATIONS['documents']) {
+		if (isset($this::CONFIGURATIONS['documents']) && $this::CONFIGURATIONS['documents']) {
+			/** @phpstan-ignore-next-line */
 			$form['page']->addMultiSelect2('documents', $this->_('documents', 'Dokumenty'), $this->documentRepository->many()->toArray());
 		}
 
@@ -566,14 +571,16 @@ class MenuPresenter extends BackendPresenter
 				$values['page']['params'] = 'page=' . $values['page']['uuid'] . '&';
 			}
 
-			if (self::CONFIGURATIONS['background']) {
+			if ($this::CONFIGURATIONS['background']) {
 				if ($values['image']->isOK()) {
+					/** @phpstan-ignore-next-line */
 					$values['page']['image'] = $form['image']->upload($values['image']->getSanitizedName());
 				}
 
 				unset($values['image']);
 
 				if ($values['mobileImage']->isOK()) {
+					/** @phpstan-ignore-next-line */
 					$values['page']['mobileImage'] = $form['mobileImage']->upload($values['mobileImage']->getSanitizedName());
 				}
 
@@ -671,6 +678,7 @@ class MenuPresenter extends BackendPresenter
 	public function actionLinkMenuItemToPage(Page $page): void
 	{
 		$form = $this->getComponent('menuForm');
+		/** @phpstan-ignore-next-line */
 		$form['name']->setDefaults($page->toArray()['name']);
 	}
 
@@ -759,13 +767,16 @@ class MenuPresenter extends BackendPresenter
 		}
 
 		$form->setDefaults($defaults);
+		/** @phpstan-ignore-next-line */
 		$form['content']->setDefaults($defaults['page']['content'] ?? []);
 
-		if (!self::CONFIGURATIONS['background']) {
+		if (!$this::CONFIGURATIONS['background']) {
 			return;
 		}
 
+		/** @phpstan-ignore-next-line */
 		$form['image']->setDefaultValue($menuItem->page->image ?? null);
+		/** @phpstan-ignore-next-line */
 		$form['mobileImage']->setDefaultValue($menuItem->page->mobileImage ?? null);
 	}
 
@@ -797,6 +808,7 @@ class MenuPresenter extends BackendPresenter
 
 		$this->menuItemRepository->many()->join(['assign' => 'web_menuassign'], 'this.uuid = assign.fk_menuitem')
 			->where('fk_menutype', $this->tab)
+			/** @phpstan-ignore-next-line */
 			->where('assign.path LIKE :path', ['path' => "$menuItem->path%"])
 			->delete();
 
