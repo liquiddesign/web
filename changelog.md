@@ -29,6 +29,15 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [2.1.10](https://github.com/liquiddesign/web/compare/v2.1.9...v2.1.10) (2024-03-22)
+
+### Bug Fixes
+
+* Change date input to polyfill ([3c8e18](https://github.com/liquiddesign/web/commit/3c8e184cf64bd321dbccac1cae9aca469521a61e), [846186](https://github.com/liquiddesign/web/commit/846186ea27f8812096bcceff8463ccde9be50463))
+
+
+---
+
 ## [2.1.9](https://github.com/liquiddesign/web/compare/v2.1.8...v2.1.9) (2024-03-18)
 
 ### Bug Fixes
