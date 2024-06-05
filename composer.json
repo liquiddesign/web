@@ -51,10 +51,10 @@
         "tester": "tester tests/Cases/*.phpt  -c tests/php.ini --setup tests/setup.php",
         "check-commit": "@php ./vendor/liquiddesign/codestyle/src/scripts/check-last-commit.php",
         "changelog": "conventional-changelog",
-        "release": "@changelog --commit",
-        "release:patch": "@changelog --patch --commit",
-        "release:minor": "@changelog --minor --commit",
-        "release:major": "@changelog --major --commit"
+        "release": "conventional-changelog --commit",
+        "release:patch": "conventional-changelog --patch --commit",
+        "release:minor": "conventional-changelog --minor --commit",
+        "release:major": "conventional-changelog --major --commit"
     },
     "config": {
         "allow-plugins": {
