@@ -9,7 +9,6 @@ use Nette\Application\UI\Template;
 use Nette\Caching\Cache;
 use Nette\DI\Attributes\Inject;
 use Nette\Http\Request;
-use Nette\Utils\Arrays;
 use Nette\Utils\Strings;
 use Pages\DB\Page;
 use Pages\Pages;
@@ -51,7 +50,7 @@ abstract class TemplateFactory extends \Base\TemplateFactory
 		$utm = [];
 		$loweredAdditionalParameters = [];
 
-		foreach ($additionalParameters as $key => $value) {
+		foreach ($additionalParameters as $value) {
 			$loweredAdditionalParameters[Strings::lower($value)] = $value;
 		}
 
