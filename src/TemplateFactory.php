@@ -50,6 +50,10 @@ abstract class TemplateFactory extends \Base\TemplateFactory
 
 		$utm = [];
 
+		foreach ($additionalParameters as $key => $value) {
+			$additionalParameters[$key] = Strings::lower($value);
+		}
+
 		foreach ($params = $this->request->getQuery() as $name => $value) {
 			$name = Strings::lower($name);
 
