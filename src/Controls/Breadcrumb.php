@@ -9,7 +9,7 @@ use Nette\Application\UI\Control;
  */
 class Breadcrumb extends Control
 {
-	/** @var array<callable(static): void> Occurs when component is attached to presenter */
+	/** @var array<callable(\Nette\Application\UI\Component): void> Occurs when component is attached to presenter */
 	public array $onAnchor = [];
 	
 	/**
