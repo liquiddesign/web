@@ -49,9 +49,10 @@ abstract class TemplateFactory extends \Base\TemplateFactory
 		}
 
 		$utm = [];
+		$loweredAdditionalParameters = [];
 
 		foreach ($additionalParameters as $key => $value) {
-			$additionalParameters[$key] = Strings::lower($value);
+			$loweredAdditionalParameters[Strings::lower($value)] = $value;
 		}
 
 		foreach ($params = $this->request->getQuery() as $name => $value) {
@@ -61,9 +62,13 @@ abstract class TemplateFactory extends \Base\TemplateFactory
 				!\str_starts_with('a_box', $name) &&
 				!\str_starts_with('fbclid', $name) &&
 				!\str_starts_with('ehub', $name) &&
-				!Arrays::contains($additionalParameters, $name)
+				!isset($loweredAdditionalParameters[$name])
 			) {
 				continue;
+			}
+
+			if (isset($loweredAdditionalParameters[$name])) {
+				$name = $loweredAdditionalParameters[$name];
 			}
 
 			unset($params[$name]);
