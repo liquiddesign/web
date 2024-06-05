@@ -4,6 +4,22 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.13](https://github.com/liquiddesign/web/compare/v2.1.12...v2.1.13) (2024-06-05)
+
+### Features
+
+
+##### Template Factory
+
+* Make $additionalParameters to lower ([da73ba](https://github.com/liquiddesign/web/commit/da73ba0eab1296588b31f2ded56401453dcb113b))
+
+### Bug Fixes
+
+* Change date input to polyfill ([09cfea](https://github.com/liquiddesign/web/commit/09cfea1ac686dce01e3e70b9eac54838d1bfaf3a))
+
+
+---
+
 ## [2.1.12](https://github.com/liquiddesign/web/compare/v2.1.11...v2.1.12) (2024-04-04)
 
 ### Features
