@@ -23,7 +23,6 @@
         "latte/latte": "~3.0",
         "league/csv": "^9.0",
         "liquiddesign/admin": "~2.1",
-        "onnov/detect-encoding": "^2.0",
         "nesbot/carbon": "~2.66 || ^3.0"
     },
     "require-dev": {
