@@ -19,6 +19,8 @@ class TinyTemplateRepository extends Repository
 		$suffix = $this->getConnection()->getMutationSuffix();
 		
 		$collection = $this->many()->setSelect([
+			'uuid' => 'uuid',
+			'name' => "name$suffix",
 			'title' => "name$suffix",
 			'description' => "description$suffix",
 			'content' => 'html',
