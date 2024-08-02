@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.21](https://github.com/liquiddesign/web/compare/v2.1.20...v2.1.21) (2024-08-02)
+
+### Bug Fixes
+
+* Cast query parameter name to string in TemplateFactory ([612480](https://github.com/liquiddesign/web/commit/612480bf1cd391b1a755a94e570ad5cae06ca18a))
+
+
+---
+
 ## [2.1.13](https://github.com/liquiddesign/web/compare/v2.1.12...v2.1.13) (2024-06-05)
 
 ### Features
