@@ -55,7 +55,7 @@ abstract class TemplateFactory extends \Base\TemplateFactory
 		}
 
 		foreach ($params = $this->request->getQuery() as $name => $value) {
-			$name = Strings::lower($name);
+			$name = Strings::lower((string) $name);
 
 			if (!\str_starts_with($name, 'utm_') &&
 				!\str_starts_with('a_box', $name) &&
