@@ -10,11 +10,9 @@ use Admin\Controls\AdminGrid;
 use Carbon\Carbon;
 use Forms\Form;
 use League\Csv\EncloseField;
-use League\Csv\Reader;
 use League\Csv\Writer;
 use Nette\Application\Responses\FileResponse;
 use Nette\Utils\FileSystem;
-use Onnov\DetectEncoding\EncodingDetector;
 use Pages\DB\Redirect;
 use Pages\DB\RedirectRepository;
 use StORM\ICollection;
@@ -28,6 +26,7 @@ class RedirectPresenter extends BackendPresenter
 			'fromMutation' => 'Z mutace',
 			'toMutation' => 'Do mutace',
 			'priority' => 'Priorita',
+			'shop' => 'Obchod',
 		],
 		'importExampleFile' => null,
 	];
@@ -89,6 +88,8 @@ class RedirectPresenter extends BackendPresenter
 		$form->addText('priority', $this->_('admin.priority', 'Pořadí'))
 			->setHtmlAttribute('data-info', $this->_('adminWebRedirect.priorityDescription', 'Nižší číslo znamená vyšší prioritu.'))->addRule($form::INTEGER)->setRequired()->setDefaultValue(0);
 
+		$this->formFactory->addShopsContainerToAdminForm($form, false);
+
 		$form->addSubmits(!$this->getParameter('redirect'));
 
 		$form->onSuccess[] = function (AdminForm $form): void {
@@ -110,7 +111,7 @@ class RedirectPresenter extends BackendPresenter
 		$this->template->headerTree = [
 			[$this->tRedirect],
 		];
-		$this->template->displayButtons = [$this->createNewItemButton('new'), $this->createButton('importCsv', '<i class="fas fa-file-upload mr-1"></i>Import')];
+		$this->template->displayButtons = [$this->createNewItemButton('new'), $this->createButton2('importCsv', '<i class="fas fa-file-upload mr-1"></i>Import')];
 		$this->template->displayControls = [$this->getComponent('grid')];
 	}
 
@@ -321,32 +322,8 @@ Povolené sloupce hlavičky (lze použít obě varianty kombinovaně):<br>
 
 	protected function importCsv(string $filePath, string $delimiter = ';'): void
 	{
-		if (!\ini_get('auto_detect_line_endings')) {
-			\ini_set('auto_detect_line_endings', '1');
-		}
+		$reader = $this->getReader($filePath, $delimiter);
 
-		$csvData = FileSystem::read($filePath);
-
-		$detector = new EncodingDetector();
-
-		$detector->disableEncoding([
-			EncodingDetector::ISO_8859_5,
-			EncodingDetector::KOI8_R,
-		]);
-
-		$encoding = $detector->getEncoding($csvData);
-
-		if ($encoding !== 'utf-8') {
-			$csvData = \iconv('windows-1250', 'utf-8', $csvData);
-			$reader = Reader::createFromString($csvData);
-			unset($csvData);
-		} else {
-			unset($csvData);
-			$reader = Reader::createFromPath($filePath);
-		}
-
-		$reader->setDelimiter($delimiter);
-		$reader->setHeaderOffset(0);
 		$mutations = $this->redirectRepository->getConnection()->getAvailableMutations();
 
 		$header = $reader->getHeader();
