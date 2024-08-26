@@ -162,7 +162,7 @@ class MenuPresenter extends BackendPresenter
 			}
 			
 			if ($this->menuItemRepository->hasChildren($menuItem)) {
-				$this->getPresenter()->flashMessage('Položku nelze odebrat protože má pod sebou položky.', 'warning');
+				$this->getPresenter()->flashMessage('Položku nelze odebrat, protože má pod sebou položky.', 'warning');
 				
 				return;
 			}
@@ -172,7 +172,7 @@ class MenuPresenter extends BackendPresenter
 			$page = $menuItem->page;
 			$menuItem->update(['page' => null]);
 			
-			if ($page && !$menuItem->isSystemic()) {
+			if ($page && !$menuItem->isSystemic() && !$page->isSystemic()) {
 				$page->delete();
 			}
 			

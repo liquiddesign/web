@@ -401,13 +401,13 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 			}
 		}
 		
-		$menuItem = $this->getCollection()
+		$menuItem = $this->getCollection(true)
 			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
 			->where('nxn.fk_menuitem', $menuItem->getPK())
 			->select(['path' => 'nxn.path'])
 			->first();
 		
-		return $this->getCollection()
+		return $this->getCollection(true)
 				->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
 				/** @phpstan-ignore-next-line */
 				->where('path LIKE :path', ['path' => "$menuItem->path%"])
