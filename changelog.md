@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.23](https://github.com/liquiddesign/web/compare/v2.1.22...v2.1.23) (2024-08-26)
+
+### Bug Fixes
+
+* Menu item deletion and improve flash message ([6505eb](https://github.com/liquiddesign/web/commit/6505eb50bf763271c7df7a7d2002403de6639093))
+
+
+---
+
 ## [2.1.22](https://github.com/liquiddesign/web/compare/v2.1.21...v2.1.22) (2024-08-06)
 
 ### Bug Fixes
