@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.24](https://github.com/liquiddesign/web/compare/v2.1.23...v2.1.24) (2024-09-11)
+
+### Features
+
+* Enable URL and SEO option in MenuPresenter ([085ccc](https://github.com/liquiddesign/web/commit/085ccc2fd88199366c1f417de41696800823baa5))
+
+
+---
+
 ## [2.1.23](https://github.com/liquiddesign/web/compare/v2.1.22...v2.1.23) (2024-08-26)
 
 ### Bug Fixes
