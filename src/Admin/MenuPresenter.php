@@ -554,7 +554,7 @@ class MenuPresenter extends BackendPresenter
 			true,
 			false,
 			'URL a SEO',
-			false,
+			true,
 			true,
 			isset($this::CONFIGURATIONS['richSnippet']) && $this::CONFIGURATIONS['richSnippet'],
 		);
