@@ -590,6 +590,10 @@ class MenuPresenter extends BackendPresenter
 			$values['page']['name'] = $values['name'];
 			$values['page']['content'] = Helpers::sanitizeMutationsStrings($values['content']);
 
+			if (isset($values['page']['opengraph'])) {
+				$values['page']['opengraph'] = $form['page']['opengraph']->upload($values['page']['uuid'] . '.%2$s');
+			}
+
 			foreach ($this->onBeforeSuccessRedirectMenuItemForm as $callback) {
 				$callback($form, $values);
 			}
