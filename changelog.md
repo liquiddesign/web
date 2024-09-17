@@ -4,6 +4,19 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.25](https://github.com/liquiddesign/web/compare/v2.1.24...v2.1.25) (2024-09-17)
+
+### Features
+
+* Enable URL and SEO option in MenuPresenter ([745cc0](https://github.com/liquiddesign/web/commit/745cc018d82448fbc5b198a3ae73e29a83eceab6))
+
+### Bug Fixes
+
+* Opengraph in non menu pages ([a781d7](https://github.com/liquiddesign/web/commit/a781d76c733d60366fa463f370c7e65380e593e4))
+
+
+---
+
 ## [2.1.24](https://github.com/liquiddesign/web/compare/v2.1.23...v2.1.24) (2024-09-11)
 
 ### Features
