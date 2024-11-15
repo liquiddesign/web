@@ -38,6 +38,7 @@ class MicrotextPresenter extends BackendPresenter
 		$grid->addColumnSelector();
 
 		$grid->addColumnText('ID', 'uuid', '%s', 'uuid', ['class' => 'fit']);
+		$grid->addColumnText('Kód', 'code', '%s', 'code', ['class' => 'fit']);
 		$grid->addColumnText('Popisek', 'label', '%s', 'label');
 
 		/*foreach ($this->formFactory->formFactory->getDefaultMutations() as $mutation) {
@@ -53,7 +54,10 @@ class MicrotextPresenter extends BackendPresenter
 
 		$grid->addButtonSaveAll();
 
-		$grid->addFilterTextInput('search', ['uuid', 'label', 'text_cs'], null, 'ID, popisek, překlad');
+		$mutationSuffix = $this->storm->getMutationSuffix();
+
+		$grid->addFilterTextInput('search', ['uuid', 'label', "text$mutationSuffix", 'code'], null, 'ID, kód, popisek, překlad');
+		$this->gridFactory->addShopsFilterSelect($grid);
 		$grid->addFilterButtons();
 
 		return $grid;
