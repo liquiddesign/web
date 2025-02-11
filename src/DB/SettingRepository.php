@@ -53,7 +53,7 @@ class SettingRepository extends Repository implements IGeneralRepository
 
 		return $this->cache->load($index, function (&$dependencies) use ($checkShops, $shops): array {
 			$dependencies = [
-				Cache::Tags => [self::class . ':' . __FUNCTION__],
+				Cache::Tags => [self::class . ':' . __FUNCTION__, 'settings'],
 				Cache::Expire => '1 week',
 			];
 
@@ -79,7 +79,7 @@ class SettingRepository extends Repository implements IGeneralRepository
 
 		$data = $this->cache->load($index, function (&$dependencies) use ($checkShops, $shops, $name): string|false {
 			$dependencies = [
-				Cache::Tags => [self::class . ':' . __FUNCTION__],
+				Cache::Tags => [self::class . ':' . __FUNCTION__, 'settings'],
 				Cache::Expire => '1 week',
 			];
 
@@ -141,7 +141,7 @@ class SettingRepository extends Repository implements IGeneralRepository
 
 		$data = $this->cache->load($index, function (&$dependencies) use ($shop, $name): string|false {
 			$dependencies = [
-				Cache::Tags => [self::class . ':' . __FUNCTION__],
+				Cache::Tags => [self::class . ':' . __FUNCTION__, 'settings'],
 				Cache::Expire => '1 week',
 			];
 
