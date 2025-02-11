@@ -6,6 +6,8 @@ namespace Web\DB;
 
 use Base\ShopsConfig;
 use Common\DB\IGeneralRepository;
+use Nette\Caching\Cache;
+use Nette\Caching\Storage;
 use StORM\Collection;
 use StORM\DIConnection;
 use StORM\Repository;
@@ -16,9 +18,13 @@ use StORM\SchemaManager;
  */
 class SettingRepository extends Repository implements IGeneralRepository
 {
-	public function __construct(DIConnection $connection, SchemaManager $schemaManager, protected readonly ShopsConfig $shopsConfig)
+	private readonly Cache $cache;
+
+	public function __construct(DIConnection $connection, SchemaManager $schemaManager, protected readonly ShopsConfig $shopsConfig, Storage $storage)
 	{
 		parent::__construct($connection, $schemaManager);
+
+		$this->cache = new Cache($storage);
 	}
 
 	/**
@@ -43,13 +49,22 @@ class SettingRepository extends Repository implements IGeneralRepository
 	 */
 	public function getValues(bool $checkShops = true, array|null $shops = null): array
 	{
-		$query = $this->many()->setIndex('name');
+		$index = self::class . ':' . __FUNCTION__ . ((int) $checkShops) . '-' . ($shops ? \serialize(\array_keys($shops)) : null);
 
-		if ($checkShops) {
-			$this->shopsConfig->filterShopsInShopEntityCollection($query, $shops);
-		}
+		return $this->cache->load($index, function (&$dependencies) use ($checkShops, $shops): array {
+			$dependencies = [
+				Cache::Tags => [self::class . ':' . __FUNCTION__],
+				Cache::Expire => '1 week',
+			];
 
-		return $query->toArrayOf('value');
+			$query = $this->many()->setIndex('name');
+
+			if ($checkShops) {
+				$this->shopsConfig->filterShopsInShopEntityCollection($query, $shops);
+			}
+
+			return $query->toArrayOf('value');
+		});
 	}
 
 	/**
@@ -60,19 +75,35 @@ class SettingRepository extends Repository implements IGeneralRepository
 	 */
 	public function getValueByName(string $name, bool $checkShops = true, array|null $shops = null): ?string
 	{
-		$settingQuery = $this->many()->where('name', $name);
+		$index = self::class . ':' . __FUNCTION__ . "-$name-$checkShops-" . ($shops ? \serialize(\array_keys($shops)) : null);
 
-		if ($checkShops) {
-			$this->shopsConfig->filterShopsInShopEntityCollection($settingQuery, $shops);
-		}
+		$data = $this->cache->load($index, function (&$dependencies) use ($checkShops, $shops, $name): string|false {
+			$dependencies = [
+				Cache::Tags => [self::class . ':' . __FUNCTION__],
+				Cache::Expire => '1 week',
+			];
 
-		$setting = $settingQuery->first();
+			$settingQuery = $this->many()->where('name', $name);
 
-		if (!$setting || !$setting->value) {
+			if ($checkShops) {
+				$this->shopsConfig->filterShopsInShopEntityCollection($settingQuery, $shops);
+			}
+
+			/** @var \Web\DB\Setting|null $setting */
+			$setting = $settingQuery->first();
+
+			if (!$setting || !$setting->value) {
+				return false;
+			}
+
+			return $setting->value;
+		});
+
+		if ($data === false) {
 			return null;
 		}
 
-		return $setting->value;
+		return $data;
 	}
 
 	/**
@@ -106,13 +137,28 @@ class SettingRepository extends Repository implements IGeneralRepository
 			return $this->getValueByName($name);
 		}
 
-		$settingQuery = $this->many()->where('name', "{$name}_$shop");
-		$setting = $settingQuery->first();
+		$index = self::class . ':' . __FUNCTION__ . "$name-$shop";
 
-		if (!$setting || !$setting->value) {
+		$data = $this->cache->load($index, function (&$dependencies) use ($shop, $name): string|false {
+			$dependencies = [
+				Cache::Tags => [self::class . ':' . __FUNCTION__],
+				Cache::Expire => '1 week',
+			];
+
+			$settingQuery = $this->many()->where('name', "{$name}_$shop");
+			$setting = $settingQuery->first();
+
+			if (!$setting || !$setting->value) {
+				return false;
+			}
+
+			return $setting->value;
+		});
+
+		if ($data === false) {
 			return null;
 		}
 
-		return $setting->value;
+		return $data;
 	}
 }
