@@ -69,7 +69,7 @@ class BannerPresenter extends BackendPresenter
 	
 	public function createComponentForm(): AdminForm
 	{
-		$form = $this->formFactory->create(true, true, true);
+		$form = $this->formFactory->create(true, true, true, useShops: true);
 		$form->addLocaleText('headline', $this->_('headline', 'Nadpis'));
 		$form->addLocaleText('text', $this->_('text', 'Text'));
 		$imagePicker = $form->addImagePicker('image', $this->_('picture', 'Obrázek'), [
@@ -94,8 +94,6 @@ class BannerPresenter extends BackendPresenter
 				$this->redirect('this');
 			};
 		}
-
-		$this->formFactory->addShopsContainerToAdminForm($form, false);
 		
 		$form->addHidden('id')->setDefaultValue(Random::generate(4));
 		$form->addSubmits(!$banner);

@@ -76,7 +76,7 @@ class SliderPresenter extends BackendPresenter
 	{
 		$presenter = $this;
 
-		$form = $this->formFactory->create(true);
+		$form = $this->formFactory->create(true, useShops: true);
 		$imageDir = $this->wwwDir . \DIRECTORY_SEPARATOR . 'userfiles' . \DIRECTORY_SEPARATOR . HomepageSlide::IMAGE_DIR;
 
 		/** @var \Web\DB\HomepageSlide|null $homepageSlide */
@@ -129,8 +129,6 @@ class SliderPresenter extends BackendPresenter
 		$form->addText('priority', 'Priorita')->addRule($form::INTEGER)->setRequired()->setDefaultValue(10);
 		$form->addCheckbox('hidden', 'Skryto');
 		$form->addCheckbox('animate', 'Animovat')->setHtmlAttribute('data-info', 'Slider bude mít efekt přibližování.');
-
-		$this->formFactory->addShopsContainerToAdminForm($form, false);
 
 		$form->addSubmits(!$this->getParameter('slide'));
 		

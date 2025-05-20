@@ -119,7 +119,7 @@ class NewsPresenter extends BackendPresenter
 	
 	public function createComponentNewForm(): Form
 	{
-		$form = $this->formFactory->create(true);
+		$form = $this->formFactory->create(true, useShops: true);
 		
 		$presenter = $this;
 		
@@ -170,8 +170,6 @@ class NewsPresenter extends BackendPresenter
 			true,
 			isset($this::CONFIGURATIONS['richSnippet']) && $this::CONFIGURATIONS['richSnippet'],
 		);
-
-		$this->formFactory->addShopsContainerToAdminForm($form, false);
 		
 		$form->addSubmits(!$news);
 		

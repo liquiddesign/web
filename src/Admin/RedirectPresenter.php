@@ -77,7 +77,7 @@ class RedirectPresenter extends BackendPresenter
 
 	public function createComponentForm(): Form
 	{
-		$form = $this->formFactory->create();
+		$form = $this->formFactory->create(useShops: true);
 
 		$form->addText('fromUrl', $this->_('adminWebRedirect.fromURl', 'Z URL'))
 			->setHtmlAttribute('data-info', $this->_('adminWebRedirect.urlDescription', 'Relativní URL bez / na konci, např. "novinka/stara-adresa"'))
@@ -87,8 +87,6 @@ class RedirectPresenter extends BackendPresenter
 			->setRequired();
 		$form->addText('priority', $this->_('admin.priority', 'Pořadí'))
 			->setHtmlAttribute('data-info', $this->_('adminWebRedirect.priorityDescription', 'Nižší číslo znamená vyšší prioritu.'))->addRule($form::INTEGER)->setRequired()->setDefaultValue(0);
-
-		$this->formFactory->addShopsContainerToAdminForm($form, false);
 
 		$form->addSubmits(!$this->getParameter('redirect'));
 

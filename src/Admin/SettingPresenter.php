@@ -235,15 +235,13 @@ class SettingPresenter extends BackendPresenter
 
 	public function createComponentContactForm(): AdminForm
 	{
-		$form = $this->formFactory->create(true);
+		$form = $this->formFactory->create(true, useShops: true);
 
 		$form->addLocaleText('name', 'Název');
 		$form->addText('phone', 'Telefonní čísla')->setHtmlAttribute('data-info', 'Zadejte telefonní čísla oddělená středníkem ";"');
 		$form->addText('email', 'E-maily')->setHtmlAttribute('data-info', 'Zadejte e-maily oddělené středníkem ";"');
 		$form->addInteger('priority', 'Priorita')->setDefaultValue(10)->setRequired();
 		$form->addCheckbox('hidden', 'Skryto');
-
-		$this->formFactory->addShopsContainerToAdminForm($form);
 
 		$form->addSubmits(!$this->getParameter('contactItem'));
 

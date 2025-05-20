@@ -48,7 +48,7 @@ class MessagePresenter extends BackendPresenter
 
 	public function createComponentNewForm(): Form
 	{
-		$form = $this->formFactory->create(true);
+		$form = $this->formFactory->create(true, useShops: true);
 
 		$form->addText('code', 'Interní kód')->setDisabled();
 		$form->addText('name', 'Název e-mailu')->setHtmlAttribute('readonly', 'readonly');
@@ -63,8 +63,6 @@ class MessagePresenter extends BackendPresenter
 		$form->addLocaleRichEdit('html', 'HTML');
 		$form->addLocaleTextArea('text', 'Text');
 		$form->addCheckbox('active', 'Aktivní');
-
-		$this->formFactory->addShopsContainerToAdminForm($form, false);
 
 		$form->addSubmits(!$this->getParameter('template'));
 		$form->bind($this->templateRepository->getStructure());

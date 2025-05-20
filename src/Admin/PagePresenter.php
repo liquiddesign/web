@@ -120,10 +120,13 @@ class PagePresenter extends BackendPresenter
 			}
 		}
 		
-		$pageContainer = $form->addPageContainer($page ? $page->type : null, $page->getParsedParameters());
-		$pageContainer->addText('robots', 'Robots');
-		$pageContainer->addLocaleText('canonicalUrl', 'Canonická URL');
-		
+		$pagesContainer = $form->addPageContainer($page ? $page->type : null, $page->getParsedParameters());
+
+		foreach ($pagesContainer as $pageContainer) {
+			$pageContainer->addText('robots', 'Robots');
+			$pageContainer->addLocaleText('canonicalUrl', 'Canonická URL');
+		}
+
 		$form->addGroup('Sitemap');
 		$form->addPolyfillDatetime('lastmod', 'Poslední změna')->setNullable();
 		$frequency = ['always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never'];
