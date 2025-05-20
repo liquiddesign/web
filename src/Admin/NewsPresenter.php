@@ -197,9 +197,9 @@ class NewsPresenter extends BackendPresenter
 			/** @var \Web\DB\News $news */
 			$news = $this->newsRepository->syncOne($values, null, true);
 			
-			$form->syncPages(function () use ($news, $values): void {
-				$values['page']['params'] = Helpers::serializeParameters(['article' => $news->getPK()]);
-				$this->pageRepository->syncOne($values['page']);
+			$form->syncPages(function ($values) use ($news): void {
+				$values['params'] = Helpers::serializeParameters(['article' => $news->getPK()]);
+				$this->pageRepository->syncOne($values);
 			});
 			
 			$this->flashMessage('Uloženo', 'success');
@@ -235,9 +235,9 @@ class NewsPresenter extends BackendPresenter
 			
 			$tag = $this->tagRepository->syncOne($values, null, true);
 			
-			$form->syncPages(function () use ($tag, $values): void {
-				$values['page']['params'] = Helpers::serializeParameters(['tag' => $tag->getPK()]);
-				$this->pageRepository->syncOne($values['page']);
+			$form->syncPages(function ($values) use ($tag): void {
+				$values['params'] = Helpers::serializeParameters(['tag' => $tag->getPK()]);
+				$this->pageRepository->syncOne($values);
 			});
 			
 			$this->flashMessage('Uloženo', 'success');

@@ -57,7 +57,6 @@ class MicrotextPresenter extends BackendPresenter
 		$mutationSuffix = $this->storm->getMutationSuffix();
 
 		$grid->addFilterTextInput('search', ['uuid', 'label', "text$mutationSuffix", 'code'], null, 'ID, kód, popisek, překlad');
-		$this->gridFactory->addShopsFilterSelect($grid);
 		$grid->addFilterButtons();
 
 		return $grid;

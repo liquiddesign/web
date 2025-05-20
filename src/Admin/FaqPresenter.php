@@ -230,9 +230,9 @@ class FaqPresenter extends BackendPresenter
 			
 			$faqItemTag = $this->faqItemTagRepo->syncOne($values, null, true);
 			
-			$form->syncPages(function () use ($faqItemTag, $values): void {
-				$values['page']['params'] = \Pages\Helpers::serializeParameters(['tag' => $faqItemTag->getPK()]);
-				$this->pageRepository->syncOne($values['page']);
+			$form->syncPages(function ($values) use ($faqItemTag): void {
+				$values['params'] = \Pages\Helpers::serializeParameters(['tag' => $faqItemTag->getPK()]);
+				$this->pageRepository->syncOne($values);
 			});
 			
 			$this->flashMessage($this->_('.saved', 'Uloženo'), 'success');

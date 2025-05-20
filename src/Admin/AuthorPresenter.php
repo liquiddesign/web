@@ -78,9 +78,9 @@ class AuthorPresenter extends BackendPresenter
 			
 			$author = $this->authorRepository->syncOne($values, null, true);
 			
-			$form->syncPages(function () use ($author, $values): void {
-				$values['page']['params'] = Helpers::serializeParameters(['author' => $author->getPK()]);
-				$this->pageRepository->syncOne($values['page']);
+			$form->syncPages(function ($values) use ($author): void {
+				$values['params'] = Helpers::serializeParameters(['author' => $author->getPK()]);
+				$this->pageRepository->syncOne($values);
 			});
 			
 			$this->flashMessage('Uloženo', 'success');
