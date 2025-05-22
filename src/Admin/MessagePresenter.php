@@ -28,6 +28,7 @@ class MessagePresenter extends BackendPresenter
 		$grid = $this->gridFactory->create($this->templateRepository->many()->where('type', $this->tab), 20, 'name', 'ASC', true);
 		$grid->addColumnSelector();
 
+		$grid->addColumnText('Kód', 'code', '%s', 'code');
 		$grid->addColumnText('Název', 'name', '%s', 'name');
 		$grid->addColumnText('Předmět', 'subject', '%s', 'subject');
 		$grid->addColumnText($this->tab === 'outgoing' ? 'Odesílatel' : 'E-mail', 'email', '%s', 'email');
@@ -39,7 +40,7 @@ class MessagePresenter extends BackendPresenter
 		$inputs = ['email', 'cc', 'alias'];
 		$grid->addButtonBulkEdit('newForm', $inputs);
 
-		$grid->addFilterTextInput('search', ['name', 'subject_cs', 'email'], null, 'Název, předmět, e-mail');
+		$grid->addFilterTextInput('search', ['name', 'subject_cs', 'email', 'code'], null, 'Kód, název, předmět, e-mail');
 	
 		$grid->addFilterButtons();
 
