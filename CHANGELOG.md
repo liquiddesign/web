@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.31](https://github.com/liquiddesign/web/compare/v2.1.30...v2.1.31) (2025-07-07)
+
+### Features
+
+* Add support for shop-specific data handling in MenuPresenter and improve page parameter processing ([e908d5](https://github.com/liquiddesign/web/commit/e908d5e3b9395193d3f603dc4438bf0deb02bc5e))
+
+
+---
+
 ## [2.1.30](https://github.com/liquiddesign/web/compare/v2.1.29...v2.1.30) (2025-05-22)
 
 ### Features
