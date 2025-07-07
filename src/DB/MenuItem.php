@@ -93,11 +93,7 @@ class MenuItem extends Entity
 	
 	public function isSystemic(): bool
 	{
-		if ($this->page) {
-			return $this->page->systemic;
-		}
-
-		return false;
+		return $this->page?->isSystemic();
 	}
 
 	public function isDeletable(): bool

@@ -252,7 +252,7 @@ class MenuPresenter extends BackendPresenter
 
 	public function createComponentForm(): Form
 	{
-		$form = $this->formFactory->create(true, true);
+		$form = $this->formFactory->create(true, true, useShops: true);
 
 		if (\count($form->getMutations()) === 1) {
 			$form->addLocaleHidden('active')->forAll(function (HiddenField $hidden): void {
@@ -335,7 +335,19 @@ class MenuPresenter extends BackendPresenter
 		$params = $menu && $menu->page ? $menu->page->getParsedParameters() : [];
 		$type = $menu && $menu->page ? $menu->page->getType() : 'content';
 
-		$form->addPageContainer($type, $params, $nameInput, false, true, false, 'URL a SEO', true, true, isset($this::CONFIGURATIONS['richSnippet']) && $this::CONFIGURATIONS['richSnippet']);
+		$form->addPageContainer(
+			$type,
+			$params,
+			$nameInput,
+			false,
+			true,
+			false,
+			'URL a SEO',
+			true,
+			true,
+			isset($this::CONFIGURATIONS['richSnippet']) && $this::CONFIGURATIONS['richSnippet'],
+			[],
+		);
 
 		Arrays::invoke($this->onBeforeSubmitMenuItemForm, $form);
 
@@ -364,47 +376,48 @@ class MenuPresenter extends BackendPresenter
 			}
 
 			if (isset($this::CONFIGURATIONS['documents']) && $this::CONFIGURATIONS['documents']) {
-				$values['page']['documents'] = $values['documents'];
+				$values['page']['page_']['documents'] = $values['documents'];
 				unset($values['documents']);
 			}
 
 			unset($values['types']);
 
-			if (!$values['page']['uuid']) {
-				$values['page']['uuid'] = Connection::generateUuid();
-				$values['page']['params'] = 'page=' . $values['page']['uuid'] . '&';
+			if (!$values['page']['page_']['uuid']) {
+				$values['page']['page_']['uuid'] = Connection::generateUuid();
+				$values['page']['page_']['params'] = 'page=' . $values['page']['page_']['uuid'] . '&';
 			}
 
-			if (isset($values['page']['opengraph'])) {
-				$values['page']['opengraph'] = $form['page']['opengraph']->upload($values['page']['uuid'] . '.%2$s');
+			if (isset($values['page']['page_']['opengraph'])) {
+				$values['page']['page_']['opengraph'] = $form['page']['page_']['opengraph']->upload($values['page']['page_']['uuid'] . '.%2$s');
 			}
 
 			if ($this::CONFIGURATIONS['background']) {
 				if ($values['image']->isOK()) {
 					/** @phpstan-ignore-next-line */
-					$values['page']['image'] = $form['image']->upload($values['image']->getSanitizedName());
+					$values['page']['page_']['image'] = $form['image']->upload($values['image']->getSanitizedName());
 				}
 
 				unset($values['image']);
 
 				if ($values['mobileImage']->isOK()) {
 					/** @phpstan-ignore-next-line */
-					$values['page']['mobileImage'] = $form['mobileImage']->upload($values['mobileImage']->getSanitizedName());
+					$values['page']['page_']['mobileImage'] = $form['mobileImage']->upload($values['mobileImage']->getSanitizedName());
 				}
 
 				unset($values['mobileImage']);
 			}
 
-			$values['page']['content'] = Helpers::sanitizeMutationsStrings($values['content']);
-			$values['page']['name'] = $values['name'];
-			$values['page']['params'] = $values['page']['params'] ?: '';
-			$type = $values['page']['type'];
+			$values['page']['page_']['content'] = Helpers::sanitizeMutationsStrings($values['content']);
+			$values['page']['page_']['name'] = $values['name'];
+			$values['page']['page_']['params'] = $values['page']['page_']['params'] ?: '';
+			$type = $values['page']['page_']['type'];
+			$values['page']['page_']['shop'] = $values['shop'];
 
 			foreach ($this->onBeforeSuccessRedirectMenuItemForm as $callback) {
 				$callback($form, $values);
 			}
 
-			$values['page'] = (string) $this->pageRepository->syncOne($values['page'], ignore: false);
+			$values['page'] = (string) $this->pageRepository->syncOne($values['page']['page_'], ignore: false);
 
 			$menuItem = $this->menuItemRepository->syncOne($values, null, true, false);
 
@@ -765,6 +778,7 @@ class MenuPresenter extends BackendPresenter
 		$defaults = $menuItem->toArray(['page']);
 		$defaults['page'] = $menuItem->page->toArray(['documents']);
 		$defaults['types'] = $this->menuItemRepository->getMenuItemPositions($menuItem);
+		$defaults['shop'] = $menuItem->page?->shop?->getPK();
 
 		foreach (\array_keys($this->menuItemRepository->getConnection()->getAvailableMutations()) as $mutation) {
 			$defaults['active'][$mutation] = $defaults['active'][$mutation] ? '1' : '0';
