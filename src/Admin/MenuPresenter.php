@@ -411,7 +411,7 @@ class MenuPresenter extends BackendPresenter
 			$values['page']['page_']['name'] = $values['name'];
 			$values['page']['page_']['params'] = $values['page']['page_']['params'] ?: '';
 			$type = $values['page']['page_']['type'];
-			$values['page']['page_']['shop'] = $values['shop'];
+			$values['page']['page_']['shop'] = $values['shop'] ?? null;
 
 			foreach ($this->onBeforeSuccessRedirectMenuItemForm as $callback) {
 				$callback($form, $values);
