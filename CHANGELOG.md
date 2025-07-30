@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.33](https://github.com/liquiddesign/web/compare/v2.1.32...v2.1.33) (2025-07-30)
+
+### Bug Fixes
+
+* Ensure `shop` parameter in MenuPresenter defaults to null if not set ([9045c2](https://github.com/liquiddesign/web/commit/9045c29f0a294d38e344893572d16cd541b2605f))
+
+
+---
+
 ## [2.1.32](https://github.com/liquiddesign/web/compare/v2.1.31...v2.1.32) (2025-07-30)
 
 
