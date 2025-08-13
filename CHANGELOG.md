@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.34](https://github.com/liquiddesign/web/compare/v2.1.33...v2.1.34) (2025-08-13)
+
+### Bug Fixes
+
+* Clear pages cache after page or menu updates in presenters ([9be3da](https://github.com/liquiddesign/web/commit/9be3da3f3beab37ff600f932d8b14bdaa89574f9))
+
+
+---
+
 ## [2.1.33](https://github.com/liquiddesign/web/compare/v2.1.32...v2.1.33) (2025-07-30)
 
 ### Bug Fixes
