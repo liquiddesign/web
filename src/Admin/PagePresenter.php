@@ -161,6 +161,7 @@ class PagePresenter extends BackendPresenter
 			$values['priority'] = $values['priority'] === '' ? null : (float) $values['priority'];
 			
 			$page = $this->pageRepository->syncOne($values + $values['page'], null, true);
+			$this->formFactory->cleanPagesCache();
 			
 			$this->flashMessage('Uloženo', 'success');
 			$form->processRedirect('detail', 'default', [$page]);

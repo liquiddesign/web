@@ -512,6 +512,7 @@ class MenuPresenter extends BackendPresenter
 				$menuItem->page->update(['params' => 'page=' . $menuItem->page->getPK() . '&']);
 			}
 
+			$this->formFactory->cleanPagesCache();
 			$this->menuItemRepository->clearMenuCache();
 
 			$this->flashMessage('Uloženo', 'success');
@@ -614,6 +615,7 @@ class MenuPresenter extends BackendPresenter
 			$page = $this->pageRepository->syncOne($values['page']);
 
 			$this->menuItemRepository->clearMenuCache();
+			$this->formFactory->cleanPagesCache();
 
 			$this->flashMessage('Uloženo', 'success');
 			$form->processRedirect('pageDetail', 'default', [$page]);
