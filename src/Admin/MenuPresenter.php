@@ -525,7 +525,16 @@ class MenuPresenter extends BackendPresenter
 
 	public function createComponentPageForm(): Form
 	{
-		$form = $this->formFactory->create(true);
+		$form = $this->formFactory->create(true, useShops: true);
+
+		/** @var \Nette\Forms\Controls\SelectBox $shopInput */
+		$shopInput = $form['shop'];
+
+		/** @var \Base\DB\Shop|null $preSelectedShop */
+		$preSelectedShop = $this->getParameter('preSelectedShop');
+
+		$shopInput->setDisabled()->setDefaultValue($preSelectedShop);
+
 		$form->setPrettyPages(true);
 
 		$page = $this->getParameter('page');
@@ -561,6 +570,11 @@ class MenuPresenter extends BackendPresenter
 
 		$form->addLocaleRichEdit('content', 'Obsah');
 
+		/** @var \Web\DB\Page|null $page */
+		$page = $this->getParameter('page');
+
+		$shops = $page?->shop ? [$page->shop] : ($preSelectedShop ? [$preSelectedShop] : null);
+
 		$form->addPageContainer(
 			$page ? $page->type : 'content',
 			$this->getPageParamsInPageFormForPageContainer($this->getParameter('page')),
@@ -572,6 +586,7 @@ class MenuPresenter extends BackendPresenter
 			false,
 			true,
 			isset($this::CONFIGURATIONS['richSnippet']) && $this::CONFIGURATIONS['richSnippet'],
+			shops: $shops,
 		);
 
 		Arrays::invoke($this->onBeforeSubmitMenuItemForm, $form);
@@ -730,7 +745,16 @@ class MenuPresenter extends BackendPresenter
 
 		if ($this->tab === 'pages') {
 			$this->template->displayControls = [$this->getComponent('pageGrid')];
-			$this->template->displayButtons = [$this->createNewItemButton('newPage')];
+
+			$shops = $this->shopsConfig->getAvailableShops();
+
+			foreach ($shops as $shop) {
+				$this->template->displayButtons[] = $this->createNewItemButton('newPage', ['preSelectedShop' => $shop], "Nová položka ($shop->name)");
+			}
+
+			if (!$shops) {
+				$this->template->displayButtons = [$this->createNewItemButton('newPage')];
+			}
 		} else {
 			$this->template->displayControls = [$this->getComponent('grid')];
 			$this->template->displayButtons = [$this->createNewItemButton('new')];
@@ -758,8 +782,10 @@ class MenuPresenter extends BackendPresenter
 		$this->template->displayControls = [$this->getComponent('form')];
 	}
 
-	public function renderNewPage(): void
+	public function renderNewPage(Shop|null $preSelectedShop = null): void
 	{
+		unset($preSelectedShop);
+
 		$this->template->headerLabel = 'Nová položka';
 		$this->template->headerTree = [
 			['Menu', 'default'],
