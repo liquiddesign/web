@@ -7,6 +7,7 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
+use Base\DB\Shop;
 use Forms\Form;
 use Nette\Caching\Cache;
 use Nette\Caching\Storage;
@@ -568,7 +569,7 @@ class MenuPresenter extends BackendPresenter
 			true,
 			false,
 			'URL a SEO',
-			true,
+			false,
 			true,
 			isset($this::CONFIGURATIONS['richSnippet']) && $this::CONFIGURATIONS['richSnippet'],
 		);
@@ -580,45 +581,53 @@ class MenuPresenter extends BackendPresenter
 		$form->onSuccess[] = function (AdminForm $form): void {
 			$values = $form->getValues('array');
 
-			if (!$values['page']['uuid']) {
-				$values['page']['uuid'] = Connection::generateUuid();
-				$values['page']['params'] = 'page=' . $values['page']['uuid'] . '&';
-			}
+			$pages = [];
 
-			if ($this::CONFIGURATIONS['background']) {
-				if ($values['image']->isOK()) {
-					/** @phpstan-ignore-next-line */
-					$values['page']['image'] = $form['image']->upload($values['image']->getSanitizedName());
+			$defaultMutation = $this->connection->getMutation();
+
+			$form->syncPages(function (array $pageValues, Shop|null $shop, string $containerIndex) use (&$pages, $form, $values, $defaultMutation): void {
+				if (!isset($pageValues['url'][$defaultMutation])) {
+					if (isset($pageValues['uuid'])) {
+						$this->pageRepository->many()->where('uuid', $pageValues['uuid'])->delete();
+					}
+
+					return;
 				}
 
-				unset($values['image']);
+				$pageValues['uuid'] ??= DIConnection::generateUuid();
+				$pageValues['params'] = \Pages\Helpers::serializeParameters(['page' => $pageValues['uuid']]);
 
-				if ($values['mobileImage']->isOK()) {
-					/** @phpstan-ignore-next-line */
-					$values['page']['mobileImage'] = $form['mobileImage']->upload($values['mobileImage']->getSanitizedName());
+				if ($this::CONFIGURATIONS['background']) {
+					if ($pageValues['image']->isOK()) {
+						$pageValues['image'] = $form['page'][$containerIndex]['image']->upload($pageValues['image']->getSanitizedName());
+					} else {
+						unset($pageValues['image']);
+					}
+
+					if ($pageValues['mobileImage']->isOK()) {
+						$pageValues['mobileImage'] = $form['page'][$containerIndex]['mobileImage']->upload($pageValues['mobileImage']->getSanitizedName());
+					} else {
+						unset($pageValues['mobileImage']);
+					}
 				}
 
-				unset($values['mobileImage']);
-			}
+				$pageValues['name'] = $values['name'];
+				$pageValues['content'] = Helpers::sanitizeMutationsStrings($values['content']);
 
-			$values['page']['name'] = $values['name'];
-			$values['page']['content'] = Helpers::sanitizeMutationsStrings($values['content']);
+				$form->uploadOpenGraphImage($form, $pageValues, $shop);
 
-			if (isset($values['page']['opengraph'])) {
-				$values['page']['opengraph'] = $form['page']['opengraph']->upload($values['page']['uuid'] . '.%2$s');
-			}
+				$pages[] = $this->pageRepository->syncOne($pageValues);
+			});
 
 			foreach ($this->onBeforeSuccessRedirectMenuItemForm as $callback) {
 				$callback($form, $values);
 			}
 
-			$page = $this->pageRepository->syncOne($values['page']);
-
 			$this->menuItemRepository->clearMenuCache();
 			$this->formFactory->cleanPagesCache();
 
 			$this->flashMessage('Uloženo', 'success');
-			$form->processRedirect('pageDetail', 'default', [$page]);
+			$form->processRedirect('pageDetail', 'default', [Arrays::first($pages)]);
 		};
 
 		return $form;
@@ -730,8 +739,6 @@ class MenuPresenter extends BackendPresenter
 		$this->template->tabs = [];
 
 		$menuTypes = $this->menuTypeRepository->getCollection();
-
-		$this->shopsConfig->filterShopsInShopEntityCollection($menuTypes);
 
 		foreach ($menuTypes->toArrayOf('name') as $type => $label) {
 			$this->template->tabs[$type] = " $label";
