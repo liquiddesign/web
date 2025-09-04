@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.36](https://github.com/liquiddesign/web/compare/v2.1.35...v2.1.36) (2025-09-04)
+
+### Features
+
+* Add pre-selected shop handling and shop-specific buttons in MenuPresenter ([843ab5](https://github.com/liquiddesign/web/commit/843ab5a81c287245794c61195998d49593dae829))
+
+
+---
+
 ## [2.1.35](https://github.com/liquiddesign/web/compare/v2.1.34...v2.1.35) (2025-09-04)
 
 ### Bug Fixes
