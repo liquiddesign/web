@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.35](https://github.com/liquiddesign/web/compare/v2.1.34...v2.1.35) (2025-09-04)
+
+### Bug Fixes
+
+* Refactor page synchronization and image handling logic in MenuPresenter ([b152da](https://github.com/liquiddesign/web/commit/b152da82f582c6a498570b6334a83c18e4ad3644))
+
+
+---
+
 ## [2.1.34](https://github.com/liquiddesign/web/compare/v2.1.33...v2.1.34) (2025-08-13)
 
 ### Bug Fixes
