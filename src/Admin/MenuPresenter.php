@@ -212,10 +212,11 @@ class MenuPresenter extends BackendPresenter
 		$grid->addColumnText('Název', 'name', '%s', 'this.name_cs');
 
 		$btnSecondary = 'btn btn-sm btn-outline-primary';
-		$baseUrl = $this->getHttpRequest()->getUrl()->getBaseUrl();
 
-		$grid->addColumn('URL', static function ($item) use ($baseUrl) {
-			return '<a href="' . $baseUrl . $item->url . '" target="_blank"><i class="fa fa-external-link-square-alt"></i>&nbsp;' . $baseUrl . $item->url . '</a>';
+		$grid->addColumn('URL', function ($item) use ($grid) {
+			$url = $this->gridFactory->getPageUrl($grid, $item);
+
+			return '<a href="' . $url . '" target="_blank"><i class="fa fa-external-link-square-alt"></i>&nbsp;' . $url . '</a>';
 		}, '%s', 'this.url_cs');
 
 		$grid->addColumnInputCheckbox('Nedostupná', 'isOffline');
