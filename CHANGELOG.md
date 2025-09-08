@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.37](https://github.com/liquiddesign/web/compare/v2.1.36...v2.1.37) (2025-09-08)
+
+### Features
+
+
+##### Menugrid
+
+* Update URL column to use dynamic page URL generation ([ce31b7](https://github.com/liquiddesign/web/commit/ce31b7ef51375c06cdc6241852464c44a382f705))
+
+
+---
+
 ## [2.1.36](https://github.com/liquiddesign/web/compare/v2.1.35...v2.1.36) (2025-09-04)
 
 ### Features
