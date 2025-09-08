@@ -131,11 +131,15 @@ class MenuPresenter extends BackendPresenter
 		};
 
 		$grid->addColumnText('Titulek', 'page.title', '%s', 'page.title_cs');
-		$grid->addColumnText(
-			'URL',
-			'getUrl',
-			'<a href="%1$s"  target="_blank"><i class="fa fa-external-link-square-alt"></i> %1$s</a>',
-		);
+		$grid->addColumn('URL', function (MenuItem $item) use ($grid) {
+			if (!$item->page) {
+				return null;
+			}
+
+			$url = $this->gridFactory->getPageUrl($grid, $item->page);
+
+			return '<a href="' . $url . '" target="_blank"><i class="fa fa-external-link-square-alt"></i>&nbsp;' . $url . '</a>';
+		}, '%s', 'this.url_cs');
 
 		$grid->addColumnInputInteger('Priorita', 'priority', '', '', 'priority', [], true);
 		$grid->addColumnInputCheckbox('<i title="Skryto" class="far fa-eye-slash"></i>', 'hidden', '', '', 'hidden');
