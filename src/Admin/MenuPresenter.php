@@ -532,13 +532,13 @@ class MenuPresenter extends BackendPresenter
 	{
 		$form = $this->formFactory->create(true, useShops: true);
 
-		/** @var \Nette\Forms\Controls\SelectBox $shopInput */
-		$shopInput = $form['shop'];
+		/** @var \Nette\Forms\Controls\SelectBox|null $shopInput */
+		$shopInput = $form['shop'] ?? null;
 
 		/** @var \Base\DB\Shop|null $preSelectedShop */
 		$preSelectedShop = $this->getParameter('preSelectedShop');
 
-		$shopInput->setDisabled()->setDefaultValue($preSelectedShop);
+		$shopInput?->setDisabled()->setDefaultValue($preSelectedShop);
 
 		$form->setPrettyPages(true);
 
