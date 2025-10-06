@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.39](https://github.com/liquiddesign/web/compare/v2.1.38...v2.1.39) (2025-10-06)
+
+### Bug Fixes
+
+
+##### Menu Presenter
+
+* Handle null shop input safely ([02f1db](https://github.com/liquiddesign/web/commit/02f1dbcd09e276a1eb97a1bb29de2f160a27ed20))
+
+
+---
+
 ## [2.1.38](https://github.com/liquiddesign/web/compare/v2.1.37...v2.1.38) (2025-09-08)
 
 ### Features
