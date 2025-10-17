@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.41](https://github.com/liquiddesign/web/compare/v2.1.40...v2.1.41) (2025-10-17)
+
+### Bug Fixes
+
+* Simplify page deletion logic in MenuPresenter ([4c0c6c](https://github.com/liquiddesign/web/commit/4c0c6c0f06eea5c99e20ce9d7858ec5f2ae4659c))
+
+
+---
+
 ## [2.1.40](https://github.com/liquiddesign/web/compare/v2.1.39...v2.1.40) (2025-10-17)
 
 ### Bug Fixes
