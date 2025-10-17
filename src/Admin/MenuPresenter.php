@@ -177,7 +177,7 @@ class MenuPresenter extends BackendPresenter
 			$page = $menuItem->page;
 			$menuItem->update(['page' => null]);
 			
-			if ($page && !$menuItem->isSystemic() && !$page->isSystemic()) {
+			if ($page && !$page->isSystemic()) {
 				$page->delete();
 			}
 			
