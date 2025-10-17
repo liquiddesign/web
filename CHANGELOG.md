@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.40](https://github.com/liquiddesign/web/compare/v2.1.39...v2.1.40) (2025-10-17)
+
+### Bug Fixes
+
+* Handle missing page UUID in MenuPresenter ([916e60](https://github.com/liquiddesign/web/commit/916e6009636b9aa28462a75646d3a53e777fcd19))
+
+
+---
+
 ## [2.1.39](https://github.com/liquiddesign/web/compare/v2.1.38...v2.1.39) (2025-10-06)
 
 ### Bug Fixes
