@@ -582,7 +582,7 @@ class MenuPresenter extends BackendPresenter
 
 		$form->addPageContainer(
 			$page ? $page->type : 'content',
-			$this->getPageParamsInPageFormForPageContainer($this->getParameter('page')),
+			$this->getPageParamsInPageFormForPageContainer($page),
 			$inputName,
 			false,
 			true,
@@ -614,8 +614,11 @@ class MenuPresenter extends BackendPresenter
 					return;
 				}
 
+				if (!isset($pageValues['uuid'])) {
+					$pageValues['params'] = \Pages\Helpers::serializeParameters(['page' => $pageValues['uuid']]);
+				}
+
 				$pageValues['uuid'] ??= DIConnection::generateUuid();
-				$pageValues['params'] = \Pages\Helpers::serializeParameters(['page' => $pageValues['uuid']]);
 
 				if ($this::CONFIGURATIONS['background']) {
 					if ($pageValues['image']->isOK()) {
