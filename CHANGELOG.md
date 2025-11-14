@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.42](https://github.com/liquiddesign/web/compare/v2.1.41...v2.1.42) (2025-11-14)
+
+### Features
+
+* Generate UUID for new pages in MenuPresenter ([c67519](https://github.com/liquiddesign/web/commit/c67519dbdb5771d5d8099f79c5843c2ed84b6ca4))
+
+
+---
+
 ## [2.1.41](https://github.com/liquiddesign/web/compare/v2.1.40...v2.1.41) (2025-10-17)
 
 ### Bug Fixes
