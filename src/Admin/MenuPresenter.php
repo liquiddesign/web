@@ -614,11 +614,11 @@ class MenuPresenter extends BackendPresenter
 					return;
 				}
 
+				// Pro nové stránky: vygenerovat UUID a nastavit params
 				if (!isset($pageValues['uuid'])) {
+					$pageValues['uuid'] = DIConnection::generateUuid();
 					$pageValues['params'] = \Pages\Helpers::serializeParameters(['page' => $pageValues['uuid']]);
 				}
-
-				$pageValues['uuid'] ??= DIConnection::generateUuid();
 
 				if ($this::CONFIGURATIONS['background']) {
 					if ($pageValues['image']->isOK()) {
