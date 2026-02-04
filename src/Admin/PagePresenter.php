@@ -75,7 +75,7 @@ class PagePresenter extends BackendPresenter
 			$types[$type] = $pageType->getName();
 		}
 		
-		$grid->addFilterSelectInput('search2', 'type = :s', null, null, null, [null => 'Typ stránky - Vše'] + $types, 's');
+		$grid->addFilterSelectInput('search2', 'type = :s', null, null, null, ['' => 'Typ stránky - Vše'] + $types, 's');
 		$grid->addFilterCheckboxInput('system', 'systemic=1', 'Systémové');
 		
 		
