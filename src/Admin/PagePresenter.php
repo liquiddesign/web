@@ -70,9 +70,11 @@ class PagePresenter extends BackendPresenter
 			$copyColumn->onRenderCell[] = function (Html $td, Page $page) use ($shopCoverage, $shopCount): void {
 				$key = $page->type . '|' . $page->params;
 
-				if (($shopCoverage[$key] ?? 0) >= $shopCount) {
-					$td[0] = '';
+				if (!(($shopCoverage[$key] ?? 0) >= $shopCount)) {
+					return;
 				}
+
+				$td[0] = '';
 			};
 		}
 
@@ -153,7 +155,6 @@ class PagePresenter extends BackendPresenter
 		}
 
 		if (!$page && !$sourcePage) {
-
 			$pageTypes = \array_map(function ($pageType) {
 				return $pageType->getName();
 			}, $this->pages->getPageTypes());
@@ -184,7 +185,7 @@ class PagePresenter extends BackendPresenter
 			$form->addHidden('type', $sourcePage->type);
 		}
 
-		$type = $page ? $page->type : ($sourcePage?->type);
+		$type = $page ? $page->type : $sourcePage?->type;
 		$params = $page ? $page->getParsedParameters() : ($sourcePage ? $sourcePage->getParsedParameters() : []);
 		// For copy mode, pass null type so addSubPageContainer won't look up the source page
 		$pagesContainer = $form->addPageContainer($sourcePage ? null : $type, $sourcePage ? [] : $params, shops: $shops);
@@ -267,7 +268,7 @@ class PagePresenter extends BackendPresenter
 					$pageValues['params'] = $pageParams;
 				}
 
-				if (empty($pageValues['uuid'])) {
+				if (\count($pageValues['uuid']) === 0) {
 					$pageValues['uuid'] = DIConnection::generateUuid();
 				}
 
