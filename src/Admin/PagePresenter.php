@@ -215,6 +215,8 @@ class PagePresenter extends BackendPresenter
 		$form->addSelect('changefreq', 'Frekvence', \array_combine($frequency, $frequency))->setPrompt('Žádná');
 		$form->addText('priority', 'Priorita')->setHtmlType('number');
 
+		$this->insertBeforeSubmits($form, $page);
+
 		$form->bind(null, ['page' => $this->pageRepository->getStructure()]);
 
 		$form->addSubmits();
@@ -268,7 +270,7 @@ class PagePresenter extends BackendPresenter
 					$pageValues['params'] = $pageParams;
 				}
 
-				if (\count($pageValues['uuid']) === 0) {
+				if (isset($pageValues['uuid']) === false || Strings::length($pageValues['uuid']) === 0) {
 					$pageValues['uuid'] = DIConnection::generateUuid();
 				}
 
@@ -279,6 +281,8 @@ class PagePresenter extends BackendPresenter
 				if (!$shop && isset($values['shop'])) {
 					$pageValues['shop'] = $values['shop'];
 				}
+
+				$this->beforeSync($pageValues, $values);
 
 				$savedPage = $this->pageRepository->syncOne($pageValues, null, true);
 			});
@@ -356,5 +360,15 @@ class PagePresenter extends BackendPresenter
 		];
 		$this->template->displayButtons = [$this->createBackButton('default')];
 		$this->template->displayControls = [$this->getComponent('form')];
+	}
+
+	protected function insertBeforeSubmits(Form $form, ?Page $page): void
+	{
+		unset($form, $page);
+	}
+
+	protected function beforeSync(array &$pageValues, array $formValues): void
+	{
+		unset($pageValues, $formValues);
 	}
 }
