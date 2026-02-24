@@ -242,11 +242,21 @@ class PagePresenter extends BackendPresenter
 				}
 
 				if ($sourcePage) {
-					\assert($form['shop'] instanceof BaseControl);
-					$form['shop']->addError('Stránka s tímto typem a parametry pro zvolený obchod již existuje');
+					$shopControl = $form->getComponent('shop', false);
+
+					if ($shopControl instanceof BaseControl) {
+						$shopControl->addError('Stránka s tímto typem a parametry pro zvolený obchod již existuje');
+					} else {
+						$form->addError('Stránka s tímto typem a parametry pro zvolený obchod již existuje');
+					}
 				} else {
-					\assert($form['type'] instanceof BaseControl);
-					$form['type']->addError($params ? 'Stránka s těmito parametry již exituje' : 'Tento typ stránky již existuje');
+					$typeControl = $form->getComponent('type', false);
+
+					if ($typeControl instanceof BaseControl) {
+						$typeControl->addError($params ? 'Stránka s těmito parametry již existuje' : 'Tento typ stránky již existuje');
+					} else {
+						$form->addError($params ? 'Stránka s těmito parametry již existuje' : 'Tento typ stránky již existuje');
+					}
 				}
 			};
 		}
@@ -293,7 +303,12 @@ class PagePresenter extends BackendPresenter
 
 			$this->formFactory->cleanPagesCache();
 			$this->flashMessage('Uloženo', 'success');
-			$form->processRedirect('detail', 'default', [$savedPage]);
+
+			if ($savedPage) {
+				$form->processRedirect('detail', 'default', [$savedPage]);
+			} else {
+				$this->redirect('default');
+			}
 		};
 
 		return $form;
