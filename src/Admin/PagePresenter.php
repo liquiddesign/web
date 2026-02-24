@@ -9,6 +9,8 @@ use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
 use Base\DB\Shop;
 use Forms\Form;
+use Nette\Forms\Container;
+use Nette\Forms\Controls\BaseControl;
 use Nette\Forms\Controls\TextInput;
 use Nette\Utils\Html;
 use Nette\Utils\Strings;
@@ -240,8 +242,10 @@ class PagePresenter extends BackendPresenter
 				}
 
 				if ($sourcePage) {
+					\assert($form['shop'] instanceof BaseControl);
 					$form['shop']->addError('Stránka s tímto typem a parametry pro zvolený obchod již existuje');
 				} else {
+					\assert($form['type'] instanceof BaseControl);
 					$form['type']->addError($params ? 'Stránka s těmito parametry již exituje' : 'Tento typ stránky již existuje');
 				}
 			};
@@ -346,7 +350,10 @@ class PagePresenter extends BackendPresenter
 		$pageDefaults = $sourcePage->toArray();
 		$pageDefaults['uuid'] = null;
 
+		\assert($form['page'] instanceof Container);
+
 		foreach ($form['page']->getComponents() as $pageSubContainer) {
+			\assert($pageSubContainer instanceof Container);
 			$pageSubContainer->setDefaults($pageDefaults);
 		}
 	}
