@@ -14,7 +14,7 @@ class Breadcrumb extends Control
 	 */
 	private array $items = [];
 	
-	public function addItem(string $name, ?string $link = null): void
+	public function addItem(string|\Stringable $name, ?string $link = null): void
 	{
 		$this->items[] = (object) ['name' => $name, 'link' => $link];
 	}
