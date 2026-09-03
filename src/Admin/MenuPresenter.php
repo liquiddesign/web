@@ -353,6 +353,7 @@ class MenuPresenter extends BackendPresenter
 			true,
 			isset($this::CONFIGURATIONS['richSnippet']) && $this::CONFIGURATIONS['richSnippet'],
 			[],
+			$menu?->page?->shop,
 		);
 
 		Arrays::invoke($this->onBeforeSubmitMenuItemForm, $form);
@@ -370,6 +371,10 @@ class MenuPresenter extends BackendPresenter
 		$form->onSuccess[] = function (AdminForm $form): void {
 			$this->generateDirectories([Page::IMAGE_DIR], Page::SUBDIRS);
 			$values = $form->getValues('array');
+
+			// Pole zakázaných mutací formulář neodeslal, takže by se do stránky zapsal null a její obsah
+			// v té mutaci by zmizel — u položek jen pro jeden jazyk (SK menu) i s fallbackem pro title a perex.
+			$form->stripInactiveMutations($values);
 
 			if (!$values['uuid']) {
 				$values['uuid'] = DIConnection::generateUuid();
