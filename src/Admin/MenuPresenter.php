@@ -104,6 +104,8 @@ class MenuPresenter extends BackendPresenter
 
 	public function createComponentGrid(): AdminGrid
 	{
+		$mutationSuffix = $this->menuItemRepository->getConnection()->getMutationSuffix();
+
 		$grid = $this->gridFactory->create($this->menuItemRepository->many()
 			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
 			->join(['type' => 'web_menutype'], 'nxn.fk_menutype = type.uuid')
@@ -130,7 +132,7 @@ class MenuPresenter extends BackendPresenter
 			$td->setHtml(\str_repeat('- - ', $level) . $td->getHtml());
 		};
 
-		$grid->addColumnText('Titulek', 'page.title', '%s', 'page.title_cs');
+		$grid->addColumnText('Titulek', 'page.title', '%s', "page.title$mutationSuffix");
 		$grid->addColumn('URL', function (MenuItem $item) use ($grid) {
 			if (!$item->page) {
 				return null;
@@ -139,7 +141,7 @@ class MenuPresenter extends BackendPresenter
 			$url = $this->gridFactory->getPageUrl($grid, $item->page);
 
 			return '<a href="' . $url . '" target="_blank"><i class="fa fa-external-link-square-alt"></i>&nbsp;' . $url . '</a>';
-		}, '%s', 'this.url_cs');
+		}, '%s', "this.url$mutationSuffix");
 
 		$grid->addColumnInputInteger('Priorita', 'priority', '', '', 'priority', [], true);
 		$grid->addColumnInputCheckbox('<i title="Skryto" class="far fa-eye-slash"></i>', 'hidden', '', '', 'hidden');
@@ -200,7 +202,7 @@ class MenuPresenter extends BackendPresenter
 			$this->onDelete($object);
 		};
 
-		$grid->addFilterTextInput('search', ['this.name_cs'], null, 'Název');
+		$grid->addFilterTextInput('search', ["this.name$mutationSuffix"], null, 'Název');
 		$grid->addFilterButtons();
 
 		return $grid;
@@ -209,11 +211,12 @@ class MenuPresenter extends BackendPresenter
 	public function createComponentPageGrid(): AdminGrid
 	{
 		$types = $this->pageTypes;
+		$mutationSuffix = $this->pageRepository->getConnection()->getMutationSuffix();
 
 		$grid = $this->gridFactory->create($this->pageRepository->getPagesWithoutMenu($types), 20, 'this.type');
 		$grid->addColumnSelector();
 
-		$grid->addColumnText('Název', 'name', '%s', 'this.name_cs');
+		$grid->addColumnText('Název', 'name', '%s', "this.name$mutationSuffix");
 
 		$btnSecondary = 'btn btn-sm btn-outline-primary';
 
@@ -221,7 +224,7 @@ class MenuPresenter extends BackendPresenter
 			$url = $this->gridFactory->getPageUrl($grid, $item);
 
 			return '<a href="' . $url . '" target="_blank"><i class="fa fa-external-link-square-alt"></i>&nbsp;' . $url . '</a>';
-		}, '%s', 'this.url_cs');
+		}, '%s', "this.url$mutationSuffix");
 
 		$grid->addColumnInputCheckbox('Nedostupná', 'isOffline');
 
@@ -246,7 +249,7 @@ class MenuPresenter extends BackendPresenter
 
 		$grid->addFilterTextInput(
 			'search',
-			['this.name_cs', 'this.url_cs', 'this.title_cs'],
+			["this.name$mutationSuffix", "this.url$mutationSuffix", "this.title$mutationSuffix"],
 			null,
 			'Název, URL, titulek',
 		);
