@@ -103,6 +103,13 @@ class MenuPresenter extends BackendPresenter
 	private array $selectedAncestors = [];
 
 	/**
+	 * Cache pro {@see getGridPage()} — klíč je PK stránky, `null` znamená „nenalezeno".
+	 *
+	 * @var array<string, \Web\DB\Page|null>
+	 */
+	private array $gridPages = [];
+
+	/**
 	 * Mutace, ve které gridy adminu čtou data — `null` = aktivní mutace připojení.
 	 *
 	 * Přepisují to projekty, kde obsah patří shopu a jeden typ menu = jeden shop: menu typ nese
@@ -150,13 +157,17 @@ class MenuPresenter extends BackendPresenter
 			$td->setHtml(\str_repeat('- - ', $level) . $td->getHtml());
 		};
 
-		$grid->addColumnText('Titulek', 'page.title', '%s', "page.title$mutationSuffix");
+		$grid->addColumn('Titulek', function (MenuItem $item): string {
+			return \htmlspecialchars((string) $this->getGridPage($item)?->title, \ENT_QUOTES);
+		}, '%s', "page.title$mutationSuffix");
 		$grid->addColumn('URL', function (MenuItem $item) use ($grid) {
-			if (!$item->page) {
+			$page = $this->getGridPage($item);
+
+			if (!$page) {
 				return null;
 			}
 
-			$url = $this->gridFactory->getPageUrl($grid, $item->page);
+			$url = \htmlspecialchars((string) $this->gridFactory->getPageUrl($grid, $page), \ENT_QUOTES);
 
 			return '<a href="' . $url . '" target="_blank"><i class="fa fa-external-link-square-alt"></i>&nbsp;' . $url . '</a>';
 		}, '%s', "this.url$mutationSuffix");
@@ -948,5 +959,34 @@ class MenuPresenter extends BackendPresenter
 		return $mutation !== null ?
 			($connection->getAvailableMutations()[$mutation] ?? $connection->getMutationSuffix()) :
 			$connection->getMutationSuffix();
+	}
+
+	/**
+	 * Navázaná stránka načtená v mutaci gridu ({@see getGridMutation()}).
+	 *
+	 * Lazy relace na tohle nestačí: `StORM\Collection::getRelatedObject()` staví kolekci přes
+	 * `many()` bez mutace, takže stránka přijde v mutaci připojení a čistě jednojazyčný obsah má
+	 * titulek i URL prázdné. `Repository::one()` bere mutaci parametrem, výsledek se drží v poli,
+	 * takže dotaz padne jednou na stránku, ne jednou na sloupec.
+	 */
+	private function getGridPage(MenuItem $item): Page|null
+	{
+		$mutation = $this->getGridMutation();
+
+		if ($mutation === null) {
+			return $item->page;
+		}
+
+		$pk = $item->getValue('page');
+
+		if (!\is_string($pk)) {
+			return null;
+		}
+
+		if (!\array_key_exists($pk, $this->gridPages)) {
+			$this->gridPages[$pk] = $this->pageRepository->one($pk, false, null, $mutation);
+		}
+
+		return $this->gridPages[$pk];
 	}
 }
