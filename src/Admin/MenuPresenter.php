@@ -102,11 +102,29 @@ class MenuPresenter extends BackendPresenter
 	 */
 	private array $selectedAncestors = [];
 
+	/**
+	 * Mutace, ve které gridy adminu čtou data — `null` = aktivní mutace připojení.
+	 *
+	 * Přepisují to projekty, kde obsah patří shopu a jeden typ menu = jeden shop: menu typ nese
+	 * `fk_shop`, položky menu ne, takže v jednom tabu jsou vždy záznamy jednoho shopu. Shop, který
+	 * plní jen sloupce jiné mutace, by se v gridu vykreslil s prázdným názvem, titulkem i URL a
+	 * s filtrem podle názvu by z výpisu vypadl úplně (`name_cs LIKE …` nad NULL je NULL).
+	 *
+	 * Mutace se předává jen do kolekce gridu, aby zbytek stránky — názvy tabů a překlady adminu —
+	 * zůstal v jazyce adminu. Globální `DIConnection::setMutation()` na to není: překladač si
+	 * načtené scope pamatuje na celý request, takže by se s ním přepnula i tlačítka a paginace.
+	 */
+	protected function getGridMutation(): string|null
+	{
+		return null;
+	}
+
 	public function createComponentGrid(): AdminGrid
 	{
-		$mutationSuffix = $this->menuItemRepository->getConnection()->getMutationSuffix();
+		$mutation = $this->getGridMutation();
+		$mutationSuffix = $this->getGridMutationSuffix();
 
-		$grid = $this->gridFactory->create($this->menuItemRepository->many()
+		$grid = $this->gridFactory->create($this->menuItemRepository->many($mutation)
 			->join(['nxn' => 'web_menuassign'], 'this.uuid = nxn.fk_menuitem')
 			->join(['type' => 'web_menutype'], 'nxn.fk_menutype = type.uuid')
 			->where('type.uuid', $this->tab)
@@ -916,5 +934,19 @@ class MenuPresenter extends BackendPresenter
 		}
 
 		return ['page' => $page->getPK()];
+	}
+
+	/**
+	 * Suffix mutovaných sloupců pro `getGridMutation()` — pro order expressions a filtry, které
+	 * StORM staví jako holé SQL, takže alias z defaultního selectu jim nestačí.
+	 */
+	private function getGridMutationSuffix(): string
+	{
+		$connection = $this->menuItemRepository->getConnection();
+		$mutation = $this->getGridMutation();
+
+		return $mutation !== null ?
+			($connection->getAvailableMutations()[$mutation] ?? $connection->getMutationSuffix()) :
+			$connection->getMutationSuffix();
 	}
 }
