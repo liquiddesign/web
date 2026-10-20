@@ -49,7 +49,7 @@ class SettingRepository extends Repository implements IGeneralRepository
 	 */
 	public function getValues(bool $checkShops = true, array|null $shops = null): array
 	{
-		$index = self::class . ':' . __FUNCTION__ . ((int) $checkShops) . '-' . ($shops ? \serialize(\array_keys($shops)) : null);
+		$index = self::class . ':' . __FUNCTION__ . ((int) $checkShops) . '-' . $this->getShopsCacheKey($checkShops, $shops);
 
 		return $this->cache->load($index, function (&$dependencies) use ($checkShops, $shops): array {
 			$dependencies = [
@@ -75,7 +75,7 @@ class SettingRepository extends Repository implements IGeneralRepository
 	 */
 	public function getValueByName(string $name, bool $checkShops = true, array|null $shops = null): ?string
 	{
-		$index = self::class . ':' . __FUNCTION__ . "-$name-$checkShops-" . ($shops ? \serialize(\array_keys($shops)) : null);
+		$index = self::class . ':' . __FUNCTION__ . "-$name-$checkShops-" . $this->getShopsCacheKey($checkShops, $shops);
 
 		$data = $this->cache->load($index, function (&$dependencies) use ($checkShops, $shops, $name): string|false {
 			$dependencies = [
@@ -160,5 +160,32 @@ class SettingRepository extends Repository implements IGeneralRepository
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Shops the query is filtered by, as a part of the cache key. Without the selected shop
+	 * in the key, shops of one installation (sharing one cache storage) read whichever value
+	 * was cached first — e.g. a setting missing in one shop came back empty in every shop.
+	 * @param array<int|string, \Base\DB\Shop|string>|null $shops
+	 */
+	private function getShopsCacheKey(bool $checkShops, array|null $shops): string
+	{
+		if (!$checkShops) {
+			return '';
+		}
+
+		if ($shops === null) {
+			return (string) $this->shopsConfig->getSelectedShop()?->getPK();
+		}
+
+		$shopPKs = [];
+
+		foreach ($shops as $shop) {
+			$shopPKs[] = \is_string($shop) ? $shop : $shop->getPK();
+		}
+
+		\sort($shopPKs);
+
+		return \implode(',', $shopPKs);
 	}
 }
