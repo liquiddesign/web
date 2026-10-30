@@ -7,6 +7,7 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
+use Nette\Application\Attributes\Persistent;
 use Nette\Utils\Random;
 use Pages\DB\PageRepository;
 use Web\DB\AuthorRepository;
@@ -45,7 +46,7 @@ class FaqPresenter extends BackendPresenter
 	
 	public string $tTags;
 	
-	/** @persistent */
+	#[Persistent]
 	public string $tab = 'items';
 	
 	public function beforeRender(): void

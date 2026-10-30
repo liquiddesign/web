@@ -9,6 +9,7 @@ use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
 use Base\DB\Shop;
 use Forms\Form;
+use Nette\Application\Attributes\Persistent;
 use Nette\Caching\Cache;
 use Nette\Caching\Storage;
 use Nette\Forms\Controls\HiddenField;
@@ -85,9 +86,7 @@ class MenuPresenter extends BackendPresenter
 	 */
 	public Storage $storage;
 
-	/**
-	 * @persistent
-	 */
+	#[Persistent]
 	public string $tab = 'main';
 
 	protected Cache $cache;

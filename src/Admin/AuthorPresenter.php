@@ -7,6 +7,7 @@ namespace Web\Admin;
 use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
+use Nette\Application\Attributes\Persistent;
 use Nette\Utils\Image;
 use Pages\DB\PageRepository;
 use Pages\Helpers;
@@ -28,7 +29,7 @@ class AuthorPresenter extends BackendPresenter
 		'richSnippet' => false,
 	];
 	
-	/** @persistent */
+	#[Persistent]
 	public string $tab = 'authors';
 	
 	/** @inject */

@@ -8,6 +8,7 @@ use Admin\BackendPresenter;
 use Admin\Controls\AdminForm;
 use Admin\Controls\AdminGrid;
 use Forms\Form;
+use Nette\Application\Attributes\Persistent;
 use Nette\Utils\Image;
 use Pages\DB\Page;
 use Pages\DB\PageRepository;
@@ -38,7 +39,7 @@ class NewsPresenter extends BackendPresenter
 		'relatedNews' => false,
 	];
 	
-	/** @persistent */
+	#[Persistent]
 	public string $tab = 'news';
 	
 	/** @inject */

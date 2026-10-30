@@ -10,12 +10,11 @@ use Admin\Controls\AdminGrid;
 use Forms\Form;
 use Messages\DB\Template;
 use Messages\DB\TemplateRepository;
+use Nette\Application\Attributes\Persistent;
 
 class MessagePresenter extends BackendPresenter
 {
-	/**
-	 * @persistent
-	 */
+	#[Persistent]
 	public string $tab = 'outgoing';
 
 	/**
