@@ -128,7 +128,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 		
 		$menu = $this->cache->load('menuTree', function (&$dependencies) use ($menuRepository, $menuItemRepository) {
 			$dependencies = [
-				Cache::TAGS => ['menu'],
+				Cache::Tags => ['menu'],
 			];
 			$menu = [];
 			
@@ -502,7 +502,7 @@ class MenuItemRepository extends Repository implements IGeneralRepository
 	public function clearMenuCache(): void
 	{
 		$this->cache->clean([
-			Cache::TAGS => ['menu'],
+			Cache::Tags => ['menu'],
 		]);
 	}
 

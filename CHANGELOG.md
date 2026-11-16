@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.54](https://github.com/liquiddesign/web/compare/v2.1.53...v2.1.54) (2026-11-16)
+
+### Compatibility
+
+* `MenuItemRepository` tags the menu cache with `Cache::Tags` instead of `Cache::TAGS`, which nette/caching 4 deprecates (`E_USER_DEPRECATED`, BlueScreen in Tracy debug mode); the PascalCase constant exists since nette/caching 3.1.3 (no behaviour change)
+
 ## [2.1.42](https://github.com/liquiddesign/web/compare/v2.1.41...v2.1.42) (2025-11-14)
 
 ### Features
